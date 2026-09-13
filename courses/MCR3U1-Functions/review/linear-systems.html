@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Substitution vs. Elimination — MCR3U1 Review</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#3b4f94; --accent-dark:#2b3a70; --accent-tint:#e8ebf6; }
+
+  .compare-grid { display:flex; gap:1.5rem; flex-wrap:wrap; margin:1rem 0; }
+  .compare-col { flex:1; min-width:280px; background:#fff; border:1px solid #ddd; border-radius:10px; padding:1rem 1.2rem; }
+  .compare-col h3 { margin-top:0; color:var(--accent-dark); }
+  .compare-col .system { font-size:1.1rem; margin-bottom:0.6rem; }
+  .compare-col .line { padding:0.2rem 0; }
+
+  .decide-card {
+    background:#fff; border:1px solid #ddd; border-radius:10px; padding:1rem 1.2rem; margin-bottom:1rem;
+  }
+  .decide-system { font-size:1.1rem; margin-bottom:0.6rem; }
+  .decide-btns { display:flex; gap:0.6rem; margin-bottom:0.5rem; }
+  button.pick-btn {
+    border:2px solid var(--accent); background:#fff; color:var(--accent-dark);
+    border-radius:6px; padding:0.4rem 0.9rem; cursor:pointer; font-weight:600;
+  }
+  button.pick-btn:hover { background:var(--accent-tint); }
+  .decide-feedback { font-weight:600; min-height:1.4em; }
+  .decide-feedback.good { color:#1a7a3c; }
+  .decide-feedback.ok { color:#8a6d00; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../../../index.html">&larr; All courses</a>
+    <a href="../index.html">MCR3U1 — Functions</a>
+    <span class="crumb-current">Substitution vs. Elimination</span>
+  </div>
+  <div class="wrap">
+    <h1>Substitution vs. Elimination</h1>
+    <p class="subtitle">MCR3U1 &middot; Prerequisite Review</p>
+
+    <div class="callout">
+      Both methods always work on any linear system. The question isn't "which one is correct" — it's
+      "which one is less work for <em>this</em> system."
+    </div>
+
+    <div class="panel">
+      <h2>Same system, two methods</h2>
+      <p>System: y = 2x + 4 and y = −x + 1</p>
+      <div class="compare-grid">
+        <div class="compare-col">
+          <h3>Substitution</h3>
+          <p>Use this when a variable is already isolated (or easy to isolate) in one equation.</p>
+          <div class="line">Both equations are already solved for y, so set them equal:</div>
+          <div class="line">2x + 4 = −x + 1</div>
+          <div class="line">3x = −3 → x = −1</div>
+          <div class="line">y = 2(−1) + 4 = 2</div>
+          <div class="line"><strong>(x, y) = (−1, 2)</strong></div>
+        </div>
+        <div class="compare-col">
+          <h3>Elimination</h3>
+          <p>Use this when coefficients can be matched (or easily scaled to match) so a variable cancels.</p>
+          <div class="line">Rewrite in standard form: 2x − y = −4 and x + y = 1</div>
+          <div class="line">Add the equations: the y-terms cancel</div>
+          <div class="line">3x = −3 → x = −1, then y = 2</div>
+          <div class="line"><strong>(x, y) = (−1, 2)</strong></div>
+        </div>
+      </div>
+      <p>Same answer either way — substitution was less rewriting here because both equations already isolated y.</p>
+    </div>
+
+    <div class="panel">
+      <h2>A system built for elimination</h2>
+      <p>System: 3x − 5y = −4 and 2x − 3y = −2</p>
+      <div class="compare-grid">
+        <div class="compare-col">
+          <h3>Why not substitution?</h3>
+          <p>Neither equation has a variable with a coefficient of 1 — isolating x or y means introducing
+          fractions right away, which is more error-prone.</p>
+        </div>
+        <div class="compare-col">
+          <h3>Elimination</h3>
+          <div class="line">Multiply to match coefficients: ×2 the first, ×3 the second</div>
+          <div class="line">6x − 10y = −8</div>
+          <div class="line">6x − 9y = −6</div>
+          <div class="line">Subtract: −y = −2 → y = 2</div>
+          <div class="line">Substitute back: 3x − 5(2) = −4 → x = 2</div>
+          <div class="line"><strong>(x, y) = (2, 2)</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Decide first</h2>
+      <p>For each system, pick the method you'd reach for first, then check the reasoning.</p>
+      <div id="decideArea"></div>
+    </div>
+
+    <div class="callout">
+      <strong>Try this:</strong> Look at y = 3x + 5 and 2x − y + 6 = 0. Before solving, decide and write
+      down which method you'd use and why — then solve it and confirm your answer is (x, y) = (1, 8).
+    </div>
+  </div>
+
+<script>
+const decideCases = [
+  {
+    system: "y = 3x + 5   and   2x − y + 6 = 0",
+    best: "Substitution",
+    reason: "The first equation is already isolated for y — substitute directly into the second."
+  },
+  {
+    system: "6x + 5y = 12   and   3x − 4y = 6",
+    best: "Elimination",
+    reason: "Neither equation isolates a variable cleanly, but ×2 the second equation matches the x-coefficients for elimination."
+  },
+  {
+    system: "3x + y = 13   and   2x + 3y = 18",
+    best: "Elimination",
+    reason: "y in the first equation could be isolated, but multiplying the first equation by 3 makes the y-coefficients match instantly — arguably faster than substitution here, and either is reasonable."
+  }
+];
+
+const decideArea = document.getElementById('decideArea');
+decideCases.forEach((c, i) => {
+  const card = document.createElement('div');
+  card.className = 'decide-card';
+  card.innerHTML = `
+    <div class="decide-system">${c.system}</div>
+    <div class="decide-btns">
+      <button class="pick-btn" data-i="${i}" data-choice="Substitution">Substitution</button>
+      <button class="pick-btn" data-i="${i}" data-choice="Elimination">Elimination</button>
+    </div>
+    <div class="decide-feedback" id="dfb${i}"></div>
+  `;
+  decideArea.appendChild(card);
+});
+
+decideArea.addEventListener('click', (e) => {
+  if (!e.target.classList.contains('pick-btn')) return;
+  const i = e.target.dataset.i;
+  const choice = e.target.dataset.choice;
+  const c = decideCases[i];
+  const fb = document.getElementById(`dfb${i}`);
+  if (choice === c.best) {
+    fb.textContent = "That's the more efficient pick here — " + c.reason;
+    fb.className = 'decide-feedback good';
+  } else {
+    fb.textContent = `${choice} would still get you the right answer, but ${c.best.toLowerCase()} is less work: ${c.reason}`;
+    fb.className = 'decide-feedback ok';
+  }
+});
+</script>
+</body>
+</html>

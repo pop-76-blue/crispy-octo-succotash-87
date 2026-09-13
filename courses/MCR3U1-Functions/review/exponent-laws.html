@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Exponent Laws Checker — MCR3U1 Review</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#3b4f94; --accent-dark:#2b3a70; --accent-tint:#e8ebf6; }
+
+  .law-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:0.9rem; margin:1rem 0 1.5rem; }
+  .law-card { background:#fff; border:1px solid #ddd; border-radius:8px; padding:0.8rem 1rem; }
+  .law-card .name { font-weight:700; color:var(--accent-dark); font-size:0.92rem; }
+  .law-card .rule { font-size:1.05rem; margin-top:0.25rem; }
+
+  .prob-card {
+    background:#fff; border:1px solid #ddd; border-radius:10px; padding:1rem 1.2rem; margin-bottom:1.1rem;
+  }
+  .prob-expr { font-size:1.25rem; font-weight:600; margin-bottom:0.6rem; }
+  .prob-row { display:flex; gap:0.6rem; align-items:center; flex-wrap:wrap; margin-bottom:0.4rem; }
+  .prob-row input[type=text] {
+    border:1px solid #bbb; border-radius:6px; padding:0.4rem 0.6rem; font-size:1rem; width:9rem;
+  }
+  button.check-btn, button.reveal-btn {
+    border:2px solid var(--accent); background:#fff; color:var(--accent-dark);
+    border-radius:6px; padding:0.4rem 0.9rem; cursor:pointer; font-weight:600;
+  }
+  button.check-btn:hover, button.reveal-btn:hover { background:var(--accent-tint); }
+  .feedback { font-weight:600; min-height:1.4em; margin-top:0.3rem; }
+  .feedback.correct { color:#1a7a3c; }
+  .feedback.wrong { color:#b3311d; }
+  .steps-box {
+    display:none; background:var(--accent-tint); border-radius:6px; padding:0.7rem 0.9rem; margin-top:0.5rem; font-size:0.95rem;
+  }
+  .steps-box.shown { display:block; }
+  .hint { font-size:0.85rem; color:#666; margin-top:0.2rem; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../../../index.html">&larr; All courses</a>
+    <a href="../index.html">MCR3U1 — Functions</a>
+    <span class="crumb-current">Exponent Laws Checker</span>
+  </div>
+  <div class="wrap">
+    <h1>Exponent Laws Checker</h1>
+    <p class="subtitle">MCR3U1 &middot; Prerequisite Review</p>
+
+    <div class="callout">
+      Before applying a product or quotient rule, always check the bases are the <strong>same</strong>.
+      Follow order of operations for everything else.
+    </div>
+
+    <div class="panel">
+      <h2>The laws</h2>
+      <div class="law-grid">
+        <div class="law-card"><div class="name">Product rule</div><div class="rule">a<sup>m</sup> × a<sup>n</sup> = a<sup>m+n</sup></div></div>
+        <div class="law-card"><div class="name">Quotient rule</div><div class="rule">a<sup>m</sup> ÷ a<sup>n</sup> = a<sup>m−n</sup></div></div>
+        <div class="law-card"><div class="name">Power of a power</div><div class="rule">(a<sup>m</sup>)<sup>n</sup> = a<sup>mn</sup></div></div>
+        <div class="law-card"><div class="name">Zero exponent</div><div class="rule">a<sup>0</sup> = 1 (a ≠ 0)</div></div>
+        <div class="law-card"><div class="name">Negative exponent</div><div class="rule">a<sup>−n</sup> = 1 / a<sup>n</sup></div></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Work through these</h2>
+      <p>Type your answer as a single power (e.g. <code>2^2</code>) where the instructions ask for it, or the evaluated number where they ask you to evaluate. Then reveal the steps to check your reasoning either way.</p>
+      <div id="probArea"></div>
+    </div>
+
+    <div class="callout">
+      <strong>Try this:</strong> Before checking any answers below, simplify
+      <code>(3⁴)² × 3⁻⁵</code> as a single power on paper, and evaluate it. Then come back and check
+      your exponent (not just the final value) against the steps for a similar problem above.
+    </div>
+  </div>
+
+<script>
+const problems = [
+  {
+    expr: "2⁵ ÷ 2³",
+    ask: "Write as a single power, then evaluate.",
+    answer: "4",
+    altAnswers: ["2^2", "2²"],
+    steps: ["Same base (2), so subtract exponents: 2⁵ ÷ 2³ = 2⁵⁻³ = 2²", "Evaluate: 2² = 4"]
+  },
+  {
+    expr: "(4²)⁻⁴",
+    ask: "Write as a single power of 4, then evaluate as a fraction.",
+    answer: "1/65536",
+    altAnswers: ["4^-8", "1/4^8"],
+    steps: ["Power of a power: multiply exponents → 4²ˣ⁻⁴ = 4⁻⁸", "Negative exponent: 4⁻⁸ = 1/4⁸ = 1/65536"]
+  },
+  {
+    expr: "(4¹⁵)⁵ × (4⁻¹²)⁶",
+    ask: "Write as a single power of 4, then evaluate.",
+    answer: "64",
+    altAnswers: ["4^3", "4³"],
+    steps: ["Power of a power on each factor: 4⁷⁵ × 4⁻⁷²", "Same base — add exponents: 4⁷⁵⁻⁷² = 4³", "Evaluate: 4³ = 64"]
+  },
+  {
+    expr: "(−2)³ × (−2)⁵ ÷ (−2)⁻⁴",
+    ask: "Write as a single power of −2, then evaluate.",
+    answer: "4096",
+    altAnswers: ["(-2)^12"],
+    steps: ["Same base (−2): add the multiplied exponents, subtract the divided one: 3 + 5 − (−4) = 12", "(−2)¹² — evaluates to 4096 (even exponent, so positive)"]
+  },
+  {
+    expr: "(10³)⁻² ÷ (10⁻¹² × 10⁶)",
+    ask: "Simplify the numerator and denominator separately first, then evaluate.",
+    answer: "1",
+    altAnswers: ["10^0"],
+    steps: ["Numerator: (10³)⁻² = 10⁻⁶", "Denominator: 10⁻¹² × 10⁶ = 10⁻⁶", "10⁻⁶ ÷ 10⁻⁶ = 10⁰ = 1"]
+  },
+  {
+    expr: "(5³)² × 5⁴ ÷ (5¹² ÷ 5⁷)",
+    ask: "Write as a single power of 5, then evaluate.",
+    answer: "3125",
+    altAnswers: ["5^5"],
+    steps: ["(5³)² = 5⁶, so numerator is 5⁶ × 5⁴ = 5¹⁰", "Denominator: 5¹² ÷ 5⁷ = 5⁵", "5¹⁰ ÷ 5⁵ = 5⁵ = 3125"]
+  }
+];
+
+const probArea = document.getElementById('probArea');
+problems.forEach((p, i) => {
+  const card = document.createElement('div');
+  card.className = 'prob-card';
+  card.innerHTML = `
+    <div class="prob-expr">${p.expr}</div>
+    <div class="hint">${p.ask}</div>
+    <div class="prob-row">
+      <input type="text" id="ans${i}" placeholder="your answer">
+      <button class="check-btn" data-i="${i}">Check</button>
+      <button class="reveal-btn" data-i="${i}">Show steps</button>
+    </div>
+    <div class="feedback" id="fb${i}"></div>
+    <div class="steps-box" id="steps${i}">${p.steps.map(s => `<div>${s}</div>`).join('')}</div>
+  `;
+  probArea.appendChild(card);
+});
+
+probArea.addEventListener('click', (e) => {
+  const i = e.target.dataset.i;
+  if (i === undefined) return;
+  const p = problems[i];
+  if (e.target.classList.contains('check-btn')) {
+    const raw = document.getElementById(`ans${i}`).value.trim().toLowerCase().replace(/\s+/g, '');
+    const accepted = [p.answer, ...p.altAnswers].map(a => a.toLowerCase().replace(/\s+/g, ''));
+    const fb = document.getElementById(`fb${i}`);
+    if (accepted.includes(raw)) {
+      fb.textContent = "Correct!";
+      fb.className = 'feedback correct';
+    } else {
+      fb.textContent = `Not quite yet — click "Show steps" to see where it goes.`;
+      fb.className = 'feedback wrong';
+    }
+  }
+  if (e.target.classList.contains('reveal-btn')) {
+    document.getElementById(`steps${i}`).classList.toggle('shown');
+  }
+});
+</script>
+</body>
+</html>

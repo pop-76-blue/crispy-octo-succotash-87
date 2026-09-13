@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Factoring Path Finder — MCR3U1 Review</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#3b4f94; --accent-dark:#2b3a70; --accent-tint:#e8ebf6; }
+
+  .path-wrap { display:flex; flex-wrap:wrap; gap:1.5rem; margin:1.5rem 0; }
+  .path-col { flex:1; min-width:220px; }
+
+  .choice-row { display:flex; gap:0.6rem; flex-wrap:wrap; margin:0.75rem 0 1.25rem; }
+  .choice-btn {
+    border:2px solid var(--accent); background:#fff; color:var(--accent-dark);
+    border-radius:8px; padding:0.6rem 1.1rem; font-size:1rem; font-weight:600;
+    cursor:pointer; transition:background 0.15s, color 0.15s;
+  }
+  .choice-btn:hover { background:var(--accent-tint); }
+  .choice-btn.active { background:var(--accent); color:#fff; }
+  .choice-btn:disabled { opacity:0.4; cursor:not-allowed; }
+
+  .tree { list-style:none; padding:0; margin:0; font-size:0.98rem; }
+  .tree li { padding:0.35rem 0 0.35rem 1rem; border-left:3px solid #ddd; margin-left:0.4rem; }
+  .tree li.lit { border-left-color:var(--accent); background:var(--accent-tint); border-radius:0 6px 6px 0; font-weight:600; color:var(--accent-dark); }
+
+  .step {
+    background:#fff; border:1px solid #ddd; border-radius:8px; padding:0.9rem 1.1rem;
+    margin-bottom:0.6rem; opacity:0.35; transition:opacity 0.2s;
+  }
+  .step.shown { opacity:1; }
+  .step .tag { font-size:0.78rem; text-transform:uppercase; letter-spacing:0.03em; color:var(--accent-dark); font-weight:700; }
+
+  #nextStepBtn { margin-top:0.5rem; }
+
+  .quiz-card {
+    background:#fff; border:1px solid #ddd; border-radius:10px; padding:1rem 1.2rem; margin-bottom:1rem;
+  }
+  .quiz-expr { font-size:1.2rem; font-weight:600; margin-bottom:0.6rem; }
+  .quiz-options { display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.5rem; }
+  .quiz-feedback { font-weight:600; min-height:1.4em; }
+  .quiz-feedback.correct { color:#1a7a3c; }
+  .quiz-feedback.wrong { color:#b3311d; }
+
+  button.opt {
+    border:1px solid var(--accent); background:#fff; color:var(--accent-dark);
+    border-radius:6px; padding:0.4rem 0.8rem; cursor:pointer; font-size:0.92rem;
+  }
+  button.opt:hover { background:var(--accent-tint); }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../../../index.html">&larr; All courses</a>
+    <a href="../index.html">MCR3U1 — Functions</a>
+    <span class="crumb-current">Factoring Path Finder</span>
+  </div>
+  <div class="wrap">
+    <h1>Factoring Path Finder</h1>
+    <p class="subtitle">MCR3U1 &middot; Prerequisite Review</p>
+
+    <div class="callout">
+      <strong>Before anything else: always check for a GCF first.</strong>
+      Every method below assumes you've already pulled out the greatest common factor, if there is one.
+      Skipping this step is the most common factoring mistake.
+    </div>
+
+    <div class="panel">
+      <h2>Step 1 — How many terms?</h2>
+      <p>Click the number of terms in your polynomial to see which method applies.</p>
+      <div class="choice-row" id="termChoices">
+        <button class="choice-btn" data-terms="2">2 terms</button>
+        <button class="choice-btn" data-terms="3">3 terms</button>
+        <button class="choice-btn" data-terms="4">4 terms</button>
+      </div>
+
+      <div class="path-wrap">
+        <div class="path-col">
+          <h3 style="margin-top:0;">The decision tree</h3>
+          <ul class="tree" id="treeView">
+            <li data-node="root">Look for a GCF</li>
+            <li data-node="2">2 terms &rarr; Difference of squares (a² − b²)</li>
+            <li data-node="3">3 terms &rarr; Trinomial (simple or complex)</li>
+            <li data-node="4">4 terms &rarr; Grouping</li>
+          </ul>
+        </div>
+        <div class="path-col" id="branchArea">
+          <h3 style="margin-top:0;">Pick a number of terms to see an example</h3>
+          <p>Your worked example and steps will appear here.</p>
+        </div>
+      </div>
+
+      <div id="exampleArea"></div>
+    </div>
+
+    <div class="panel">
+      <h2>Quick check</h2>
+      <p>For each polynomial, choose the method you'd reach for <em>first</em> (after checking for a GCF). Then reveal the worked answer.</p>
+      <div id="quizArea"></div>
+    </div>
+
+    <div class="callout">
+      <strong>Try this:</strong> Before you touch the buttons above, look at
+      <code>3x&sup2; − 27</code> and decide on paper which branch it belongs to and why
+      (hint: factor out the GCF first — what's left over?). Then use the tool to check your reasoning,
+      and try the same prediction on <code>5x&sup2; + 20x + 15</code>.
+    </div>
+  </div>
+
+<script>
+const branches = {
+  2: {
+    label: "2 terms — Difference of Squares",
+    note: "Only applies when both terms are perfect squares and they're being subtracted: a² − b².",
+    example: "x² − 81",
+    steps: [
+      { tag: "Recognize", text: "x² and 81 are both perfect squares: x² = (x)², 81 = (9)²." },
+      { tag: "Apply the pattern", text: "a² − b² = (a − b)(a + b), with a = x and b = 9." },
+      { tag: "Result", text: "x² − 81 = (x − 9)(x + 9)" }
+    ]
+  },
+  3: {
+    label: "3 terms — Trinomial",
+    note: "If the leading coefficient is 1, it's a simple trinomial (find two numbers that multiply to c and add to b). If the leading coefficient isn't 1, it's a complex trinomial (use the product/sum method: find two numbers with product = a×c and sum = b, then split the middle term and group).",
+    example: "2x² − 2x − 40  (complex trinomial — GCF of 2 comes out first)",
+    steps: [
+      { tag: "Common factor", text: "2x² − 2x − 40 = 2(x² − x − 20)" },
+      { tag: "Product / Sum", text: "Need two numbers with product = −20 and sum = −1: those are −5 and 4." },
+      { tag: "Split & factor", text: "x² − x − 20 = (x − 5)(x + 4)" },
+      { tag: "Result", text: "2x² − 2x − 40 = 2(x − 5)(x + 4)" }
+    ]
+  },
+  4: {
+    label: "4 terms — Grouping",
+    note: "Split into two pairs, common-factor each pair, then factor out the shared binomial.",
+    example: "5x³ − 10x² + 3x − 6",
+    steps: [
+      { tag: "Group in pairs", text: "(5x³ − 10x²) + (3x − 6)" },
+      { tag: "Factor each pair", text: "5x²(x − 2) + 3(x − 2)" },
+      { tag: "Factor out the shared binomial", text: "(x − 2)(5x² + 3)" }
+    ]
+  }
+};
+
+let stepIndex = 0;
+let currentSteps = [];
+
+function renderBranch(n) {
+  document.querySelectorAll('#treeView li').forEach(li => li.classList.remove('lit'));
+  document.querySelector('#treeView li[data-node="root"]').classList.add('lit');
+  document.querySelector(`#treeView li[data-node="${n}"]`).classList.add('lit');
+
+  const b = branches[n];
+  const branchArea = document.getElementById('branchArea');
+  branchArea.innerHTML = `<h3 style="margin-top:0;">${b.label}</h3><p>${b.note}</p><p><strong>Example:</strong> ${b.example}</p>`;
+
+  currentSteps = b.steps;
+  stepIndex = 0;
+  const exampleArea = document.getElementById('exampleArea');
+  exampleArea.innerHTML = currentSteps.map((s, i) =>
+    `<div class="step" id="step${i}"><span class="tag">${s.tag}</span><br>${s.text}</div>`
+  ).join('') + `<button class="choice-btn" id="nextStepBtn">Show next step</button>`;
+
+  document.getElementById('nextStepBtn').addEventListener('click', showNextStep);
+}
+
+function showNextStep() {
+  if (stepIndex < currentSteps.length) {
+    document.getElementById(`step${stepIndex}`).classList.add('shown');
+    stepIndex++;
+  }
+  if (stepIndex >= currentSteps.length) {
+    document.getElementById('nextStepBtn').disabled = true;
+    document.getElementById('nextStepBtn').textContent = "All steps shown";
+  }
+}
+
+document.querySelectorAll('#termChoices .choice-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#termChoices .choice-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderBranch(btn.dataset.terms);
+  });
+});
+
+// Quick-check quiz
+const quizQuestions = [
+  { expr: "x² − 16", options: ["Difference of squares", "Simple trinomial", "Grouping"], answer: "Difference of squares",
+    solution: "x² − 16 = (x − 4)(x + 4)" },
+  { expr: "x² + 11x + 24", options: ["Difference of squares", "Simple trinomial", "Complex trinomial"], answer: "Simple trinomial",
+    solution: "Need two numbers with product 24, sum 11 → 8 and 3. x² + 11x + 24 = (x + 8)(x + 3)" },
+  { expr: "6x² + 7x − 5", options: ["Simple trinomial", "Complex trinomial", "Grouping"], answer: "Complex trinomial",
+    solution: "Product = 6×(−5) = −30, sum = 7 → 10 and −3. Split and group: (2x − 1)(3x + 5)" },
+  { expr: "2(x + 5) − y(x + 5)", options: ["Difference of squares", "Grouping", "Simple trinomial"], answer: "Grouping",
+    solution: "Both terms already share the binomial factor (x + 5): (x + 5)(2 − y)" },
+  { expr: "9x³y² − 36xy⁴", options: ["Common factor only", "Difference of squares (after GCF)", "Grouping"], answer: "Difference of squares (after GCF)",
+    solution: "GCF is 9xy²: 9xy²(x² − 4y²). What's left, x² − 4y², is a difference of squares → 9xy²(x − 2y)(x + 2y)" }
+];
+
+const quizArea = document.getElementById('quizArea');
+quizQuestions.forEach((q, i) => {
+  const card = document.createElement('div');
+  card.className = 'quiz-card';
+  card.innerHTML = `
+    <div class="quiz-expr">${q.expr}</div>
+    <div class="quiz-options">${q.options.map(o => `<button class="opt" data-q="${i}" data-choice="${o}">${o}</button>`).join('')}</div>
+    <div class="quiz-feedback" id="fb${i}"></div>
+  `;
+  quizArea.appendChild(card);
+});
+
+quizArea.addEventListener('click', (e) => {
+  if (!e.target.classList.contains('opt')) return;
+  const i = e.target.dataset.q;
+  const choice = e.target.dataset.choice;
+  const q = quizQuestions[i];
+  const fb = document.getElementById(`fb${i}`);
+  if (choice === q.answer) {
+    fb.textContent = "Correct — " + q.solution;
+    fb.className = 'quiz-feedback correct';
+  } else {
+    fb.textContent = `Not quite. Correct method: ${q.answer}. ${q.solution}`;
+    fb.className = 'quiz-feedback wrong';
+  }
+});
+</script>
+</body>
+</html>

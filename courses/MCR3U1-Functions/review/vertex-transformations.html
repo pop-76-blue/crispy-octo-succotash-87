@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Vertex Form Transformations — MCR3U1 Review</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#3b4f94; --accent-dark:#2b3a70; --accent-tint:#e8ebf6; }
+
+  .demo-grid { display:flex; flex-wrap:wrap; gap:1.5rem; }
+  .controls-col { flex:1; min-width:260px; }
+  .canvas-col { flex:2; min-width:320px; text-align:center; }
+
+  .slider-row { margin-bottom:1.1rem; }
+  .slider-row label { display:flex; justify-content:space-between; font-weight:600; margin-bottom:0.25rem; }
+  .slider-row output { color:var(--accent-dark); font-variant-numeric:tabular-nums; }
+  .slider-row input[type=range] { width:100%; accent-color:var(--accent); }
+
+  .readout {
+    background:#fff; border:1px solid #ddd; border-radius:8px; padding:0.9rem 1.1rem; margin-top:1rem;
+  }
+  .readout div { padding:0.25rem 0; }
+  .readout .k { color:var(--accent-dark); font-weight:600; display:inline-block; min-width:9.5rem; }
+
+  #graphCanvas { background:#fff; border:1px solid #ddd; border-radius:8px; max-width:100%; }
+
+  .toggle-row { margin-top:0.75rem; }
+  .toggle-row label { font-weight:600; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../../../index.html">&larr; All courses</a>
+    <a href="../index.html">MCR3U1 — Functions</a>
+    <span class="crumb-current">Vertex Form Transformations</span>
+  </div>
+  <div class="wrap">
+    <h1>Vertex Form Transformations</h1>
+    <p class="subtitle">MCR3U1 &middot; Prerequisite Review</p>
+
+    <div class="callout">
+      Vertex form: <strong>y = a(x − h)² + k</strong>. The vertex sits at (h, k). The sign and size of
+      <em>a</em> control which way the parabola opens and how stretched or compressed it is.
+    </div>
+
+    <div class="panel">
+      <div class="demo demo-grid">
+        <div class="controls-col">
+          <div class="slider-row">
+            <label>a <output id="aVal">1</output></label>
+            <input type="range" id="aSlider" min="-3" max="3" step="0.1" value="1">
+          </div>
+          <div class="slider-row">
+            <label>h <output id="hVal">0</output></label>
+            <input type="range" id="hSlider" min="-8" max="8" step="1" value="0">
+          </div>
+          <div class="slider-row">
+            <label>k <output id="kVal">0</output></label>
+            <input type="range" id="kSlider" min="-8" max="8" step="1" value="0">
+          </div>
+
+          <div class="toggle-row">
+            <label><input type="checkbox" id="stepToggle" checked> Show step pattern (over 1, up 1·a / 3·a / 5·a / 7·a)</label>
+          </div>
+
+          <div class="readout" id="readout"></div>
+        </div>
+        <div class="canvas-col">
+          <canvas id="graphCanvas" width="440" height="440"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>Try this:</strong> Set a = 2, h = −3, k = 4 in your head first — write down the predicted
+      vertex, axis of symmetry, opening direction, and y-intercept on paper. Then move the sliders to
+      those values and check every prediction against the readout.
+    </div>
+  </div>
+
+<script>
+const canvas = document.getElementById('graphCanvas');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+const scale = 18; // pixels per unit
+const originX = W / 2, originY = H / 2;
+
+const aSlider = document.getElementById('aSlider');
+const hSlider = document.getElementById('hSlider');
+const kSlider = document.getElementById('kSlider');
+const aVal = document.getElementById('aVal');
+const hVal = document.getElementById('hVal');
+const kVal = document.getElementById('kVal');
+const stepToggle = document.getElementById('stepToggle');
+const readout = document.getElementById('readout');
+
+function toPx(x, y) {
+  return [originX + x * scale, originY - y * scale];
+}
+
+function drawGrid() {
+  ctx.clearRect(0, 0, W, H);
+  ctx.strokeStyle = '#eee';
+  ctx.lineWidth = 1;
+  for (let u = -12; u <= 12; u++) {
+    const [x1] = toPx(u, 0);
+    ctx.beginPath(); ctx.moveTo(x1, 0); ctx.lineTo(x1, H); ctx.stroke();
+    const [, y1] = toPx(0, u);
+    ctx.beginPath(); ctx.moveTo(0, y1); ctx.lineTo(W, y1); ctx.stroke();
+  }
+  ctx.strokeStyle = '#999';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(0, originY); ctx.lineTo(W, originY); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(originX, 0); ctx.lineTo(originX, H); ctx.stroke();
+}
+
+function draw() {
+  const a = parseFloat(aSlider.value);
+  const h = parseFloat(hSlider.value);
+  const k = parseFloat(kSlider.value);
+
+  aVal.textContent = a.toFixed(1);
+  hVal.textContent = h.toFixed(0);
+  kVal.textContent = k.toFixed(0);
+
+  drawGrid();
+
+  // parabola curve
+  ctx.strokeStyle = 'var(--accent)';
+  ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent') || '#3b4f94';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  let started = false;
+  for (let px = 0; px <= W; px++) {
+    const x = (px - originX) / scale;
+    const y = a * (x - h) * (x - h) + k;
+    const py = originY - y * scale;
+    if (py < -50 || py > H + 50) { started = false; continue; }
+    if (!started) { ctx.moveTo(px, py); started = true; }
+    else ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+
+  // vertex marker
+  const [vx, vy] = toPx(h, k);
+  ctx.fillStyle = '#2b3a70';
+  ctx.beginPath(); ctx.arc(vx, vy, 5, 0, Math.PI * 2); ctx.fill();
+
+  // step pattern dots
+  if (stepToggle.checked) {
+    ctx.fillStyle = '#c0392b';
+    const offsets = [1, 3, 5, 7];
+    offsets.forEach((o, i) => {
+      const dy = a * o;
+      [h - (i + 1), h + (i + 1)].forEach(xVal => {
+        const yVal = k + dy;
+        const [px, py] = toPx(xVal, yVal);
+        if (py >= 0 && py <= H) {
+          ctx.beginPath(); ctx.arc(px, py, 3.5, 0, Math.PI * 2); ctx.fill();
+        }
+      });
+    });
+  }
+
+  // y-intercept
+  const yInt = a * (0 - h) * (0 - h) + k;
+  const [yiX, yiY] = toPx(0, yInt);
+  ctx.fillStyle = '#1a7a3c';
+  ctx.beginPath(); ctx.arc(yiX, yiY, 4, 0, Math.PI * 2); ctx.fill();
+
+  readout.innerHTML = `
+    <div><span class="k">Vertex:</span> (${h.toFixed(0)}, ${k.toFixed(0)})</div>
+    <div><span class="k">Axis of symmetry:</span> x = ${h.toFixed(0)}</div>
+    <div><span class="k">Opens:</span> ${a > 0 ? 'up' : a < 0 ? 'down' : 'flat (a = 0, not a parabola)'}</div>
+    <div><span class="k">Stretch/compression:</span> ${Math.abs(a) > 1 ? 'vertical stretch by ' + Math.abs(a).toFixed(1) : Math.abs(a) < 1 ? 'vertical compression by ' + Math.abs(a).toFixed(1) : 'no stretch (|a| = 1)'}</div>
+    <div><span class="k">y-intercept:</span> (0, ${yInt.toFixed(2)})</div>
+  `;
+}
+
+[aSlider, hSlider, kSlider, stepToggle].forEach(el => el.addEventListener('input', draw));
+draw();
+</script>
+</body>
+</html>
