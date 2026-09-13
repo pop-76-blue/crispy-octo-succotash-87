@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Bitwise Operations</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#8a6d1a; --accent-dark:#6b5313; --accent-tint:#f6f0dc; }
+  .reg-label {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--ink-soft);
+    text-align: center;
+    margin-bottom: 4px;
+  }
+  table.truth {
+    border-collapse: collapse;
+    font-family: var(--mono);
+    font-size: 14px;
+    margin: 14px auto 4px;
+  }
+  table.truth th, table.truth td {
+    border: 1px solid var(--line);
+    padding: 6px 14px;
+    text-align: center;
+  }
+  table.truth tr.live-row td {
+    background: var(--accent-tint);
+    font-weight: 700;
+  }
+  #regBWrap[data-hidden="true"] { display: none; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../index.html">&larr; TER3MU</a>
+    <span class="crumb-current">Bitwise Operations</span>
+  </div>
+
+  <div class="wrap">
+    <h1>Bitwise Operations</h1>
+    <p class="subtitle">Unit 1 &nbsp;&middot;&nbsp; 1.2.8 Bitwise Operations (AND, OR, XOR, SHL, SHR)</p>
+
+    <div class="callout">
+      Logical operations (AND, OR, XOR) compare two registers <em>column by column</em> — no carrying between positions. Shift operations (SHL, SHR) work on a single register, sliding every bit one position and dropping whatever falls off the end.
+    </div>
+
+    <div class="demo">
+      <h3 style="text-align:center;margin-bottom:2px;">Register A</h3>
+      <div class="bit-row" id="rowA"></div>
+      <div class="decimal-readout" id="readoutA"></div>
+
+      <div id="regBWrap">
+        <h3 style="text-align:center;margin:26px 0 2px;">Register B</h3>
+        <div class="bit-row" id="rowB"></div>
+        <div class="decimal-readout" id="readoutB"></div>
+      </div>
+
+      <div class="op-row" id="opRow">
+        <button class="op-btn" data-op="AND" data-active="true">A AND B</button>
+        <button class="op-btn" data-op="OR">A OR B</button>
+        <button class="op-btn" data-op="XOR">A XOR B</button>
+        <button class="op-btn" data-op="SHL">SHL(A)</button>
+        <button class="op-btn" data-op="SHR">SHR(A)</button>
+      </div>
+
+      <h3 style="text-align:center;margin-bottom:2px;">Result</h3>
+      <div class="bit-row result-row" id="rowResult"></div>
+      <div class="decimal-readout" id="readoutResult"></div>
+
+      <table class="truth" id="truthTable">
+        <thead><tr><th>A</th><th id="colBHeader">B</th><th id="opHeader">AND</th></tr></thead>
+        <tbody id="truthBody"></tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <h2 style="border:none;padding:0;margin:0 0 10px;">What each operation does</h2>
+      <p><strong>AND:</strong> result bit is 1 only if both A and B have a 1 in that position.<br>
+      <strong>OR:</strong> result bit is 1 if either A or B (or both) has a 1.<br>
+      <strong>XOR:</strong> result bit is 1 if exactly one of A or B has a 1 — not both.<br>
+      <strong>SHL(A):</strong> shifts every bit of A one place left, drops the leftmost bit, and inserts a 0 on the right. This has the same effect as multiplying A by 2.<br>
+      <strong>SHR(A):</strong> shifts every bit of A one place right, drops the rightmost bit, and inserts a 0 on the left. This has the same effect as integer division of A by 2.</p>
+    </div>
+
+    <div class="callout">
+      <strong>Try this:</strong> Set A to <span style="font-family:var(--mono)">0011 1000</span> (56) and B to <span style="font-family:var(--mono)">0001 0101</span> (21). Predict the AND result column by column on paper, then check it. Afterward, switch to SHL(A) twice in a row and confirm it doubles A's decimal value each time.
+    </div>
+  </div>
+
+  <script>
+    const BITS = 8;
+    let A = [0,0,1,1,1,0,0,0]; // 56
+    let B = [0,0,0,1,0,1,0,1]; // 21
+    let op = "AND";
+
+    function buildRow(container, arr, editable) {
+      container.innerHTML = "";
+      arr.forEach((val, i) => {
+        const cell = document.createElement("div");
+        cell.className = "bit";
+        cell.dataset.on = val;
+        cell.textContent = val;
+        if (editable) {
+          cell.addEventListener("click", () => {
+            arr[i] = arr[i] ? 0 : 1;
+            render();
+          });
+        }
+        container.appendChild(cell);
+      });
+    }
+
+    function toDecimal(arr) { return arr.reduce((acc, bit) => acc * 2 + bit, 0); }
+
+    function compute() {
+      if (op === "SHL") return [...A.slice(1), 0];
+      if (op === "SHR") return [0, ...A.slice(0, BITS - 1)];
+      const result = [];
+      for (let i = 0; i < BITS; i++) {
+        let r;
+        if (op === "AND") r = A[i] & B[i];
+        else if (op === "OR") r = A[i] | B[i];
+        else r = A[i] ^ B[i];
+        result.push(r);
+      }
+      return result;
+    }
+
+    const opLabels = { AND: "AND", OR: "OR", XOR: "XOR", SHL: "SHL(A)", SHR: "SHR(A)" };
+
+    function renderTruthTable() {
+      const table = document.getElementById('truthTable');
+      const isShift = op === 'SHL' || op === 'SHR';
+      table.style.display = isShift ? 'none' : '';
+      if (isShift) return;
+
+      const body = document.getElementById("truthBody");
+      const header = document.getElementById("opHeader");
+      header.textContent = opLabels[op];
+      body.innerHTML = "";
+      const rows = [[0,0],[0,1],[1,0],[1,1]];
+      rows.forEach(([a,b]) => {
+        let r;
+        if (op === "AND") r = a & b;
+        else if (op === "OR") r = a | b;
+        else r = a ^ b;
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td>${a}</td><td>${b}</td><td>${r}</td>`;
+        body.appendChild(tr);
+      });
+    }
+
+    function render() {
+      const isShift = op === 'SHL' || op === 'SHR';
+      document.getElementById('regBWrap').dataset.hidden = isShift ? 'true' : 'false';
+
+      buildRow(document.getElementById("rowA"), A, true);
+      buildRow(document.getElementById("rowB"), B, !isShift);
+      document.getElementById("readoutA").innerHTML = `decimal: ${toDecimal(A)}`;
+      document.getElementById("readoutB").innerHTML = `decimal: ${toDecimal(B)}`;
+
+      const result = compute();
+      buildRow(document.getElementById("rowResult"), result, false);
+      document.getElementById("readoutResult").innerHTML = `decimal: ${toDecimal(result)}`;
+
+      document.querySelectorAll(".op-btn").forEach(btn => {
+        btn.dataset.active = (btn.dataset.op === op) ? "true" : "false";
+      });
+
+      renderTruthTable();
+    }
+
+    document.getElementById("opRow").addEventListener("click", (e) => {
+      const btn = e.target.closest(".op-btn");
+      if (!btn) return;
+      op = btn.dataset.op;
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>

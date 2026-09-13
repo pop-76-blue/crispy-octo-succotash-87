@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Unit 1 Quiz Prep — Practice Set</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#8a6d1a; --accent-dark:#6b5313; --accent-tint:#f6f0dc; }
+  .q-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    margin: 16px 0;
+  }
+  .q-num {
+    font-family: var(--sans);
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .q-prompt {
+    font-family: var(--sans);
+    font-size: 16px;
+    margin: 6px 0 14px;
+  }
+  .q-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .q-option {
+    font-family: var(--sans);
+    font-size: 14.5px;
+    text-align: left;
+    padding: 9px 14px;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    background: var(--surface);
+    cursor: pointer;
+  }
+  .q-option[data-state="correct"] { background: #e3f3e3; border-color: #2e7d32; }
+  .q-option[data-state="incorrect"] { background: #fbe6e6; border-color: #b3261e; }
+  .q-input-row { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
+  .q-input-row input {
+    font-family: var(--mono);
+    font-size: 15px;
+    padding: 6px 10px;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    width: 160px;
+  }
+  .check-btn {
+    font-family: var(--sans);
+    font-size: 13.5px;
+    padding: 6px 14px;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .explanation {
+    display: none;
+    font-family: var(--sans);
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    background: var(--accent-tint);
+    border-radius: 5px;
+    padding: 10px 14px;
+    margin-top: 8px;
+  }
+  .explanation.show { display: block; }
+  .score-bar {
+    position: sticky;
+    top: 0;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    padding: 10px 20px;
+    font-family: var(--sans);
+    font-size: 14px;
+    text-align: center;
+    z-index: 5;
+  }
+  .reset-link {
+    font-family: var(--sans);
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    text-align: center;
+    margin-top: 30px;
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../index.html">&larr; TER3MU</a>
+    <span class="crumb-current">Unit 1 Quiz Prep</span>
+  </div>
+
+  <div class="score-bar">Answered: <strong id="answeredCount">0</strong>/<span id="totalCount">0</span> &nbsp;&middot;&nbsp; Correct: <strong id="correctCount">0</strong></div>
+
+  <div class="wrap">
+    <h1>Unit 1 Quiz Prep — Practice Set</h1>
+    <p class="subtitle">Covers 1.1 Decimal, 1.2 Binary through 1.2.8 Bitwise Operations — matching the quiz format (multiple choice, written answer, calculations)</p>
+
+    <div id="questionList"></div>
+
+    <p class="reset-link"><a href="#" id="resetLink">Reset my saved answers on this page</a></p>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'ter3mu-unit1-quiz-prep';
+
+    const questions = [
+      {
+        type: 'mc',
+        prompt: '1. Which best explains why Hindu-Arabic numerals made complex arithmetic possible, but Roman numerals did not?',
+        options: [
+          'Hindu-Arabic numerals are positional; a digit\u2019s value depends on where it sits',
+          'Hindu-Arabic numerals use fewer symbols overall',
+          'Roman numerals cannot represent numbers larger than 100',
+          'Hindu-Arabic numerals were invented more recently'
+        ],
+        correct: 0,
+        explanation: 'Positional notation means each digit\u2019s value is multiplied by a power of the base based on its position \u2014 that\u2019s what makes column-based arithmetic (carrying, borrowing) work cleanly.'
+      },
+      {
+        type: 'mc',
+        prompt: '2. In the decimal number 5,347, what value does the digit 3 represent?',
+        options: ['3', '30', '300', '3,000'],
+        correct: 2,
+        explanation: '3 sits in the hundreds position (10\u00b2), so 3 \u00d7 100 = 300.'
+      },
+      {
+        type: 'calc',
+        prompt: '3. Convert 1101\u2082 to decimal. Show your reasoning, then type just the final decimal number below.',
+        answer: '13',
+        explanation: '1101\u2082 = 1\u00d72\u00b3 + 1\u00d72\u00b2 + 0\u00d72\u00b9 + 1\u00d72\u2070 = 8 + 4 + 0 + 1 = 13.'
+      },
+      {
+        type: 'calc',
+        prompt: '4. Convert decimal 22 to binary using the Remainder\u2019s Method. Type the binary result (no spaces).',
+        answer: '10110',
+        explanation: '22\u00f72=11 r0, 11\u00f72=5 r1, 5\u00f72=2 r1, 2\u00f72=1 r0, 1\u00f72=0 r1. Reading remainders bottom to top: 10110.'
+      },
+      {
+        type: 'mc',
+        prompt: '5. Which decimal numbers, when converted to binary, always end up as a single 1 followed by zeroes?',
+        options: ['Multiples of 10', 'Odd numbers', 'Powers of 2 (2, 4, 8, 16, 32\u2026)', 'Prime numbers'],
+        correct: 2,
+        explanation: 'Each power of 2 is exactly 2\u207f, so its binary form is a 1 in position n and 0s everywhere else \u2014 e.g. 8 = 1000\u2082.'
+      },
+      {
+        type: 'written',
+        prompt: '6. Written answer: explain in one or two sentences why a decimal number that is one less than a power of 2 (like 15 or 31) always converts to a binary number made up entirely of 1s.',
+        sample: 'A power of 2 is a single 1 followed by zeroes. Subtracting 1 flips that 1 and every zero after it, leaving all 1s up to that position \u2014 e.g. 16 = 10000\u2082, so 15 = 01111\u2082.'
+      },
+      {
+        type: 'calc',
+        prompt: '7. Using programmer\u2019s format, express decimal 27 as a padded, grouped binary byte. Type it exactly as it should appear, e.g. "0001 0111".',
+        answer: '0001 1011',
+        explanation: '27 in raw binary is 11011 (5 bits). Padded to 8 bits: 00011011. Grouped into nibbles: 0001 1011.'
+      },
+      {
+        type: 'mc',
+        prompt: '8. What is the decimal ASCII value of the character \'A\'?',
+        options: ['41', '65', '97', '100'],
+        correct: 1,
+        explanation: 'A = 65 in the ASCII table. Lowercase letters are always 32 higher than their uppercase counterpart, so a = 97.'
+      },
+      {
+        type: 'calc',
+        prompt: '9. What character corresponds to binary ASCII 0100 0011?',
+        answer: 'C',
+        explanation: '0100 0011\u2082 = 67 in decimal, and 67 is the ASCII code for \'C\'.'
+      },
+      {
+        type: 'written',
+        prompt: '10. Written answer: a timing diagram for a byte shows 8 equal time intervals, each either high or low. Explain what determines whether an interval is drawn high or low.',
+        sample: 'Each interval represents one bit of the byte being transmitted, read left to right. A high interval means that bit is a 1 (current flowing); a low interval means that bit is a 0 (no current).'
+      },
+      {
+        type: 'mc',
+        prompt: '11. What is 56 AND 21 (both given in decimal, compared as 8-bit binary)?',
+        options: ['16', '21', '56', '77'],
+        correct: 0,
+        explanation: '56 = 00111000, 21 = 00010101. Comparing column by column, only the bit worth 16 is 1 in both numbers, so the result is 00010000 = 16.'
+      },
+      {
+        type: 'calc',
+        prompt: '12. What is SHL applied to binary 1001\u2082? Type the result in binary.',
+        answer: '10010',
+        explanation: 'SHL shifts every bit one place left and inserts a 0 on the right: 1001 \u2192 10010. In decimal, this doubled 9 into 18.'
+      },
+      {
+        type: 'mc',
+        prompt: '13. Which bitwise operation gives a result bit of 1 only when exactly one of the two input bits is 1 (not both)?',
+        options: ['AND', 'OR', 'XOR', 'SHR'],
+        correct: 2,
+        explanation: 'XOR (\u201ceXclusive OR\u201d) is 1 only when the two bits differ. If both are 1, or both are 0, the result is 0.'
+      },
+      {
+        type: 'mc',
+        prompt: '14. How many bits make up one byte, and how many distinct values can a byte represent?',
+        options: ['4 bits, 8 values', '8 bits, 256 values', '16 bits, 256 values', '8 bits, 128 values'],
+        correct: 1,
+        explanation: 'A byte is 8 bits, and 8 bits gives 2\u2078 = 256 distinct patterns \u2014 exactly enough for the full ASCII table.'
+      },
+      {
+        type: 'calc',
+        prompt: '15. SHR is applied to decimal 122 (in binary). What decimal value results?',
+        answer: '61',
+        explanation: 'SHR has the same effect as integer division by 2. 122 \u00f7 2 = 61 (no remainder needed since SHR just drops the rightmost bit).'
+      }
+    ];
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : {};
+      } catch (e) { return {}; }
+    }
+
+    function saveState(state) {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) { /* ignore */ }
+    }
+
+    let state = loadState();
+
+    function updateScoreBar() {
+      const answered = Object.keys(state).filter(k => state[k] && state[k].answered).length;
+      const correct = Object.keys(state).filter(k => state[k] && state[k].correct).length;
+      document.getElementById('answeredCount').textContent = answered;
+      document.getElementById('correctCount').textContent = correct;
+      document.getElementById('totalCount').textContent = questions.length;
+    }
+
+    function render() {
+      const list = document.getElementById('questionList');
+      list.innerHTML = '';
+
+      questions.forEach((q, idx) => {
+        const card = document.createElement('div');
+        card.className = 'q-card';
+
+        const label = document.createElement('div');
+        label.className = 'q-num';
+        label.textContent = q.type === 'mc' ? 'Multiple choice' : q.type === 'calc' ? 'Calculation' : 'Written answer';
+        card.appendChild(label);
+
+        const prompt = document.createElement('div');
+        prompt.className = 'q-prompt';
+        prompt.textContent = q.prompt;
+        card.appendChild(prompt);
+
+        const saved = state[idx] || {};
+
+        if (q.type === 'mc') {
+          const optsDiv = document.createElement('div');
+          optsDiv.className = 'q-options';
+          q.options.forEach((opt, oi) => {
+            const btn = document.createElement('button');
+            btn.className = 'q-option';
+            btn.textContent = opt;
+            if (saved.answered) {
+              if (oi === q.correct) btn.dataset.state = 'correct';
+              else if (oi === saved.picked) btn.dataset.state = 'incorrect';
+            }
+            btn.addEventListener('click', () => {
+              state[idx] = { answered: true, picked: oi, correct: oi === q.correct };
+              saveState(state);
+              render();
+              updateScoreBar();
+            });
+            optsDiv.appendChild(btn);
+          });
+          card.appendChild(optsDiv);
+
+          const exp = document.createElement('div');
+          exp.className = 'explanation' + (saved.answered ? ' show' : '');
+          exp.textContent = q.explanation;
+          card.appendChild(exp);
+
+        } else if (q.type === 'calc') {
+          const row = document.createElement('div');
+          row.className = 'q-input-row';
+          const inp = document.createElement('input');
+          inp.type = 'text';
+          inp.value = saved.typed || '';
+          const btn = document.createElement('button');
+          btn.className = 'check-btn';
+          btn.textContent = 'Check answer';
+          btn.addEventListener('click', () => {
+            const typed = inp.value.trim();
+            const correct = typed.toLowerCase().replace(/\s+/g, ' ') === q.answer.toLowerCase().replace(/\s+/g, ' ');
+            state[idx] = { answered: true, typed, correct };
+            saveState(state);
+            render();
+            updateScoreBar();
+          });
+          row.appendChild(inp);
+          row.appendChild(btn);
+          card.appendChild(row);
+
+          const exp = document.createElement('div');
+          exp.className = 'explanation' + (saved.answered ? ' show' : '');
+          exp.innerHTML = saved.answered
+            ? (saved.correct ? '<strong>Correct.</strong> ' : `<strong>Not quite \u2014 correct answer: ${q.answer}.</strong> `) + q.explanation
+            : '';
+          card.appendChild(exp);
+
+        } else if (q.type === 'written') {
+          const btn = document.createElement('button');
+          btn.className = 'check-btn';
+          btn.textContent = saved.answered ? 'Hide sample answer' : 'Show sample answer';
+          btn.style.marginBottom = '8px';
+          btn.addEventListener('click', () => {
+            state[idx] = { answered: !saved.answered };
+            saveState(state);
+            render();
+            updateScoreBar();
+          });
+          card.appendChild(btn);
+
+          const exp = document.createElement('div');
+          exp.className = 'explanation' + (saved.answered ? ' show' : '');
+          exp.innerHTML = `<strong>Sample answer:</strong> ${q.sample}`;
+          card.appendChild(exp);
+        }
+
+        list.appendChild(card);
+      });
+
+      updateScoreBar();
+    }
+
+    document.getElementById('resetLink').addEventListener('click', (e) => {
+      e.preventDefault();
+      state = {};
+      saveState(state);
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>

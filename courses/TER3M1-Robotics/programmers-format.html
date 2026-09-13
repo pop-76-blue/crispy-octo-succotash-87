@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Programmer's Format &amp; Bit Grouping</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#8a6d1a; --accent-dark:#6b5313; --accent-tint:#f6f0dc; }
+  input#decInput2 {
+    font-family: var(--mono);
+    font-size: 18px;
+    padding: 6px 10px;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    width: 160px;
+    text-align: center;
+  }
+  .nibble-group {
+    display: inline-flex;
+    gap: 2px;
+    padding: 4px;
+    border-radius: 5px;
+    margin: 0 4px;
+  }
+  .nibble-group:nth-child(odd) { background: var(--accent-tint); }
+  .format-row {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 16px 0;
+  }
+  .raw-row {
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 20px;
+    letter-spacing: 2px;
+    margin: 14px 0;
+  }
+  .note-line {
+    text-align: center;
+    font-family: var(--sans);
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    margin-top: 10px;
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../index.html">&larr; TER3MU</a>
+    <span class="crumb-current">Programmer's Format</span>
+  </div>
+
+  <div class="wrap">
+    <h1>Programmer's Format &amp; Bit Grouping</h1>
+    <p class="subtitle">Unit 1 &nbsp;&middot;&nbsp; 1.2.4 Using a Programmer's Calculator to Convert Bases</p>
+
+    <div class="panel">
+      <p>Raw binary conversion gives you the fewest bits possible — but real systems (RAM addresses, network packets, anything a "programmer's calculator" displays) pad every number out to a full byte, or several bytes, and add a space every 4 bits so it's readable. This page shows both forms side by side for any number you enter.</p>
+    </div>
+
+    <div class="demo">
+      <h3 style="text-align:center;">Enter a decimal number</h3>
+      <div style="text-align:center;">
+        <input type="text" id="decInput2" value="27">
+      </div>
+
+      <h3 style="text-align:center; margin-top:26px;">Raw binary (no padding)</h3>
+      <div class="raw-row" id="rawBinary"></div>
+
+      <h3 style="text-align:center; margin-top:26px;">Programmer's format</h3>
+      <p style="text-align:center; color:var(--ink-soft); font-size:13.5px; margin-top:-6px;">Padded to a multiple of 8 bits, grouped into nibbles (shaded blocks alternate for clarity)</p>
+      <div class="format-row" id="formattedBinary"></div>
+
+      <div class="note-line" id="byteCountNote"></div>
+    </div>
+
+    <div class="panel">
+      <h2 style="border:none;padding:0;margin:0 0 10px;">Worked example</h2>
+      <p>Take decimal 27. Converted to binary it's <span style="font-family:var(--mono)">11011</span> — only 5 bits. Since real systems work in whole bytes, we pad with leading zeroes until the length is a multiple of 8: <span style="font-family:var(--mono)">00011011</span>. Then, purely for human readability, a space is inserted every 4 bits: <span style="font-family:var(--mono)">0001 1011</span>. The value hasn't changed — only how it's displayed.</p>
+      <p>Try checking your answers against a real programmer's calculator such as the one at <a href="https://calc.penjee.com/" target="_blank" rel="noopener">calc.penjee.com</a>, or your operating system's built-in calculator switched to "Programmer" mode.</p>
+    </div>
+
+    <div class="callout">
+      <strong>Try this:</strong> Before typing it in, predict how many bits decimal <strong>384</strong> needs once padded to a full byte boundary — will it fit in 8 bits, or spill into a second byte? Enter it above and check.
+    </div>
+  </div>
+
+  <script>
+    const input = document.getElementById('decInput2');
+
+    function render() {
+      const raw = input.value.trim();
+      const n = /^\d+$/.test(raw) ? Number(raw) : 0;
+      const rawBinary = n.toString(2);
+      document.getElementById('rawBinary').textContent = rawBinary + (raw.length ? '\u2082' : '');
+
+      const paddedLength = Math.ceil(rawBinary.length / 8) * 8 || 8;
+      const padded = rawBinary.padStart(paddedLength, '0');
+
+      const formatted = document.getElementById('formattedBinary');
+      formatted.innerHTML = '';
+      for (let i = 0; i < padded.length; i += 4) {
+        const group = document.createElement('div');
+        group.className = 'nibble-group';
+        padded.slice(i, i + 4).split('').forEach(bit => {
+          const d = document.createElement('div');
+          d.className = 'bit';
+          d.dataset.on = bit;
+          d.textContent = bit;
+          d.style.cursor = 'default';
+          group.appendChild(d);
+        });
+        formatted.appendChild(group);
+      }
+
+      const byteCount = paddedLength / 8;
+      document.getElementById('byteCountNote').textContent =
+        `${paddedLength} bits total = ${byteCount} byte${byteCount === 1 ? '' : 's'}`;
+    }
+
+    input.addEventListener('input', render);
+    render();
+  </script>
+</body>
+</html>

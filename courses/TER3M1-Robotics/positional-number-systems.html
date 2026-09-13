@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Positional Number Systems</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#8a6d1a; --accent-dark:#6b5313; --accent-tint:#f6f0dc; }
+  .expand-row {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    flex-wrap: wrap;
+    font-family: var(--mono);
+    font-size: 15px;
+    margin: 18px 0 8px;
+  }
+  .expand-cell {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 8px 12px;
+    text-align: center;
+    min-width: 64px;
+  }
+  .expand-cell .digit { font-size: 20px; font-weight: 700; color: var(--accent-dark); }
+  .expand-cell .place { font-size: 11px; color: var(--ink-soft); margin-top: 2px; }
+  .sum-line {
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 14px;
+    margin-top: 14px;
+    color: var(--ink-soft);
+  }
+  .sum-line strong { color: var(--ink); font-size: 16px; }
+  input#numInput {
+    font-family: var(--mono);
+    font-size: 18px;
+    padding: 6px 10px;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    width: 140px;
+    text-align: center;
+  }
+  .base-toggle { display:flex; justify-content:center; gap:8px; margin-bottom:18px; }
+  table.compare {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--sans);
+    font-size: 14px;
+    margin: 16px 0;
+  }
+  table.compare th, table.compare td {
+    border: 1px solid var(--line);
+    padding: 8px 12px;
+    text-align: left;
+  }
+  table.compare th { background: var(--accent-tint); }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../index.html">&larr; TER3MU</a>
+    <span class="crumb-current">Positional Number Systems</span>
+  </div>
+
+  <div class="wrap">
+    <h1>Positional Number Systems</h1>
+    <p class="subtitle">Unit 1 &nbsp;&middot;&nbsp; 1.1 The Decimal System &amp; intro to 1.2 The Binary System</p>
+
+    <div class="panel">
+      <h2 style="border:none;padding:0;margin:0 0 10px;">Why "positional" matters</h2>
+      <p>In the number system we use every day, a digit's value depends on <em>where it sits</em>. The digit 2 in <span style="font-family:var(--mono)">72,376</span> is worth 2,000. The same digit 2 in <span style="font-family:var(--mono)">123</span> is worth only 20. Moving a digit one spot to the left multiplies its value by the base of the system — 10, in decimal.</p>
+      <p>This wasn't always how numbers worked. Roman numerals aren't positional — <span style="font-family:var(--mono)">X</span> means 10 no matter where it appears in a string of symbols. That's exactly why arithmetic with Roman numerals is painful and arithmetic with Hindu-Arabic numerals (what we use) is easy enough to hand off to a machine.</p>
+    </div>
+
+    <div class="demo">
+      <h3 style="text-align:center;">Place-Value Explorer</h3>
+      <div class="base-toggle">
+        <button class="op-btn" data-base="10" data-active="true">Base 10 (decimal)</button>
+        <button class="op-btn" data-base="2">Base 2 (binary)</button>
+      </div>
+      <div style="text-align:center;">
+        <input type="text" id="numInput" value="347">
+      </div>
+      <div class="expand-row" id="expandRow"></div>
+      <div class="sum-line" id="sumLine"></div>
+    </div>
+
+    <div class="panel">
+      <h2 style="border:none;padding:0;margin:0 0 10px;">Decimal vs. Binary, side by side</h2>
+      <table class="compare">
+        <tr><th></th><th>Decimal</th><th>Binary</th></tr>
+        <tr><td>Digits used</td><td>0–9 (ten digits)</td><td>0–1 (two digits)</td></tr>
+        <tr><td>Base (radix)</td><td>10</td><td>2</td></tr>
+        <tr><td>Why this base</td><td>Humans have 10 fingers</td><td>Computers have two electrical states: on / off</td></tr>
+        <tr><td>Each digit is called a</td><td>digit</td><td>bit</td></tr>
+        <tr><td>Subscript needed?</td><td>No — assumed unless stated otherwise</td><td>Yes, e.g. <span style="font-family:var(--mono)">1101<sub>2</sub></span> — unless the context makes it unambiguous (like a byte written in 0s and 1s)</td></tr>
+      </table>
+      <p>Every number system built this way — decimal, binary, and later hexadecimal and octal — follows the same rule: a number equals the sum of each digit multiplied by the base raised to that digit's position, counting from position 0 on the right.</p>
+    </div>
+
+    <div class="callout">
+      <strong>Try this:</strong> Type <span style="font-family:var(--mono)">5019</span> into the explorer above in base 10 and predict, before it updates, what value the "5" contributes. Then switch to base 2, type <span style="font-family:var(--mono)">1011</span>, and predict the total decimal value before checking the sum line.
+    </div>
+  </div>
+
+  <script>
+    let base = 10;
+    const input = document.getElementById('numInput');
+
+    function render() {
+      const raw = input.value.trim();
+      const valid = base === 10 ? /^\d+$/.test(raw) : /^[01]+$/.test(raw);
+      const expandRow = document.getElementById('expandRow');
+      const sumLine = document.getElementById('sumLine');
+      expandRow.innerHTML = '';
+
+      if (!valid || raw.length === 0) {
+        sumLine.textContent = base === 10 ? 'Enter digits 0–9 only.' : 'Enter digits 0 or 1 only.';
+        return;
+      }
+
+      const digits = raw.split('').map(Number);
+      const n = digits.length;
+      let total = 0;
+      let terms = [];
+
+      digits.forEach((d, i) => {
+        const position = n - 1 - i;
+        const value = d * Math.pow(base, position);
+        total += value;
+
+        const cell = document.createElement('div');
+        cell.className = 'expand-cell';
+        cell.innerHTML = `<div class="digit">${d}</div><div class="place">&times; ${base}<sup>${position}</sup></div>`;
+        expandRow.appendChild(cell);
+
+        terms.push(`${d}&times;${base}<sup>${position}</sup>`);
+      });
+
+      sumLine.innerHTML = `${terms.join(' + ')} &nbsp;=&nbsp; <strong>${total}</strong>${base === 2 ? ' (decimal)' : ''}`;
+    }
+
+    document.querySelectorAll('.base-toggle .op-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        base = Number(btn.dataset.base);
+        document.querySelectorAll('.base-toggle .op-btn').forEach(b => b.dataset.active = 'false');
+        btn.dataset.active = 'true';
+        input.value = base === 10 ? '347' : '1011';
+        render();
+      });
+    });
+
+    input.addEventListener('input', render);
+    render();
+  </script>
+</body>
+</html>

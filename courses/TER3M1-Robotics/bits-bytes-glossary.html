@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Bits, Bytes &amp; Data Sizes — Reference</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#8a6d1a; --accent-dark:#6b5313; --accent-tint:#f6f0dc; }
+  .term-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin: 12px 0;
+  }
+  .term-card .term-name {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--accent-dark);
+  }
+  .term-card .term-size {
+    font-family: var(--sans);
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    float: right;
+  }
+  .scale-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin: 20px 0;
+    font-family: var(--mono);
+    font-size: 13px;
+  }
+  .scale-box {
+    background: var(--accent-tint);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 6px 10px;
+  }
+  .arrow { color: var(--ink-soft); }
+  #bitCountSlider { width: 100%; }
+  .range-readout {
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 15px;
+    margin-top: 10px;
+  }
+  .range-readout strong { color: var(--accent-dark); }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../index.html">&larr; TER3MU</a>
+    <span class="crumb-current">Bits, Bytes &amp; Data Sizes</span>
+  </div>
+
+  <div class="wrap">
+    <h1>Bits, Bytes &amp; Data Sizes</h1>
+    <p class="subtitle">Unit 1 &nbsp;&middot;&nbsp; 1.2.7 Important Definitions — reference page</p>
+
+    <div class="scale-row">
+      <div class="scale-box">bit</div><span class="arrow">&rarr; 4 &rarr;</span>
+      <div class="scale-box">nibble</div><span class="arrow">&rarr; &times;2 &rarr;</span>
+      <div class="scale-box">byte</div><span class="arrow">&rarr; &times;2 &rarr;</span>
+      <div class="scale-box">word</div><span class="arrow">&rarr; &times;2 &rarr;</span>
+      <div class="scale-box">dword</div><span class="arrow">&rarr; &times;2 &rarr;</span>
+      <div class="scale-box">qword</div>
+    </div>
+
+    <div class="term-card">
+      <span class="term-size">1 bit</span>
+      <div class="term-name">bit</div>
+      <p>The smallest unit of information a computer stores — a single 0 or 1. Physically, it's usually a voltage level (roughly 0V or 5V) that a circuit reads as low or high.</p>
+    </div>
+
+    <div class="term-card">
+      <span class="term-size">4 bits</span>
+      <div class="term-name">nibble</div>
+      <p>Half a byte. One nibble holds exactly enough bits to represent one hexadecimal digit (0 through F) — that's why hex and binary pair up so cleanly.</p>
+    </div>
+
+    <div class="term-card">
+      <span class="term-size">8 bits</span>
+      <div class="term-name">byte</div>
+      <p>The standard unit for a single character of text. With 8 bits you get 2<sup>8</sup> = 256 distinct patterns — exactly enough to cover the full ASCII table.</p>
+    </div>
+
+    <div class="term-card">
+      <span class="term-size">16 bits (2 bytes)</span>
+      <div class="term-name">word</div>
+      <p>Two bytes together. The exact meaning of "word" varies more by system than the other terms, but in this course we use 2 bytes.</p>
+    </div>
+
+    <div class="term-card">
+      <span class="term-size">32 bits (4 bytes)</span>
+      <div class="term-name">dword</div>
+      <p>Short for "double word" — 4 bytes. This is the size Java uses for its <span style="font-family:var(--mono)">int</span> type.</p>
+    </div>
+
+    <div class="term-card">
+      <span class="term-size">64 bits (8 bytes)</span>
+      <div class="term-name">qword</div>
+      <p>Short for "quadruple word" — 8 bytes. Java's <span style="font-family:var(--mono)">long</span> and <span style="font-family:var(--mono)">double</span> types both use 8 bytes.</p>
+    </div>
+
+    <div class="panel">
+      <h2 style="border:none;padding:0;margin:0 0 10px;">Programming language variable types</h2>
+      <table style="width:100%; border-collapse:collapse; font-family:var(--sans); font-size:14px;">
+        <tr style="background:var(--accent-tint);"><th style="text-align:left; padding:8px 12px; border:1px solid var(--line);">Type</th><th style="text-align:left; padding:8px 12px; border:1px solid var(--line);">Holds</th><th style="text-align:left; padding:8px 12px; border:1px solid var(--line);">Size</th></tr>
+        <tr><td style="padding:8px 12px; border:1px solid var(--line); font-family:var(--mono);">char</td><td style="padding:8px 12px; border:1px solid var(--line);">One character</td><td style="padding:8px 12px; border:1px solid var(--line);">1 byte in most languages; 2 bytes in Java</td></tr>
+        <tr><td style="padding:8px 12px; border:1px solid var(--line); font-family:var(--mono);">int</td><td style="padding:8px 12px; border:1px solid var(--line);">Whole numbers</td><td style="padding:8px 12px; border:1px solid var(--line);">4 bytes</td></tr>
+        <tr><td style="padding:8px 12px; border:1px solid var(--line); font-family:var(--mono);">long</td><td style="padding:8px 12px; border:1px solid var(--line);">Larger whole numbers</td><td style="padding:8px 12px; border:1px solid var(--line);">8 bytes</td></tr>
+        <tr><td style="padding:8px 12px; border:1px solid var(--line); font-family:var(--mono);">double</td><td style="padding:8px 12px; border:1px solid var(--line);">Decimal numbers</td><td style="padding:8px 12px; border:1px solid var(--line);">8 bytes</td></tr>
+      </table>
+    </div>
+
+    <div class="demo">
+      <h3 style="text-align:center;">How many values can <em>n</em> bits represent?</h3>
+      <p style="text-align:center; color:var(--ink-soft); font-size:14px;">Every bit you add doubles the number of possible patterns. Drag the slider to see why a byte (8 bits) tops out at exactly 256 values.</p>
+      <input type="range" id="bitCountSlider" min="1" max="32" value="8">
+      <div class="range-readout">
+        <strong id="bitCountLabel">8</strong> bits &nbsp;&rarr;&nbsp; 2<sup id="expLabel">8</sup> = <strong id="valueCount">256</strong> possible patterns
+        &nbsp;&middot;&nbsp; unsigned range [0, <span id="maxVal">255</span>]
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>Try this:</strong> Before moving the slider, predict how many values 10 bits can represent — then drag to 10 and check. Also predict: does 16 bits give you exactly enough range to count every person in a school of 40,000 students? Check the unsigned range at 16 bits to confirm.
+    </div>
+  </div>
+
+  <script>
+    const slider = document.getElementById('bitCountSlider');
+    function render() {
+      const n = Number(slider.value);
+      const count = Math.pow(2, n);
+      document.getElementById('bitCountLabel').textContent = n;
+      document.getElementById('expLabel').textContent = n;
+      document.getElementById('valueCount').textContent = count.toLocaleString();
+      document.getElementById('maxVal').textContent = (count - 1).toLocaleString();
+    }
+    slider.addEventListener('input', render);
+    render();
+  </script>
+</body>
+</html>

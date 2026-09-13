@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Binary &harr; Decimal Converter</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#8a6d1a; --accent-dark:#6b5313; --accent-tint:#f6f0dc; }
+  .tab-row { display:flex; justify-content:center; gap:8px; margin-bottom: 20px; }
+  .power-row {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin: 4px 0 0;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+  .power-cell { width: 40px; text-align: center; }
+  .method-toggle { display:flex; justify-content:center; gap:8px; margin: 18px 0 10px; }
+  table.remainder {
+    border-collapse: collapse;
+    font-family: var(--mono);
+    font-size: 14px;
+    margin: 10px auto;
+  }
+  table.remainder th, table.remainder td {
+    border: 1px solid var(--line);
+    padding: 6px 16px;
+    text-align: center;
+  }
+  table.remainder th { background: var(--accent-tint); }
+  .readout-bottom-up {
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-top: 6px;
+  }
+  .power-check-row {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 14px 0;
+  }
+  .power-check {
+    font-family: var(--mono);
+    font-size: 14px;
+    padding: 8px 12px;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    cursor: pointer;
+    background: var(--surface);
+    text-align: center;
+    min-width: 50px;
+  }
+  .power-check[data-on="true"] {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent-dark);
+  }
+  .match-yes { color: #2e7d32; font-weight: 700; }
+  .match-no { color: var(--ink-soft); }
+  input#decInput {
+    font-family: var(--mono);
+    font-size: 18px;
+    padding: 6px 10px;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    width: 140px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../index.html">&larr; TER3MU</a>
+    <span class="crumb-current">Binary &harr; Decimal Converter</span>
+  </div>
+
+  <div class="wrap">
+    <h1>Binary &harr; Decimal Converter</h1>
+    <p class="subtitle">Unit 1 &nbsp;&middot;&nbsp; 1.2.1 Binary to Decimal &middot; 1.2.2 &amp; 1.2.3 Decimal to Binary</p>
+
+    <div class="tab-row">
+      <button class="op-btn" data-tab="b2d" data-active="true">Binary &rarr; Decimal</button>
+      <button class="op-btn" data-tab="d2b">Decimal &rarr; Binary</button>
+    </div>
+
+    <!-- BINARY TO DECIMAL -->
+    <div id="panelB2D" class="demo">
+      <h3 style="text-align:center;">Toggle bits, watch the decimal value build</h3>
+      <div class="bit-row" id="bitRow"></div>
+      <div class="power-row" id="powerRow"></div>
+      <div class="decimal-readout" id="sumB2D"></div>
+    </div>
+
+    <!-- DECIMAL TO BINARY -->
+    <div id="panelD2B" class="demo" style="display:none;">
+      <h3 style="text-align:center;">Convert a decimal number to binary</h3>
+      <div style="text-align:center;">
+        <input type="text" id="decInput" value="23">
+      </div>
+
+      <div class="method-toggle">
+        <button class="op-btn" data-method="remainder" data-active="true">Remainder's Method</button>
+        <button class="op-btn" data-method="powers">Sum of Powers Method</button>
+      </div>
+
+      <div id="remainderView">
+        <table class="remainder" id="remainderTable"></table>
+        <div class="readout-bottom-up" id="remainderResult"></div>
+      </div>
+
+      <div id="powersView" style="display:none;">
+        <p style="text-align:center; color:var(--ink-soft); font-size:14px;">Click the powers of 2 that add up to your target number.</p>
+        <div class="power-check-row" id="powerCheckRow"></div>
+        <div class="decimal-readout" id="powersSum"></div>
+      </div>
+    </div>
+
+    <div class="callout" id="tryThis">
+      <strong>Try this:</strong> In Binary&nbsp;&rarr;&nbsp;Decimal mode, set the bits to <span style="font-family:var(--mono)">1 0 1 1 1</span> (using the leftmost 5 switches) and predict the decimal value before checking the readout. Then switch to Decimal&nbsp;&rarr;&nbsp;Binary, enter <strong>43</strong>, and try the Sum of Powers method yourself before switching to Remainder's Method to confirm.
+    </div>
+  </div>
+
+  <script>
+    const BITS = 8;
+    let bits = [0,0,1,0,1,1,1,1]; // 47 by default
+
+    function buildBitRow() {
+      const row = document.getElementById('bitRow');
+      const prow = document.getElementById('powerRow');
+      row.innerHTML = '';
+      prow.innerHTML = '';
+      bits.forEach((v, i) => {
+        const pos = BITS - 1 - i;
+        const cell = document.createElement('div');
+        cell.className = 'bit';
+        cell.dataset.on = v;
+        cell.textContent = v;
+        cell.addEventListener('click', () => { bits[i] = bits[i] ? 0 : 1; renderB2D(); });
+        row.appendChild(cell);
+
+        const pcell = document.createElement('div');
+        pcell.className = 'power-cell';
+        pcell.textContent = '2' + toSuperscript(pos);
+        prow.appendChild(pcell);
+      });
+    }
+
+    function toSuperscript(n) {
+      const map = {'0':'\u2070','1':'\u00b9','2':'\u00b2','3':'\u00b3','4':'\u2074','5':'\u2075','6':'\u2076','7':'\u2077','8':'\u2078','9':'\u2079'};
+      return String(n).split('').map(d => map[d]).join('');
+    }
+
+    function renderB2D() {
+      buildBitRow();
+      let total = 0;
+      let terms = [];
+      bits.forEach((v, i) => {
+        const pos = BITS - 1 - i;
+        if (v) { total += Math.pow(2, pos); terms.push(`2${toSuperscript(pos)}`); }
+      });
+      document.getElementById('sumB2D').innerHTML = terms.length
+        ? `${terms.join(' + ')} = <strong>${total}</strong> (decimal)`
+        : '0 (decimal)';
+    }
+
+    // Tabs
+    document.querySelectorAll('.tab-row .op-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-row .op-btn').forEach(b => b.dataset.active = 'false');
+        btn.dataset.active = 'true';
+        document.getElementById('panelB2D').style.display = btn.dataset.tab === 'b2d' ? '' : 'none';
+        document.getElementById('panelD2B').style.display = btn.dataset.tab === 'd2b' ? '' : 'none';
+      });
+    });
+
+    // Method toggle (decimal -> binary)
+    document.querySelectorAll('.method-toggle .op-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.method-toggle .op-btn').forEach(b => b.dataset.active = 'false');
+        btn.dataset.active = 'true';
+        document.getElementById('remainderView').style.display = btn.dataset.method === 'remainder' ? '' : 'none';
+        document.getElementById('powersView').style.display = btn.dataset.method === 'powers' ? '' : 'none';
+        renderD2B();
+      });
+    });
+
+    function renderRemainder(n) {
+      const table = document.getElementById('remainderTable');
+      table.innerHTML = '<tr><th>Divide by 2</th><th>Quotient</th><th>Remainder</th></tr>';
+      let steps = [];
+      let cur = n;
+      if (cur === 0) steps.push([0, 0, 0]);
+      while (cur > 0) {
+        const rem = cur % 2;
+        const quot = Math.floor(cur / 2);
+        steps.push([cur, quot, rem]);
+        cur = quot;
+      }
+      steps.forEach(([dividend, quot, rem]) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${dividend}</td><td>${quot}</td><td>${rem}</td>`;
+        table.appendChild(tr);
+      });
+      const binary = steps.map(s => s[2]).reverse().join('') || '0';
+      document.getElementById('remainderResult').innerHTML =
+        `Read the remainders bottom to top: <strong>${binary}</strong><sub>2</sub>`;
+    }
+
+    let selectedPowers = new Set();
+    function renderPowersView(n) {
+      const row = document.getElementById('powerCheckRow');
+      row.innerHTML = '';
+      selectedPowers.clear();
+      const maxPow = Math.max(7, Math.ceil(Math.log2(Math.max(n,1))));
+      for (let p = maxPow; p >= 0; p--) {
+        const div = document.createElement('div');
+        div.className = 'power-check';
+        div.dataset.on = 'false';
+        div.dataset.power = p;
+        div.innerHTML = Math.pow(2,p);
+        div.addEventListener('click', () => {
+          if (selectedPowers.has(p)) selectedPowers.delete(p); else selectedPowers.add(p);
+          div.dataset.on = selectedPowers.has(p) ? 'true' : 'false';
+          updatePowersSum(n);
+        });
+        row.appendChild(div);
+      }
+      updatePowersSum(n);
+    }
+
+    function updatePowersSum(target) {
+      let sum = 0;
+      [...selectedPowers].forEach(p => sum += Math.pow(2, p));
+      const match = sum === target;
+      document.getElementById('powersSum').innerHTML =
+        `Sum so far: <strong>${sum}</strong> &nbsp;&middot;&nbsp; target: <strong>${target}</strong> &nbsp;` +
+        (match ? '<span class="match-yes">&#10003; matches!</span>' : '<span class="match-no">keep going</span>');
+    }
+
+    function renderD2B() {
+      const raw = document.getElementById('decInput').value.trim();
+      const n = /^\d+$/.test(raw) ? Number(raw) : 0;
+      renderRemainder(n);
+      renderPowersView(n);
+    }
+
+    document.getElementById('decInput').addEventListener('input', renderD2B);
+
+    renderB2D();
+    renderD2B();
+  </script>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ASCII Explorer</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#8a6d1a; --accent-dark:#6b5313; --accent-tint:#f6f0dc; }
+  .tab-row { display:flex; justify-content:center; gap:8px; margin-bottom: 20px; }
+  input#textInput {
+    font-family: var(--mono);
+    font-size: 18px;
+    padding: 6px 10px;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    width: 260px;
+    text-align: center;
+  }
+  table.ascii-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--mono);
+    font-size: 14px;
+    margin: 16px 0;
+  }
+  table.ascii-table th, table.ascii-table td {
+    border: 1px solid var(--line);
+    padding: 8px 12px;
+    text-align: center;
+  }
+  table.ascii-table th { background: var(--accent-tint); font-family: var(--sans); }
+  .transmit-line {
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 15px;
+    letter-spacing: 1px;
+    margin: 16px 0;
+    word-break: break-all;
+  }
+  .eot-toggle { text-align: center; margin: 10px 0; font-family: var(--sans); font-size: 13.5px; }
+  select#reverseMode {
+    font-family: var(--sans);
+    font-size: 14px;
+    padding: 4px 8px;
+    border-radius: 5px;
+    border: 1px solid var(--line);
+  }
+  input#reverseInput {
+    font-family: var(--mono);
+    font-size: 16px;
+    padding: 6px 10px;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    width: 200px;
+    text-align: center;
+    margin-left: 8px;
+  }
+  .reverse-result {
+    text-align: center;
+    font-family: var(--sans);
+    font-size: 18px;
+    margin-top: 14px;
+  }
+  .reverse-result .char-box {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    font-family: var(--mono);
+    font-size: 22px;
+    padding: 6px 16px;
+    border-radius: 5px;
+    margin-left: 8px;
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../index.html">&larr; TER3MU</a>
+    <span class="crumb-current">ASCII Explorer</span>
+  </div>
+
+  <div class="wrap">
+    <h1>ASCII Explorer</h1>
+    <p class="subtitle">Unit 1 &nbsp;&middot;&nbsp; 1.2.5 The ASCII Table</p>
+
+    <div class="panel">
+      <p>ASCII gives every character a unique decimal number, so devices can agree on what a stream of 1s and 0s actually means. The character is never sent as decimal, though — it's sent as an 8-bit binary pattern, one bit at a time.</p>
+    </div>
+
+    <div class="tab-row">
+      <button class="op-btn" data-tab="encode" data-active="true">Text &rarr; ASCII</button>
+      <button class="op-btn" data-tab="decode">ASCII &rarr; Text</button>
+    </div>
+
+    <div id="panelEncode" class="demo">
+      <h3 style="text-align:center;">Type a word or short phrase</h3>
+      <div style="text-align:center;">
+        <input type="text" id="textInput" value="Cat" maxlength="12">
+      </div>
+      <table class="ascii-table" id="asciiTable"></table>
+
+      <div class="eot-toggle">
+        <label><input type="checkbox" id="eotCheck"> append END OF TRANSMISSION code (0000 0100)</label>
+      </div>
+      <h3 style="text-align:center;">Full binary transmission</h3>
+      <div class="transmit-line" id="transmitLine"></div>
+    </div>
+
+    <div id="panelDecode" class="demo" style="display:none;">
+      <h3 style="text-align:center;">Enter a value, get the character</h3>
+      <div style="text-align:center;">
+        <select id="reverseMode">
+          <option value="dec">Decimal ASCII</option>
+          <option value="bin">Binary ASCII (8 bits)</option>
+        </select>
+        <input type="text" id="reverseInput" value="74">
+      </div>
+      <div class="reverse-result" id="reverseResult"></div>
+    </div>
+
+    <div class="callout">
+      <strong>Try this:</strong> Before checking the table, predict the decimal ASCII value of the letter <strong>a</strong> (lowercase) versus <strong>A</strong> (uppercase) — is the gap between them always 32? Type both into Text&nbsp;&rarr;&nbsp;ASCII to confirm, then use ASCII&nbsp;&rarr;&nbsp;Text to decode <span style="font-family:var(--mono)">0100 1010</span> without looking it up first.
+    </div>
+  </div>
+
+  <script>
+    function toBinary8(code) { return code.toString(2).padStart(8, '0'); }
+    function formatBin(bin) { return bin.slice(0,4) + ' ' + bin.slice(4); }
+
+    function renderEncode() {
+      const text = document.getElementById('textInput').value;
+      const table = document.getElementById('asciiTable');
+      table.innerHTML = '<tr><th>Character</th><th>Decimal ASCII</th><th>Binary ASCII</th></tr>';
+      let binParts = [];
+      for (const ch of text) {
+        const code = ch.charCodeAt(0);
+        const bin = toBinary8(code);
+        binParts.push(bin);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${ch === ' ' ? '(space)' : ch}</td><td>${code}</td><td>${formatBin(bin)}</td>`;
+        table.appendChild(tr);
+      }
+      if (document.getElementById('eotCheck').checked) binParts.push('00000100');
+      document.getElementById('transmitLine').textContent = binParts.map(formatBin).join('  ');
+    }
+
+    function renderDecode() {
+      const mode = document.getElementById('reverseMode').value;
+      const raw = document.getElementById('reverseInput').value.trim();
+      const result = document.getElementById('reverseResult');
+      let code = null;
+
+      if (mode === 'dec' && /^\d+$/.test(raw)) {
+        code = Number(raw);
+      } else if (mode === 'bin' && /^[01\s]+$/.test(raw)) {
+        code = parseInt(raw.replace(/\s/g, ''), 2);
+      }
+
+      if (code === null || code < 0 || code > 255 || isNaN(code)) {
+        result.innerHTML = 'Enter a value between 0 and 255 (decimal) or an 8-bit binary pattern.';
+        return;
+      }
+      const ch = String.fromCharCode(code);
+      result.innerHTML = `Decimal ${code} &middot; Binary ${formatBin(toBinary8(code))} is &rarr; <span class="char-box">${ch === ' ' ? '␣' : ch}</span>`;
+    }
+
+    document.querySelectorAll('.tab-row .op-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-row .op-btn').forEach(b => b.dataset.active = 'false');
+        btn.dataset.active = 'true';
+        document.getElementById('panelEncode').style.display = btn.dataset.tab === 'encode' ? '' : 'none';
+        document.getElementById('panelDecode').style.display = btn.dataset.tab === 'decode' ? '' : 'none';
+      });
+    });
+
+    document.getElementById('textInput').addEventListener('input', renderEncode);
+    document.getElementById('eotCheck').addEventListener('change', renderEncode);
+    document.getElementById('reverseMode').addEventListener('change', renderDecode);
+    document.getElementById('reverseInput').addEventListener('input', renderDecode);
+
+    renderEncode();
+    renderDecode();
+  </script>
+</body>
+</html>
