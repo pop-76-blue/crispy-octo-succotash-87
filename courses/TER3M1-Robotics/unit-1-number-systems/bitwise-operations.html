@@ -39,10 +39,10 @@
 
   <div class="wrap">
     <h1>Bitwise Operations</h1>
-    <p class="subtitle">Unit 1 &nbsp;&middot;&nbsp; 1.2.8 Bitwise Operations (AND, OR, XOR, SHL, SHR)</p>
+    <p class="subtitle">Unit 1 &nbsp;&middot;&nbsp; 1.2.8 Bitwise Operations (AND, OR, XOR, NOT, SHL, SHR)</p>
 
     <div class="callout">
-      Logical operations (AND, OR, XOR) compare two registers <em>column by column</em> — no carrying between positions. Shift operations (SHL, SHR) work on a single register, sliding every bit one position and dropping whatever falls off the end.
+      Logical operations (AND, OR, XOR) compare two registers <em>column by column</em> — no carrying between positions. NOT works on a single register, flipping every bit. Shift operations (SHL, SHR) also work on a single register, sliding every bit one position and dropping whatever falls off the end.
     </div>
 
     <div class="demo">
@@ -60,6 +60,8 @@
         <button class="op-btn" data-op="AND" data-active="true">A AND B</button>
         <button class="op-btn" data-op="OR">A OR B</button>
         <button class="op-btn" data-op="XOR">A XOR B</button>
+        <button class="op-btn" data-op="NOT_A">NOT(A)</button>
+        <button class="op-btn" data-op="NOT_B">NOT(B)</button>
         <button class="op-btn" data-op="SHL">SHL(A)</button>
         <button class="op-btn" data-op="SHR">SHR(A)</button>
       </div>
@@ -69,7 +71,7 @@
       <div class="decimal-readout" id="readoutResult"></div>
 
       <table class="truth" id="truthTable">
-        <thead><tr><th>A</th><th id="colBHeader">B</th><th id="opHeader">AND</th></tr></thead>
+        <thead><tr><th id="colAHeader">A</th><th id="colBHeader">B</th><th id="opHeader">AND</th></tr></thead>
         <tbody id="truthBody"></tbody>
       </table>
     </div>
@@ -79,12 +81,13 @@
       <p><strong>AND:</strong> result bit is 1 only if both A and B have a 1 in that position.<br>
       <strong>OR:</strong> result bit is 1 if either A or B (or both) has a 1.<br>
       <strong>XOR:</strong> result bit is 1 if exactly one of A or B has a 1 — not both.<br>
+      <strong>NOT(A) / NOT(B):</strong> flips every bit of a single register — every 0 becomes a 1, and every 1 becomes a 0.<br>
       <strong>SHL(A):</strong> shifts every bit of A one place left, drops the leftmost bit, and inserts a 0 on the right. This has the same effect as multiplying A by 2.<br>
       <strong>SHR(A):</strong> shifts every bit of A one place right, drops the rightmost bit, and inserts a 0 on the left. This has the same effect as integer division of A by 2.</p>
     </div>
 
     <div class="callout">
-      <strong>Try this:</strong> Set A to <span style="font-family:var(--mono)">0011 1000</span> (56) and B to <span style="font-family:var(--mono)">0001 0101</span> (21). Predict the AND result column by column on paper, then check it. Afterward, switch to SHL(A) twice in a row and confirm it doubles A's decimal value each time.
+      <strong>Try this:</strong> Set A to <span style="font-family:var(--mono)">0011 1000</span> (56) and B to <span style="font-family:var(--mono)">0001 0101</span> (21). Predict the AND result column by column on paper, then check it. Try NOT(A) and predict its decimal value before checking — notice it's not simply "256 minus A". Afterward, switch to SHL(A) twice in a row and confirm it doubles A's decimal value each time.
     </div>
   </div>
 
@@ -116,6 +119,8 @@
     function compute() {
       if (op === "SHL") return [...A.slice(1), 0];
       if (op === "SHR") return [0, ...A.slice(0, BITS - 1)];
+      if (op === "NOT_A") return A.map(v => v ? 0 : 1);
+      if (op === "NOT_B") return B.map(v => v ? 0 : 1);
       const result = [];
       for (let i = 0; i < BITS; i++) {
         let r;
@@ -127,7 +132,7 @@
       return result;
     }
 
-    const opLabels = { AND: "AND", OR: "OR", XOR: "XOR", SHL: "SHL(A)", SHR: "SHR(A)" };
+    const opLabels = { AND: "AND", OR: "OR", XOR: "XOR", NOT_A: "NOT(A)", NOT_B: "NOT(B)", SHL: "SHL(A)", SHR: "SHR(A)" };
 
     function renderTruthTable() {
       const table = document.getElementById('truthTable');
@@ -137,8 +142,27 @@
 
       const body = document.getElementById("truthBody");
       const header = document.getElementById("opHeader");
+      const colAHeader = document.getElementById("colAHeader");
+      const colBHeader = document.getElementById("colBHeader");
       header.textContent = opLabels[op];
       body.innerHTML = "";
+
+      if (op === "NOT_A" || op === "NOT_B") {
+        colAHeader.textContent = op === "NOT_A" ? "A" : "—";
+        colBHeader.textContent = op === "NOT_B" ? "B" : "—";
+        [0, 1].forEach(v => {
+          const r = v ? 0 : 1;
+          const tr = document.createElement("tr");
+          tr.innerHTML = op === "NOT_A"
+            ? `<td>${v}</td><td>—</td><td>${r}</td>`
+            : `<td>—</td><td>${v}</td><td>${r}</td>`;
+          body.appendChild(tr);
+        });
+        return;
+      }
+
+      colAHeader.textContent = "A";
+      colBHeader.textContent = "B";
       const rows = [[0,0],[0,1],[1,0],[1,1]];
       rows.forEach(([a,b]) => {
         let r;
@@ -153,10 +177,11 @@
 
     function render() {
       const isShift = op === 'SHL' || op === 'SHR';
-      document.getElementById('regBWrap').dataset.hidden = isShift ? 'true' : 'false';
+      const hideB = isShift || op === 'NOT_A';
+      document.getElementById('regBWrap').dataset.hidden = hideB ? 'true' : 'false';
 
       buildRow(document.getElementById("rowA"), A, true);
-      buildRow(document.getElementById("rowB"), B, !isShift);
+      buildRow(document.getElementById("rowB"), B, !isShift && op !== 'NOT_A');
       document.getElementById("readoutA").innerHTML = `decimal: ${toDecimal(A)}`;
       document.getElementById("readoutB").innerHTML = `decimal: ${toDecimal(B)}`;
 
