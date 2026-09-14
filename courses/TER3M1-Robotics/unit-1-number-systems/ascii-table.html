@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ASCII Table (1&ndash;127)</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#8a6d1a; --accent-dark:#6b5313; --accent-tint:#f6f0dc; }
+  .controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+    font-family: var(--sans);
+    font-size: 14px;
+  }
+  #filterInput {
+    font-family: var(--mono);
+    font-size: 15px;
+    padding: 6px 10px;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    width: 160px;
+    text-align: center;
+  }
+  .table-wrap {
+    max-height: 640px;
+    overflow-y: auto;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+  table.ascii-full {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--mono);
+    font-size: 13.5px;
+  }
+  table.ascii-full th, table.ascii-full td {
+    border: 1px solid var(--line);
+    padding: 6px 10px;
+    text-align: center;
+  }
+  table.ascii-full th {
+    background: var(--accent-tint);
+    font-family: var(--sans);
+    font-weight: 700;
+    position: sticky;
+    top: 0;
+  }
+  table.ascii-full tr.ctrl-row { color: var(--ink-soft); }
+  table.ascii-full tr.ctrl-row[data-hidden="true"] { display: none; }
+  table.ascii-full tr.match { background: var(--accent-tint); font-weight: 700; }
+  table.ascii-full td.char-col { font-family: var(--sans); }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../index.html">&larr; TER3MU</a>
+    <span class="crumb-current">ASCII Table (1&ndash;127)</span>
+  </div>
+
+  <div class="wrap">
+    <h1>ASCII Table (1&ndash;127)</h1>
+    <p class="subtitle">Unit 1 &nbsp;&middot;&nbsp; 1.2.5 The ASCII Table — full reference, one row per character</p>
+
+    <div class="panel">
+      <p>Every character has one decimal ASCII value, shown here alongside the same value in three other bases you'll use throughout this unit and the next: binary (base 2), octal (base 8), and hexadecimal (base 16, covered in the next unit — included here for reference). Codes 1&ndash;31 and 127 aren't printable characters at all; they're control signals left over from early teletype equipment (like line feed or "end of transmission"), shown here in gray.</p>
+    </div>
+
+    <div class="controls">
+      <label>Jump to a character: <input type="text" id="filterInput" maxlength="1" placeholder="e.g. J"></label>
+      <label><input type="checkbox" id="hideCtrl"> hide non-printable / control codes</label>
+    </div>
+
+    <div class="table-wrap">
+      <table class="ascii-full" id="asciiFullTable">
+        <thead>
+          <tr><th>Dec</th><th>Binary (8-bit)</th><th>Octal</th><th>Hex</th><th>Character</th></tr>
+        </thead>
+        <tbody id="asciiFullBody"></tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <strong>Try this:</strong> Before scrolling to find it, predict whether decimal 100 falls in the lowercase letters or somewhere else, then jump to it with the search box. Also check: what's the octal value of the character your first name starts with?
+    </div>
+  </div>
+
+  <script>
+    const CONTROL_NAMES = {
+      1:'SOH',2:'STX',3:'ETX',4:'EOT',5:'ENQ',6:'ACK',7:'BEL',8:'BS',9:'TAB',
+      10:'LF',11:'VT',12:'FF',13:'CR',14:'SO',15:'SI',16:'DLE',17:'DC1',18:'DC2',
+      19:'DC3',20:'DC4',21:'NAK',22:'SYN',23:'ETB',24:'CAN',25:'EM',26:'SUB',
+      27:'ESC',28:'FS',29:'GS',30:'RS',31:'US',127:'DEL'
+    };
+
+    function buildTable() {
+      const body = document.getElementById('asciiFullBody');
+      body.innerHTML = '';
+      for (let code = 1; code <= 127; code++) {
+        const tr = document.createElement('tr');
+        const isCtrl = CONTROL_NAMES[code] !== undefined;
+        const isSpace = code === 32;
+        if (isCtrl) tr.className = 'ctrl-row';
+        tr.dataset.code = code;
+
+        const bin = code.toString(2).padStart(8, '0');
+        const oct = code.toString(8).padStart(3, '0');
+        const hex = code.toString(16).toUpperCase().padStart(2, '0');
+        let charDisplay;
+        if (isCtrl) charDisplay = CONTROL_NAMES[code];
+        else if (isSpace) charDisplay = '(space)';
+        else charDisplay = String.fromCharCode(code);
+
+        tr.innerHTML = `<td>${code}</td><td>${bin}</td><td>${oct}</td><td>${hex}</td><td class="char-col">${charDisplay}</td>`;
+        body.appendChild(tr);
+      }
+    }
+
+    function applyHideToggle() {
+      const hide = document.getElementById('hideCtrl').checked;
+      document.querySelectorAll('#asciiFullBody tr.ctrl-row').forEach(tr => {
+        tr.dataset.hidden = hide ? 'true' : 'false';
+      });
+    }
+
+    function applyFilter() {
+      const raw = document.getElementById('filterInput').value;
+      document.querySelectorAll('#asciiFullBody tr').forEach(tr => tr.classList.remove('match'));
+      if (!raw) return;
+      const code = raw.charCodeAt(0);
+      const row = document.querySelector(`#asciiFullBody tr[data-code="${code}"]`);
+      if (row) {
+        row.classList.add('match');
+        row.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      }
+    }
+
+    document.getElementById('hideCtrl').addEventListener('change', applyHideToggle);
+    document.getElementById('filterInput').addEventListener('input', applyFilter);
+
+    buildTable();
+    applyHideToggle();
+  </script>
+</body>
+</html>

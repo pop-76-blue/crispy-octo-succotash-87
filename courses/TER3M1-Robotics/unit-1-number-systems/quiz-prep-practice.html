@@ -213,6 +213,36 @@
         prompt: '15. SHR is applied to decimal 122 (in binary). What decimal value results?',
         answer: '61',
         explanation: 'SHR has the same effect as integer division by 2. 122 \u00f7 2 = 61 (no remainder needed since SHR just drops the rightmost bit).'
+      },
+      {
+        type: 'calc',
+        prompt: '16. Using an ASCII table, find the decimal value for the character \'$\'.',
+        answer: '36',
+        explanation: 'Looking up \'$\' in the ASCII table gives decimal 36 \u2014 this is why you look values up rather than compute them from a formula; ASCII assignments are just a fixed table.'
+      },
+      {
+        type: 'calc',
+        prompt: '17. Convert the decimal ASCII value from the previous question (36) into its 8-bit binary ASCII form. Type it with a space between the two nibbles, e.g. "0000 0000".',
+        answer: '0010 0100',
+        explanation: '36 in binary is 100100 (6 bits). Padded to a full byte: 00100100. Grouped into nibbles: 0010 0100.'
+      },
+      {
+        type: 'mc',
+        prompt: '18. What character corresponds to binary ASCII 0110 1011?',
+        options: ['g', 'k', 's', '+'],
+        correct: 1,
+        explanation: '0110 1011\u2082 = 107 in decimal, and 107 is the ASCII code for lowercase \'k\'.'
+      },
+      {
+        type: 'calc',
+        prompt: '19. A timing diagram reads, left to right across 8 equal intervals: low, high, high, low, high, low, high, high. What decimal value does this represent?',
+        answer: '107',
+        explanation: 'Reading low=0, high=1 left to right gives 01101011\u2082, which is 107 in decimal \u2014 the same byte as the previous question, just shown as a timing diagram instead of a binary string.'
+      },
+      {
+        type: 'written',
+        prompt: '20. Written answer: your timing diagram tool and your ASCII tool can both take the same 8-bit pattern as input. Explain why the timing diagram and the binary ASCII form always agree on decimal value, even though they look completely different.',
+        sample: 'Both are just different ways of displaying the same 8 bits. The timing diagram shows each bit as a high or low voltage level over a time interval; the binary ASCII form shows the same bit as a digit 0 or 1. Converting either representation to decimal uses the same place-value rule, so they always match.'
       }
     ];
 
