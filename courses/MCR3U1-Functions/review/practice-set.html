@@ -76,9 +76,14 @@
 
 <script>
 const questions = [
+  { id: "lf1", section: "Linear Functions", prompt: "State the equation of a line with slope 2 and y-intercept 6. How would you graph it?", answer: "y = 2x + 6. Plot the y-intercept (0, 6), then use the slope to go over 1, up 2 to find more points." },
+  { id: "lf2", section: "Linear Functions", prompt: "Find the equation of a line parallel to y = 2x + 6 that passes through (2, −5).", answer: "Parallel lines share slope: y = 2x + b. Substitute (2, −5): −5 = 2(2) + b → b = −9. y = 2x − 9" },
+  { id: "lf3", section: "Linear Functions", prompt: "Find the equation of a line through (2, −5) and (1, 1).", answer: "m = (−5 − 1) / (2 − 1) = −6. Using (1, 1): 1 = −6(1) + b → b = 7. y = −6x + 7" },
+  { id: "lf4", section: "Linear Functions", prompt: "Find the equation of a line perpendicular to y = 2x + 6 through (4, −1).", answer: "Perpendicular slope is the negative reciprocal: m = −1/2. Substitute (4, −1): −1 = −1/2(4) + b → −1 = −2 + b → b = 1. y = −(1/2)x + 1" },
+  { id: "lf5", section: "Linear Functions", prompt: "Find the equation of the line through (3, 4) and (−3, −8).", answer: "m = (4 − (−8)) / (3 − (−3)) = 12/6 = 2. Using (3,4): 4 = 2(3) + b → b = −2. y = 2x − 2" },
+
   { id: "ls1", section: "Linear Systems", prompt: "Solve: y = 3x − 2 and y = −2x + 8", answer: "Set equal: 3x − 2 = −2x + 8 → 5x = 10 → x = 2, y = 4. (x, y) = (2, 4)" },
   { id: "ls2", section: "Linear Systems", prompt: "Solve: 4x + 3y = 11 and 2x − y = 3", answer: "From the second equation, y = 2x − 3. Substitute: 4x + 3(2x − 3) = 11 → 10x = 20 → x = 2, y = 1. (x, y) = (2, 1)" },
-  { id: "ls3", section: "Linear Systems", prompt: "Find the equation of the line through (3, 4) and (−3, −8).", answer: "m = (4 − (−8)) / (3 − (−3)) = 12/6 = 2. Using (3,4): 4 = 2(3) + b → b = −2. y = 2x − 2" },
 
   { id: "poly1", section: "Expanding & Simplifying", prompt: "Expand and simplify: 6(a − 4) + 2(5a + 3)", answer: "6a − 24 + 10a + 6 = 16a − 18" },
   { id: "poly2", section: "Expanding & Simplifying", prompt: "Expand and simplify: (x + 7)(x − 3)", answer: "x² − 3x + 7x − 21 = x² + 4x − 21" },

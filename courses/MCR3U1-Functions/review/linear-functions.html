@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Linear Functions — MCR3U1 Review</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#3b4f94; --accent-dark:#2b3a70; --accent-tint:#e8ebf6; }
+
+  .demo-grid { display:flex; flex-wrap:wrap; gap:1.5rem; }
+  .controls-col { flex:1; min-width:260px; }
+  .canvas-col { flex:2; min-width:320px; text-align:center; }
+
+  .slider-row { margin-bottom:1.1rem; }
+  .slider-row label { display:flex; justify-content:space-between; font-weight:600; margin-bottom:0.25rem; }
+  .slider-row output { color:var(--accent-dark); font-variant-numeric:tabular-nums; }
+  .slider-row input[type=range] { width:100%; accent-color:var(--accent); }
+
+  .readout {
+    background:#fff; border:1px solid #ddd; border-radius:8px; padding:0.9rem 1.1rem; margin-top:1rem;
+  }
+  .readout div { padding:0.25rem 0; }
+  .readout .k { color:var(--accent-dark); font-weight:600; display:inline-block; min-width:9.5rem; }
+
+  #graphCanvas { background:#fff; border:1px solid #ddd; border-radius:8px; max-width:100%; }
+
+  .toggle-row { margin-top:0.75rem; display:flex; gap:1rem; flex-wrap:wrap; }
+  .toggle-row label { font-weight:600; font-size:0.92rem; }
+
+  .point-row { display:flex; gap:0.6rem; align-items:center; margin-top:0.6rem; }
+  .point-row input[type=number] { width:4.5rem; border:1px solid #bbb; border-radius:6px; padding:0.3rem 0.5rem; }
+
+  .steps { background:#fff; border:1px solid #ddd; border-radius:8px; padding:0.9rem 1.1rem; margin:0.6rem 0; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../../../index.html">&larr; All courses</a>
+    <a href="../index.html">MCR3U1 — Functions</a>
+    <span class="crumb-current">Linear Functions</span>
+  </div>
+  <div class="wrap">
+    <h1>Linear Functions</h1>
+    <p class="subtitle">MCR3U1 &middot; Prerequisite Review</p>
+
+    <div class="callout">
+      Slope-intercept form: <strong>y = mx + b</strong>. m is the slope (rise/run), b is the y-intercept.
+      Two lines are <strong>parallel</strong> if they have the same slope, and <strong>perpendicular</strong>
+      if their slopes are negative reciprocals of each other (m₁ × m₂ = −1).
+    </div>
+
+    <div class="panel">
+      <h2>Slope-intercept grapher</h2>
+      <div class="demo demo-grid">
+        <div class="controls-col">
+          <div class="slider-row">
+            <label>m (slope) <output id="mVal">1</output></label>
+            <input type="range" id="mSlider" min="-4" max="4" step="0.5" value="1">
+          </div>
+          <div class="slider-row">
+            <label>b (y-intercept) <output id="bVal">0</output></label>
+            <input type="range" id="bSlider" min="-8" max="8" step="1" value="0">
+          </div>
+
+          <div class="toggle-row">
+            <label><input type="checkbox" id="parallelToggle"> Show a parallel line through a point</label>
+            <label><input type="checkbox" id="perpToggle"> Show a perpendicular line through a point</label>
+          </div>
+          <div class="point-row">
+            Point: (<input type="number" id="pointX" value="2" step="1">, <input type="number" id="pointY" value="-5" step="1">)
+          </div>
+
+          <div class="readout" id="readout"></div>
+        </div>
+        <div class="canvas-col">
+          <canvas id="graphCanvas" width="440" height="440"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Finding an equation from two points</h2>
+      <p>When you're not given slope-intercept form directly, use rise/run for the slope, then either
+      substitute into y = mx + b or use point-slope form: y − y₁ = m(x − x₁).</p>
+      <div class="steps">
+        <strong>Example:</strong> Find the equation of the line through (5, 5) and (−10, −4).
+        <br><br>
+        1. Slope: m = (5 − (−4)) / (5 − (−10)) = 9/15 = 3/5
+        <br>
+        2. Substitute a point into y = mx + b: 5 = (3/5)(5) + b → 5 = 3 + b → b = 2
+        <br>
+        3. Equation: <strong>y = (3/5)x + 2</strong>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>More practice elsewhere</h2>
+      <ul>
+        <li><a href="https://www.jensenmath.ca/math9-unit-5" target="_blank" rel="noopener">Jensen Math — Grade 9 Unit 5: Equation of a Line</a> (slope-intercept form, parallel and perpendicular lines)</li>
+        <li><a href="https://www.jensenmath.ca/math9-unit-4" target="_blank" rel="noopener">Jensen Math — Grade 9 Unit 4: Slope</a> (rise/run and slope from two points)</li>
+        <li><a href="https://courseware.cemc.uwaterloo.ca/42" target="_blank" rel="noopener">CEMC Courseware — Linear Relations and Analytic Geometry</a> (see "Properties of Slope" and "Equations of Linear Relations")</li>
+      </ul>
+    </div>
+
+    <div class="callout">
+      <strong>Try this:</strong> A line has slope 2 and y-intercept 6. On paper, write its equation, then
+      find the equation of a line parallel to it through (2, −5), and a line through (2, −5) and (1, 1)
+      (not necessarily perpendicular — just find the line through both points). Then set the sliders and
+      point above to check each answer, using the parallel/perpendicular toggles for the second line.
+    </div>
+  </div>
+
+<script>
+const canvas = document.getElementById('graphCanvas');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+const scale = 18;
+const originX = W / 2, originY = H / 2;
+
+const mSlider = document.getElementById('mSlider');
+const bSlider = document.getElementById('bSlider');
+const mVal = document.getElementById('mVal');
+const bVal = document.getElementById('bVal');
+const parallelToggle = document.getElementById('parallelToggle');
+const perpToggle = document.getElementById('perpToggle');
+const pointX = document.getElementById('pointX');
+const pointY = document.getElementById('pointY');
+const readout = document.getElementById('readout');
+
+function toPx(x, y) {
+  return [originX + x * scale, originY - y * scale];
+}
+
+function drawGrid() {
+  ctx.clearRect(0, 0, W, H);
+  ctx.strokeStyle = '#eee';
+  ctx.lineWidth = 1;
+  for (let u = -12; u <= 12; u++) {
+    const [x1] = toPx(u, 0);
+    ctx.beginPath(); ctx.moveTo(x1, 0); ctx.lineTo(x1, H); ctx.stroke();
+    const [, y1] = toPx(0, u);
+    ctx.beginPath(); ctx.moveTo(0, y1); ctx.lineTo(W, y1); ctx.stroke();
+  }
+  ctx.strokeStyle = '#999';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(0, originY); ctx.lineTo(W, originY); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(originX, 0); ctx.lineTo(originX, H); ctx.stroke();
+}
+
+function drawLine(m, b, color, width) {
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  ctx.beginPath();
+  const xLeft = -12, xRight = 12;
+  const [pxL, pyL] = toPx(xLeft, m * xLeft + b);
+  const [pxR, pyR] = toPx(xRight, m * xRight + b);
+  ctx.moveTo(pxL, pyL);
+  ctx.lineTo(pxR, pyR);
+  ctx.stroke();
+}
+
+function draw() {
+  const m = parseFloat(mSlider.value);
+  const b = parseFloat(bSlider.value);
+  const px = parseFloat(pointX.value) || 0;
+  const py = parseFloat(pointY.value) || 0;
+
+  mVal.textContent = m.toFixed(1);
+  bVal.textContent = b.toFixed(0);
+
+  drawGrid();
+  drawLine(m, b, '#3b4f94', 2.5);
+
+  let readoutHTML = `
+    <div><span class="k">Equation:</span> y = ${m.toFixed(1)}x ${b >= 0 ? '+ ' + b.toFixed(0) : '- ' + Math.abs(b).toFixed(0)}</div>
+    <div><span class="k">Slope:</span> ${m.toFixed(1)} (rise/run)</div>
+    <div><span class="k">y-intercept:</span> (0, ${b.toFixed(0)})</div>
+  `;
+
+  // point marker
+  const [ppx, ppy] = toPx(px, py);
+  ctx.fillStyle = '#333';
+  ctx.beginPath(); ctx.arc(ppx, ppy, 4, 0, Math.PI * 2); ctx.fill();
+
+  if (parallelToggle.checked) {
+    const bPar = py - m * px;
+    drawLine(m, bPar, '#1a7a3c', 2);
+    readoutHTML += `<div><span class="k">Parallel line:</span> y = ${m.toFixed(1)}x ${bPar >= 0 ? '+ ' + bPar.toFixed(2) : '- ' + Math.abs(bPar).toFixed(2)} (same slope, through (${px}, ${py}))</div>`;
+  }
+
+  if (perpToggle.checked) {
+    if (m !== 0) {
+      const mPerp = -1 / m;
+      const bPerp = py - mPerp * px;
+      drawLine(mPerp, bPerp, '#b3311d', 2);
+      readoutHTML += `<div><span class="k">Perpendicular line:</span> y = ${mPerp.toFixed(2)}x ${bPerp >= 0 ? '+ ' + bPerp.toFixed(2) : '- ' + Math.abs(bPerp).toFixed(2)} (slope = −1/${m.toFixed(1)}, through (${px}, ${py}))</div>`;
+    } else {
+      readoutHTML += `<div><span class="k">Perpendicular line:</span> undefined slope when m = 0 (would be a vertical line, x = ${px})</div>`;
+    }
+  }
+
+  readout.innerHTML = readoutHTML;
+}
+
+[mSlider, bSlider, parallelToggle, perpToggle, pointX, pointY].forEach(el => el.addEventListener('input', draw));
+draw();
+</script>
+</body>
+</html>
