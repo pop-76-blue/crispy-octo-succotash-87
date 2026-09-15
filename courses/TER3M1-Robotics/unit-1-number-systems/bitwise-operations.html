@@ -6,29 +6,136 @@
 <link rel="stylesheet" href="../../../shared/base.css">
 <style>
   :root { --accent:#8a6d1a; --accent-dark:#6b5313; --accent-tint:#f6f0dc; }
-  .reg-label {
-    font-family: var(--mono);
+
+  .reg-heading {
+    font-family: var(--sans);
     font-size: 13px;
     color: var(--ink-soft);
     text-align: center;
     margin-bottom: 4px;
   }
-  table.truth {
-    border-collapse: collapse;
-    font-family: var(--mono);
-    font-size: 14px;
-    margin: 14px auto 4px;
-  }
-  table.truth th, table.truth td {
-    border: 1px solid var(--line);
-    padding: 6px 14px;
+  .reg-block { margin-bottom: 18px; }
+
+  #opTitle {
     text-align: center;
-  }
-  table.truth tr.live-row td {
-    background: var(--accent-tint);
+    font-family: var(--sans);
+    font-size: 15px;
+    color: var(--accent-dark);
     font-weight: 700;
+    margin: 0 0 14px;
   }
-  #regBWrap[data-hidden="true"] { display: none; }
+
+  /* --- Column ledger (AND / OR / XOR / NOT) --- */
+  .ledger {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin: 6px 0 10px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .ledger-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 3px 8px;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .ledger-col:hover { background: var(--accent-tint); }
+  .ledger-col[data-active="true"] { background: var(--accent); }
+  .ledger-col[data-active="true"] .place-label { color: #fff; }
+  .ledger-col[data-active="true"] .divider-line { border-color: #fff; }
+
+  .place-label {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--ink-soft);
+  }
+  .divider-line {
+    width: 100%;
+    border-top: 2px solid var(--ink);
+    margin: 1px 0 2px;
+  }
+  .bit[data-pending="true"] {
+    background: var(--surface);
+    border-style: dashed;
+    color: var(--ink-soft);
+  }
+
+  .walkthrough-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 14px 0 6px;
+  }
+  .small-btn {
+    font-family: var(--sans);
+    font-size: 13px;
+    padding: 7px 14px;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .small-btn.secondary {
+    background: var(--surface);
+    color: var(--ink);
+    border-color: var(--line);
+  }
+  .small-btn:disabled { opacity: 0.5; cursor: default; }
+
+  /* --- Shift track --- */
+  .shift-label {
+    text-align: center;
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+  }
+  .shift-track-outer {
+    width: 330px;
+    height: 44px;
+    margin: 4px auto 8px;
+    overflow: hidden;
+    position: relative;
+  }
+  .shift-track { position: relative; height: 44px; }
+  .shift-cell {
+    position: absolute;
+    top: 0;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+  }
+  .shift-cell.animate { transition: left 0.55s ease, opacity 0.55s ease; }
+  .shift-cell[data-on="1"] { background: var(--accent); color: #fff; border-color: var(--accent-dark); }
+  .shift-cell.incoming { box-shadow: 0 0 0 2px var(--accent-tint) inset; }
+
+  .explain-panel {
+    font-family: var(--sans);
+    font-size: 14px;
+    background: var(--accent-tint);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    margin-top: 14px;
+    min-height: 20px;
+    color: var(--ink);
+  }
+  .explain-panel .hint { color: var(--ink-soft); font-style: italic; }
 </style>
 </head>
 <body>
@@ -42,62 +149,86 @@
     <p class="subtitle">Unit 1 &nbsp;&middot;&nbsp; 1.2.8 Bitwise Operations (AND, OR, XOR, NOT, SHL, SHR)</p>
 
     <div class="callout">
-      Logical operations (AND, OR, XOR) compare two registers <em>column by column</em> — no carrying between positions. NOT works on a single register, flipping every bit. Shift operations (SHL, SHR) also work on a single register, sliding every bit one position and dropping whatever falls off the end.
+      Click any column below to see exactly how that bit was computed, or press <strong>Walk through it</strong> to watch the whole operation build left to right, one column at a time.
+    </div>
+
+    <div class="op-row" id="opRow">
+      <button class="op-btn" data-op="AND" data-active="true">AND</button>
+      <button class="op-btn" data-op="OR">OR</button>
+      <button class="op-btn" data-op="XOR">XOR</button>
+      <button class="op-btn" data-op="NOT_A">NOT(A)</button>
+      <button class="op-btn" data-op="NOT_B">NOT(B)</button>
+      <button class="op-btn" data-op="SHL">SHL(A)</button>
+      <button class="op-btn" data-op="SHR">SHR(A)</button>
     </div>
 
     <div class="demo">
-      <h3 style="text-align:center;margin-bottom:2px;">Register A</h3>
-      <div class="bit-row" id="rowA"></div>
-      <div class="decimal-readout" id="readoutA"></div>
+      <h3 id="opTitle"></h3>
 
-      <div id="regBWrap">
-        <h3 style="text-align:center;margin:26px 0 2px;">Register B</h3>
+      <div class="reg-block" id="regABlock">
+        <div class="reg-heading">Register A</div>
+        <div class="bit-row" id="rowA"></div>
+        <div class="decimal-readout" id="readoutA"></div>
+      </div>
+
+      <div class="reg-block" id="regBBlock">
+        <div class="reg-heading">Register B</div>
         <div class="bit-row" id="rowB"></div>
         <div class="decimal-readout" id="readoutB"></div>
       </div>
 
-      <div class="op-row" id="opRow">
-        <button class="op-btn" data-op="AND" data-active="true">A AND B</button>
-        <button class="op-btn" data-op="OR">A OR B</button>
-        <button class="op-btn" data-op="XOR">A XOR B</button>
-        <button class="op-btn" data-op="NOT_A">NOT(A)</button>
-        <button class="op-btn" data-op="NOT_B">NOT(B)</button>
-        <button class="op-btn" data-op="SHL">SHL(A)</button>
-        <button class="op-btn" data-op="SHR">SHR(A)</button>
+      <!-- Ledger view: AND / OR / XOR / NOT_A / NOT_B -->
+      <div id="ledgerWrap">
+        <p style="text-align:center; font-family:var(--sans); font-size:12.5px; color:var(--ink-soft); margin:0 0 4px;">Same values as above, lined up by place value so you can work the operation column by column. Edit A / B up top &mdash; click a column below to inspect it.</p>
+        <div class="ledger" id="ledger"></div>
+        <div class="decimal-readout" id="readoutResultLedger"></div>
+        <div class="walkthrough-controls">
+          <button class="small-btn" id="walkBtn">Walk through it</button>
+          <button class="small-btn secondary" id="showAllBtn" style="display:none;">Show full result</button>
+        </div>
       </div>
 
-      <h3 style="text-align:center;margin-bottom:2px;">Result</h3>
-      <div class="bit-row result-row" id="rowResult"></div>
-      <div class="decimal-readout" id="readoutResult"></div>
+      <!-- Shift view: SHL / SHR -->
+      <div id="shiftWrap" style="display:none;">
+        <div class="shift-label" id="shiftLabel"></div>
+        <div class="shift-track-outer"><div class="shift-track" id="shiftTrack"></div></div>
+        <div class="decimal-readout" id="readoutResultShift"></div>
+        <div class="walkthrough-controls">
+          <button class="small-btn" id="replayShiftBtn">Replay animation</button>
+        </div>
+      </div>
 
-      <table class="truth" id="truthTable">
-        <thead><tr><th id="colAHeader">A</th><th id="colBHeader">B</th><th id="opHeader">AND</th></tr></thead>
-        <tbody id="truthBody"></tbody>
-      </table>
+      <div class="explain-panel" id="explainPanel"></div>
     </div>
 
     <div class="panel">
       <h2 style="border:none;padding:0;margin:0 0 10px;">What each operation does</h2>
-      <p><strong>AND:</strong> result bit is 1 only if both A and B have a 1 in that position.<br>
+      <p><strong>AND:</strong> result bit is 1 only if both A and B have a 1 in that column.<br>
       <strong>OR:</strong> result bit is 1 if either A or B (or both) has a 1.<br>
       <strong>XOR:</strong> result bit is 1 if exactly one of A or B has a 1 — not both.<br>
       <strong>NOT(A) / NOT(B):</strong> flips every bit of a single register — every 0 becomes a 1, and every 1 becomes a 0.<br>
-      <strong>SHL(A):</strong> shifts every bit of A one place left, drops the leftmost bit, and inserts a 0 on the right. This has the same effect as multiplying A by 2.<br>
-      <strong>SHR(A):</strong> shifts every bit of A one place right, drops the rightmost bit, and inserts a 0 on the left. This has the same effect as integer division of A by 2.</p>
+      <strong>SHL(A):</strong> shifts every bit of A one place left, drops the leftmost bit, and inserts a 0 on the right — the same effect as multiplying A by 2.<br>
+      <strong>SHR(A):</strong> shifts every bit of A one place right, drops the rightmost bit, and inserts a 0 on the left — the same effect as integer division of A by 2.</p>
     </div>
 
     <div class="callout">
-      <strong>Try this:</strong> Set A to <span style="font-family:var(--mono)">0011 1000</span> (56) and B to <span style="font-family:var(--mono)">0001 0101</span> (21). Predict the AND result column by column on paper, then check it. Try NOT(A) and predict its decimal value before checking — notice it's not simply "256 minus A". Afterward, switch to SHL(A) twice in a row and confirm it doubles A's decimal value each time.
+      <strong>Try this:</strong> Set A to <span style="font-family:var(--mono)">0011 1000</span> (56) and B to <span style="font-family:var(--mono)">0001 0101</span> (21). Before pressing Walk through it, predict every column of the AND result on paper — then watch it build and check yourself column by column. Afterward, try NOT(A) and SHL(A), clicking a few columns in each to see how the explanation changes.
     </div>
   </div>
 
   <script>
     const BITS = 8;
+    const CELL_W = 36, GAP = 6, SLOT = CELL_W + GAP;
+
     let A = [0,0,1,1,1,0,0,0]; // 56
     let B = [0,0,0,1,0,1,0,1]; // 21
     let op = "AND";
+    let walkGen = 0; // invalidates stale timers
 
-    function buildRow(container, arr, editable) {
+    function toDecimal(arr) { return arr.reduce((acc, bit) => acc * 2 + bit, 0); }
+    function placeValue(i) { return Math.pow(2, BITS - 1 - i); }
+
+    function buildEditableBitRow(container, arr, editable) {
       container.innerHTML = "";
       arr.forEach((val, i) => {
         const cell = document.createElement("div");
@@ -105,105 +236,318 @@
         cell.dataset.on = val;
         cell.textContent = val;
         if (editable) {
-          cell.addEventListener("click", () => {
+          cell.addEventListener("click", (e) => {
+            e.stopPropagation();
             arr[i] = arr[i] ? 0 : 1;
-            render();
+            cancelWalkthrough();
+            renderAll();
           });
         }
         container.appendChild(cell);
       });
     }
 
-    function toDecimal(arr) { return arr.reduce((acc, bit) => acc * 2 + bit, 0); }
+    const opMeta = {
+      AND:   { title: "A AND B \u2014 column by column", usesA: true,  usesB: true  },
+      OR:    { title: "A OR B \u2014 column by column",  usesA: true,  usesB: true  },
+      XOR:   { title: "A XOR B \u2014 column by column", usesA: true,  usesB: true  },
+      NOT_A: { title: "NOT(A) \u2014 column by column",  usesA: true,  usesB: false },
+      NOT_B: { title: "NOT(B) \u2014 column by column",  usesA: false, usesB: true  },
+      SHL:   { title: "SHL(A) \u2014 shifting every bit one place left",  usesA: true, usesB: false },
+      SHR:   { title: "SHR(A) \u2014 shifting every bit one place right", usesA: true, usesB: false }
+    };
 
-    function compute() {
-      if (op === "SHL") return [...A.slice(1), 0];
-      if (op === "SHR") return [0, ...A.slice(0, BITS - 1)];
-      if (op === "NOT_A") return A.map(v => v ? 0 : 1);
-      if (op === "NOT_B") return B.map(v => v ? 0 : 1);
-      const result = [];
-      for (let i = 0; i < BITS; i++) {
-        let r;
-        if (op === "AND") r = A[i] & B[i];
-        else if (op === "OR") r = A[i] | B[i];
-        else r = A[i] ^ B[i];
-        result.push(r);
-      }
-      return result;
+    function isShiftOp() { return op === "SHL" || op === "SHR"; }
+    function isLedgerOp() { return !isShiftOp(); }
+
+    function columnResult(i) {
+      const a = A[i], b = B[i];
+      if (op === "AND") return a & b;
+      if (op === "OR") return a | b;
+      if (op === "XOR") return a ^ b;
+      if (op === "NOT_A") return a ? 0 : 1;
+      if (op === "NOT_B") return b ? 0 : 1;
+      return 0;
     }
 
-    const opLabels = { AND: "AND", OR: "OR", XOR: "XOR", NOT_A: "NOT(A)", NOT_B: "NOT(B)", SHL: "SHL(A)", SHR: "SHR(A)" };
-
-    function renderTruthTable() {
-      const table = document.getElementById('truthTable');
-      const isShift = op === 'SHL' || op === 'SHR';
-      table.style.display = isShift ? 'none' : '';
-      if (isShift) return;
-
-      const body = document.getElementById("truthBody");
-      const header = document.getElementById("opHeader");
-      const colAHeader = document.getElementById("colAHeader");
-      const colBHeader = document.getElementById("colBHeader");
-      header.textContent = opLabels[op];
-      body.innerHTML = "";
-
-      if (op === "NOT_A" || op === "NOT_B") {
-        colAHeader.textContent = op === "NOT_A" ? "A" : "—";
-        colBHeader.textContent = op === "NOT_B" ? "B" : "—";
-        [0, 1].forEach(v => {
-          const r = v ? 0 : 1;
-          const tr = document.createElement("tr");
-          tr.innerHTML = op === "NOT_A"
-            ? `<td>${v}</td><td>—</td><td>${r}</td>`
-            : `<td>—</td><td>${v}</td><td>${r}</td>`;
-          body.appendChild(tr);
-        });
-        return;
+    function explainColumnText(i) {
+      const pv = placeValue(i);
+      const a = A[i], b = B[i], r = columnResult(i);
+      if (op === "AND") {
+        const why = r ? "both bits were 1" : "at least one bit was 0";
+        return `Column worth ${pv}: A=${a}, B=${b} &rarr; AND &rarr; <strong>${r}</strong> (${why}).`;
       }
+      if (op === "OR") {
+        const why = r ? "at least one bit was 1" : "both bits were 0";
+        return `Column worth ${pv}: A=${a}, B=${b} &rarr; OR &rarr; <strong>${r}</strong> (${why}).`;
+      }
+      if (op === "XOR") {
+        const why = r ? "exactly one bit was 1" : "the two bits matched";
+        return `Column worth ${pv}: A=${a}, B=${b} &rarr; XOR &rarr; <strong>${r}</strong> (${why}).`;
+      }
+      if (op === "NOT_A") {
+        return `Column worth ${pv}: A=${a} &rarr; NOT &rarr; <strong>${r}</strong> (flipped).`;
+      }
+      if (op === "NOT_B") {
+        return `Column worth ${pv}: B=${b} &rarr; NOT &rarr; <strong>${r}</strong> (flipped).`;
+      }
+      return "";
+    }
 
-      colAHeader.textContent = "A";
-      colBHeader.textContent = "B";
-      const rows = [[0,0],[0,1],[1,0],[1,1]];
-      rows.forEach(([a,b]) => {
-        let r;
-        if (op === "AND") r = a & b;
-        else if (op === "OR") r = a | b;
-        else r = a ^ b;
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${a}</td><td>${b}</td><td>${r}</td>`;
-        body.appendChild(tr);
+    function setActiveColumn(i) {
+      document.querySelectorAll(".ledger-col").forEach(col => {
+        col.dataset.active = (Number(col.dataset.index) === i) ? "true" : "false";
       });
     }
 
-    function render() {
-      const isShift = op === 'SHL' || op === 'SHR';
-      const hideB = isShift || op === 'NOT_A';
-      document.getElementById('regBWrap').dataset.hidden = hideB ? 'true' : 'false';
+    function buildLedger(revealUpTo) {
+      // revealUpTo: null means show everything instantly.
+      // A number (including -1) means columns with index > revealUpTo are still hidden ("?").
+      // -1 specifically means "nothing revealed yet" (every column pending).
+      const meta = opMeta[op];
+      const ledger = document.getElementById("ledger");
+      ledger.innerHTML = "";
 
-      buildRow(document.getElementById("rowA"), A, true);
-      buildRow(document.getElementById("rowB"), B, !isShift && op !== 'NOT_A');
-      document.getElementById("readoutA").innerHTML = `decimal: ${toDecimal(A)}`;
-      document.getElementById("readoutB").innerHTML = `decimal: ${toDecimal(B)}`;
+      for (let i = 0; i < BITS; i++) {
+        const col = document.createElement("div");
+        col.className = "ledger-col";
+        col.dataset.index = i;
 
-      const result = compute();
-      buildRow(document.getElementById("rowResult"), result, false);
-      document.getElementById("readoutResult").innerHTML = `decimal: ${toDecimal(result)}`;
+        const label = document.createElement("div");
+        label.className = "place-label";
+        label.textContent = placeValue(i);
+        col.appendChild(label);
 
-      document.querySelectorAll(".op-btn").forEach(btn => {
+        if (meta.usesA) {
+          const aCell = document.createElement("div");
+          aCell.className = "bit";
+          aCell.dataset.on = A[i];
+          aCell.textContent = A[i];
+          col.appendChild(aCell);
+        }
+
+        if (meta.usesB) {
+          const bCell = document.createElement("div");
+          bCell.className = "bit";
+          bCell.dataset.on = B[i];
+          bCell.textContent = B[i];
+          col.appendChild(bCell);
+        }
+
+        const divider = document.createElement("div");
+        divider.className = "divider-line";
+        col.appendChild(divider);
+
+        const resultCell = document.createElement("div");
+        resultCell.className = "bit";
+        const showPending = revealUpTo !== null && i > revealUpTo;
+        if (showPending) {
+          resultCell.dataset.pending = "true";
+          resultCell.textContent = "?";
+        } else {
+          const r = columnResult(i);
+          resultCell.dataset.on = r;
+          resultCell.textContent = r;
+        }
+        col.appendChild(resultCell);
+
+        col.addEventListener("click", () => {
+          setActiveColumn(i);
+          document.getElementById("explainPanel").innerHTML = explainColumnText(i);
+        });
+
+        ledger.appendChild(col);
+      }
+
+      const displayedBits = [];
+      for (let i = 0; i < BITS; i++) {
+        displayedBits.push((revealUpTo !== null && i > revealUpTo) ? 0 : columnResult(i));
+      }
+      const stillBuilding = revealUpTo !== null && revealUpTo < BITS - 1;
+      document.getElementById("readoutResultLedger").innerHTML =
+        `decimal: <strong>${toDecimal(displayedBits)}</strong>` +
+        (stillBuilding ? ' <span style="color:var(--ink-soft); font-weight:400;">(building\u2026)</span>' : '');
+    }
+
+    function cancelWalkthrough() {
+      walkGen++;
+      document.getElementById("walkBtn").disabled = false;
+      document.getElementById("showAllBtn").style.display = "none";
+    }
+
+    function startWalkthrough() {
+      const myGen = ++walkGen;
+      document.getElementById("walkBtn").disabled = true;
+      document.getElementById("showAllBtn").style.display = "";
+      document.getElementById("explainPanel").innerHTML = '<span class="hint">Watching column 1 of 8\u2026</span>';
+      buildLedger(-1); // nothing revealed yet
+
+      function step(i) {
+        if (myGen !== walkGen) return; // cancelled by a later action
+        buildLedger(i);
+        setActiveColumn(i);
+        document.getElementById("explainPanel").innerHTML = explainColumnText(i);
+        if (i < BITS - 1) {
+          setTimeout(() => step(i + 1), 850);
+        } else {
+          setTimeout(() => {
+            if (myGen !== walkGen) return;
+            document.getElementById("walkBtn").disabled = false;
+          }, 300);
+        }
+      }
+      setTimeout(() => step(0), 400);
+    }
+
+    function renderShift() {
+      const meta = opMeta[op];
+      document.getElementById("shiftLabel").textContent =
+        (op === "SHL" ? "SHL(A): each bit moves one place left, a 0 enters on the right" : "SHR(A): each bit moves one place right, a 0 enters on the left");
+
+      const outer = document.querySelector(".shift-track-outer");
+      outer.style.width = (BITS * CELL_W + (BITS - 1) * GAP) + "px";
+
+      animateShift(op);
+    }
+
+    function animateShift(direction) {
+      const track = document.getElementById("shiftTrack");
+      track.innerHTML = "";
+
+      const cells = [];
+      A.forEach((val, i) => {
+        const cell = document.createElement("div");
+        cell.className = "shift-cell";
+        cell.dataset.on = val;
+        cell.textContent = val;
+        cell.style.left = (i * SLOT) + "px";
+        cell.style.opacity = "1";
+        track.appendChild(cell);
+        cells.push(cell);
+      });
+
+      const incoming = document.createElement("div");
+      incoming.className = "shift-cell incoming";
+      incoming.dataset.on = "0";
+      incoming.textContent = "0";
+      incoming.style.opacity = "0";
+      if (direction === "SHL") {
+        incoming.style.left = (BITS * SLOT) + "px";
+      } else {
+        incoming.style.left = (-1 * SLOT) + "px";
+      }
+      track.appendChild(incoming);
+
+      // Force reflow so the browser registers the starting position before animating
+      void track.offsetWidth;
+
+      requestAnimationFrame(() => {
+        cells.forEach(c => c.classList.add("animate"));
+        incoming.classList.add("animate");
+
+        if (direction === "SHL") {
+          cells.forEach((c, i) => {
+            const newLeft = (i - 1) * SLOT;
+            c.style.left = newLeft + "px";
+            if (i === 0) c.style.opacity = "0";
+          });
+          incoming.style.left = ((BITS - 1) * SLOT) + "px";
+          incoming.style.opacity = "1";
+        } else {
+          cells.forEach((c, i) => {
+            const newLeft = (i + 1) * SLOT;
+            c.style.left = newLeft + "px";
+            if (i === BITS - 1) c.style.opacity = "0";
+          });
+          incoming.style.left = "0px";
+          incoming.style.opacity = "1";
+        }
+      });
+
+      const myGen = walkGen;
+      setTimeout(() => {
+        if (myGen !== walkGen) return;
+        finalizeShift(direction);
+      }, 600);
+    }
+
+    function finalizeShift(direction) {
+      const newA = direction === "SHL" ? [...A.slice(1), 0] : [0, ...A.slice(0, BITS - 1)];
+      const track = document.getElementById("shiftTrack");
+      track.innerHTML = "";
+      newA.forEach((val, i) => {
+        const cell = document.createElement("div");
+        cell.className = "shift-cell";
+        cell.dataset.on = val;
+        cell.textContent = val;
+        cell.style.left = (i * SLOT) + "px";
+        cell.style.opacity = "1";
+        cell.style.cursor = "pointer";
+        cell.addEventListener("click", () => {
+          const fromIndex = direction === "SHL" ? i + 1 : i - 1;
+          const panel = document.getElementById("explainPanel");
+          if (fromIndex >= 0 && fromIndex < BITS) {
+            panel.innerHTML = `Column worth ${placeValue(i)}: this bit is what used to be in the column worth ${placeValue(fromIndex)} of A, before the shift.`;
+          } else {
+            panel.innerHTML = `Column worth ${placeValue(i)}: this is the newly inserted 0 \u2014 there was nothing to shift into this position.`;
+          }
+        });
+        track.appendChild(cell);
+      });
+      document.getElementById("readoutResultShift").innerHTML = `decimal: <strong>${toDecimal(newA)}</strong>`;
+    }
+
+    function renderAll() {
+      const meta = opMeta[op];
+      document.getElementById("opTitle").textContent = meta.title;
+
+      document.getElementById("regABlock").style.display = meta.usesA ? "" : "none";
+      document.getElementById("regBBlock").style.display = meta.usesB ? "" : "none";
+
+      buildEditableBitRow(document.getElementById("rowA"), A, true);
+      buildEditableBitRow(document.getElementById("rowB"), B, true);
+      document.getElementById("readoutA").innerHTML = `decimal: <strong>${toDecimal(A)}</strong>`;
+      document.getElementById("readoutB").innerHTML = `decimal: <strong>${toDecimal(B)}</strong>`;
+
+      document.querySelectorAll("#opRow .op-btn").forEach(btn => {
         btn.dataset.active = (btn.dataset.op === op) ? "true" : "false";
       });
 
-      renderTruthTable();
+      if (isLedgerOp()) {
+        document.getElementById("ledgerWrap").style.display = "";
+        document.getElementById("shiftWrap").style.display = "none";
+        buildLedger(null);
+        document.getElementById("explainPanel").innerHTML = '<span class="hint">Click any column above, or press \u201cWalk through it.\u201d</span>';
+        document.getElementById("walkBtn").disabled = false;
+        document.getElementById("showAllBtn").style.display = "none";
+      } else {
+        document.getElementById("ledgerWrap").style.display = "none";
+        document.getElementById("shiftWrap").style.display = "";
+        document.getElementById("explainPanel").innerHTML = '<span class="hint">Click a bit in the result once it settles to see where it came from.</span>';
+        renderShift();
+      }
     }
 
     document.getElementById("opRow").addEventListener("click", (e) => {
       const btn = e.target.closest(".op-btn");
       if (!btn) return;
       op = btn.dataset.op;
-      render();
+      cancelWalkthrough();
+      renderAll();
     });
 
-    render();
+    document.getElementById("walkBtn").addEventListener("click", startWalkthrough);
+    document.getElementById("showAllBtn").addEventListener("click", () => {
+      cancelWalkthrough();
+      buildLedger(null);
+      document.getElementById("explainPanel").innerHTML = '<span class="hint">Click any column above, or press \u201cWalk through it.\u201d</span>';
+    });
+    document.getElementById("replayShiftBtn").addEventListener("click", () => {
+      walkGen++;
+      renderShift();
+    });
+
+    renderAll();
   </script>
 </body>
 </html>
