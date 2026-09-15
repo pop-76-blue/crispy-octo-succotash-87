@@ -156,8 +156,7 @@
       <button class="op-btn" data-op="AND" data-active="true">AND</button>
       <button class="op-btn" data-op="OR">OR</button>
       <button class="op-btn" data-op="XOR">XOR</button>
-      <button class="op-btn" data-op="NOT_A">NOT(A)</button>
-      <button class="op-btn" data-op="NOT_B">NOT(B)</button>
+      <button class="op-btn" data-op="NOT">NOT</button>
       <button class="op-btn" data-op="SHL">SHL(A)</button>
       <button class="op-btn" data-op="SHR">SHR(A)</button>
     </div>
@@ -206,13 +205,13 @@
       <p><strong>AND:</strong> result bit is 1 only if both A and B have a 1 in that column.<br>
       <strong>OR:</strong> result bit is 1 if either A or B (or both) has a 1.<br>
       <strong>XOR:</strong> result bit is 1 if exactly one of A or B has a 1 — not both.<br>
-      <strong>NOT(A) / NOT(B):</strong> flips every bit of a single register — every 0 becomes a 1, and every 1 becomes a 0.<br>
+      <strong>NOT:</strong> flips every bit of A — every 0 becomes a 1, and every 1 becomes a 0.<br>
       <strong>SHL(A):</strong> shifts every bit of A one place left, drops the leftmost bit, and inserts a 0 on the right — the same effect as multiplying A by 2.<br>
       <strong>SHR(A):</strong> shifts every bit of A one place right, drops the rightmost bit, and inserts a 0 on the left — the same effect as integer division of A by 2.</p>
     </div>
 
     <div class="callout">
-      <strong>Try this:</strong> Set A to <span style="font-family:var(--mono)">0011 1000</span> (56) and B to <span style="font-family:var(--mono)">0001 0101</span> (21). Before pressing Walk through it, predict every column of the AND result on paper — then watch it build and check yourself column by column. Afterward, try NOT(A) and SHL(A), clicking a few columns in each to see how the explanation changes.
+      <strong>Try this:</strong> Set A to <span style="font-family:var(--mono)">0011 1000</span> (56) and B to <span style="font-family:var(--mono)">0001 0101</span> (21). Before pressing Walk through it, predict every column of the AND result on paper — then watch it build and check yourself column by column. Afterward, try NOT and SHL(A), clicking a few columns in each to see how the explanation changes.
     </div>
   </div>
 
@@ -251,8 +250,7 @@
       AND:   { title: "A AND B \u2014 column by column", usesA: true,  usesB: true  },
       OR:    { title: "A OR B \u2014 column by column",  usesA: true,  usesB: true  },
       XOR:   { title: "A XOR B \u2014 column by column", usesA: true,  usesB: true  },
-      NOT_A: { title: "NOT(A) \u2014 column by column",  usesA: true,  usesB: false },
-      NOT_B: { title: "NOT(B) \u2014 column by column",  usesA: false, usesB: true  },
+      NOT:   { title: "NOT(A) \u2014 column by column",  usesA: true,  usesB: false },
       SHL:   { title: "SHL(A) \u2014 shifting every bit one place left",  usesA: true, usesB: false },
       SHR:   { title: "SHR(A) \u2014 shifting every bit one place right", usesA: true, usesB: false }
     };
@@ -265,8 +263,7 @@
       if (op === "AND") return a & b;
       if (op === "OR") return a | b;
       if (op === "XOR") return a ^ b;
-      if (op === "NOT_A") return a ? 0 : 1;
-      if (op === "NOT_B") return b ? 0 : 1;
+      if (op === "NOT") return a ? 0 : 1;
       return 0;
     }
 
@@ -285,11 +282,8 @@
         const why = r ? "exactly one bit was 1" : "the two bits matched";
         return `Column worth ${pv}: A=${a}, B=${b} &rarr; XOR &rarr; <strong>${r}</strong> (${why}).`;
       }
-      if (op === "NOT_A") {
+      if (op === "NOT") {
         return `Column worth ${pv}: A=${a} &rarr; NOT &rarr; <strong>${r}</strong> (flipped).`;
-      }
-      if (op === "NOT_B") {
-        return `Column worth ${pv}: B=${b} &rarr; NOT &rarr; <strong>${r}</strong> (flipped).`;
       }
       return "";
     }
