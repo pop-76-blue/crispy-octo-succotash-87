@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Charles Babbage &amp; Early Computing</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#8a6d1a; --accent-dark:#6b5313; --accent-tint:#f6f0dc; }
+
+  .timeline-scroll {
+    overflow-x: auto;
+    padding: 10px 4px 18px;
+  }
+  .timeline {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    min-width: 920px;
+    position: relative;
+    padding-top: 10px;
+  }
+  .timeline::before {
+    content: "";
+    position: absolute;
+    top: 24px;
+    left: 30px;
+    right: 30px;
+    height: 2px;
+    background: var(--line);
+  }
+  .timeline-node {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    padding: 0 4px;
+  }
+  .timeline-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 2px solid var(--accent);
+    margin-top: 18px;
+    z-index: 1;
+    transition: background 0.15s ease, transform 0.15s ease;
+  }
+  .timeline-node:hover .timeline-dot { transform: scale(1.2); }
+  .timeline-node[data-active="true"] .timeline-dot { background: var(--accent); }
+  .timeline-year {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--accent-dark);
+    margin-top: 8px;
+  }
+  .timeline-label {
+    font-family: var(--sans);
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    text-align: center;
+    margin-top: 3px;
+    max-width: 100px;
+  }
+  .timeline-detail {
+    font-family: var(--sans);
+    font-size: 14.5px;
+    background: var(--accent-tint);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin-top: 4px;
+    min-height: 24px;
+  }
+
+  table.compare-engines {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--sans);
+    font-size: 14px;
+    margin: 16px 0;
+  }
+  table.compare-engines th, table.compare-engines td {
+    border: 1px solid var(--line);
+    padding: 9px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+  table.compare-engines th { background: var(--accent-tint); }
+
+  .person-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    margin: 10px 0;
+  }
+  .person-name { font-weight: 700; color: var(--accent-dark); }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../index.html">&larr; TER3MU</a>
+    <span class="crumb-current">Charles Babbage &amp; Early Computing</span>
+  </div>
+
+  <div class="wrap">
+    <h1>Charles Babbage &amp; Early Computing</h1>
+    <p class="subtitle">Unit 1 &nbsp;&middot;&nbsp; History segment for the quiz &mdash; the Analytical Engine vs. Difference Engine No. 2, dates, and contemporaries</p>
+
+    <div class="panel">
+      <p>Charles Babbage (26 December 1791 &ndash; 18 October 1871) was an English mathematician, philosopher, and mechanical engineer. He held the Lucasian Chair of Mathematics at Cambridge &mdash; the same position later held by Stephen Hawking, and centuries earlier by Isaac Newton. Babbage is often called a "father of the computer" not for one single invention, but for two very different machines he designed across his lifetime: the Difference Engine and the Analytical Engine.</p>
+    </div>
+
+    <div class="demo">
+      <h3 style="text-align:center;">Timeline &mdash; click any point</h3>
+      <div class="timeline-scroll">
+        <div class="timeline" id="timeline"></div>
+      </div>
+      <div class="timeline-detail" id="timelineDetail"></div>
+    </div>
+
+    <div class="panel">
+      <h2 style="border:none;padding:0;margin:0 0 10px;">Difference Engine (No. 2) vs. Analytical Engine</h2>
+      <p>This is the distinction the quiz will ask about directly &mdash; they are <strong>not</strong> the same machine, and only one of them is a "computer" in the modern sense.</p>
+      <table class="compare-engines">
+        <tr><th></th><th>Difference Engine No. 2</th><th>Analytical Engine</th></tr>
+        <tr><td>What it is</td><td>A mechanical <strong>calculator</strong></td><td>A general-purpose, <strong>programmable</strong> mechanical computer</td></tr>
+        <tr><td>Designed</td><td>1847&ndash;1849, as a refined version of his original 1820s Difference Engine</td><td>Conceived in 1834; worked on until his death in 1871</td></tr>
+        <tr><td>What it could do</td><td>Only addition, repeated according to the "method of finite differences," to build mathematical tables (e.g. for navigation)</td><td>Any calculation set before it &mdash; addition, multiplication, conditional branching, looping</td></tr>
+        <tr><td>Could it be reprogrammed?</td><td>No &mdash; built for one job</td><td>Yes &mdash; instructions and data were entered on punched cards, borrowed from the Jacquard loom</td></tr>
+        <tr><td>Key design idea</td><td>Uses only arithmetic addition, avoiding the harder mechanics of multiplication/division</td><td>Separated the "Store" (memory) from the "Mill" (the part that processed numbers) &mdash; the same split modern computers still use between RAM and a CPU</td></tr>
+        <tr><td>Was it built in his lifetime?</td><td>No &mdash; Babbage never built it himself; the Science Museum in London completed one from his original drawings in 2002</td><td>No &mdash; only a small portion (the mill and a printer) was ever assembled, completed posthumously in 1910</td></tr>
+      </table>
+    </div>
+
+    <div class="panel">
+      <h2 style="border:none;padding:0;margin:0 0 10px;">Contemporaries</h2>
+
+      <div class="person-card">
+        <div class="person-name">Ada Lovelace (Countess of Lovelace)</div>
+        <p>Translated and annotated an Italian engineer's paper describing the Analytical Engine, adding notes that included what's now recognized as the first published algorithm intended to be carried out by a machine &mdash; which is why she's often credited as the first computer programmer.</p>
+      </div>
+      <div class="person-card">
+        <div class="person-name">Luigi Menabrea</div>
+        <p>An Italian engineer (later a general and prime minister of Italy) who published the original paper describing the Analytical Engine &mdash; the paper Ada Lovelace translated and expanded with her own notes.</p>
+      </div>
+      <div class="person-card">
+        <div class="person-name">John Herschel</div>
+        <p>A close friend of Babbage's from Cambridge and a noted polymath astronomer. Together they founded the Analytical Society as students, promoting a more modern style of calculus.</p>
+      </div>
+      <div class="person-card">
+        <div class="person-name">George Peacock</div>
+        <p>A mathematician and the third founding member (with Babbage and Herschel) of the Analytical Society at Cambridge.</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>Try this:</strong> Without looking back at the page, write down which of the two engines was programmable, which one only added numbers, and which person is credited with writing the first program for a machine. Then check yourself against the table and cards above.
+    </div>
+  </div>
+
+  <script>
+    const events = [
+      { year: 1791, label: "Born", detail: "Charles Babbage is born in London, England, on December 26, 1791." },
+      { year: 1810, label: "Cambridge & the Analytical Society", detail: "Babbage enrolls at Trinity College, Cambridge, and later co-founds the Analytical Society with John Herschel and George Peacock." },
+      { year: 1822, label: "Proposes the Difference Engine", detail: "Babbage proposes his first Difference Engine to the British government as a way to mechanically produce accurate mathematical tables." },
+      { year: 1833, label: "Funding stalls", detail: "Government funding for the original Difference Engine runs out, and the project is never completed as originally designed." },
+      { year: 1834, label: "Conceives the Analytical Engine", detail: "With the Difference Engine stalled, Babbage begins designing a far more ambitious machine: a general-purpose, programmable Analytical Engine." },
+      { year: 1842, label: "Lovelace's notes published", detail: "Ada Lovelace translates Luigi Menabrea's paper on the Analytical Engine and adds her own extensive notes, including the first published algorithm intended for a machine." },
+      { year: 1847, label: "Designs Difference Engine No. 2", detail: "Babbage designs an improved Difference Engine No. 2, using techniques developed for the Analytical Engine to make it more efficient than his original design." },
+      { year: 1871, label: "Dies", detail: "Charles Babbage dies in London on October 18, 1871, having never completed a full working Analytical Engine." },
+      { year: 1991, label: "Difference Engine No. 1 built", detail: "The Science Museum in London builds a working Difference Engine from Babbage's original plans, proving the design would have worked with Victorian-era manufacturing." },
+      { year: 2002, label: "Difference Engine No. 2 built", detail: "The Science Museum completes a full working Difference Engine No. 2, built faithfully from Babbage's 1847\u20131849 drawings." }
+    ];
+
+    function selectEvent(i) {
+      document.querySelectorAll(".timeline-node").forEach((node, idx) => {
+        node.dataset.active = (idx === i) ? "true" : "false";
+      });
+      document.getElementById("timelineDetail").innerHTML =
+        `<strong>${events[i].year} \u2014 ${events[i].label}.</strong> ${events[i].detail}`;
+    }
+
+    function buildTimeline() {
+      const container = document.getElementById("timeline");
+      events.forEach((ev, i) => {
+        const node = document.createElement("div");
+        node.className = "timeline-node";
+        node.dataset.active = "false";
+        node.innerHTML = `<div class="timeline-dot"></div><div class="timeline-year">${ev.year}</div><div class="timeline-label">${ev.label}</div>`;
+        node.addEventListener("click", () => selectEvent(i));
+        container.appendChild(node);
+      });
+    }
+
+    buildTimeline();
+    selectEvent(0);
+  </script>
+</body>
+</html>

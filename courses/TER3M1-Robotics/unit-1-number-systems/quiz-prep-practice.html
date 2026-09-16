@@ -103,7 +103,11 @@
 
   <div class="wrap">
     <h1>Unit 1 Quiz Prep — Practice Set</h1>
-    <p class="subtitle">Covers 1.1 Decimal, 1.2 Binary through 1.2.8 Bitwise Operations — matching the quiz format (multiple choice, written answer, calculations)</p>
+    <p class="subtitle">Covers 1.1 Decimal, 1.2 Binary through 1.2.8 Bitwise Operations, 1.3 Hexadecimal, and the Babbage history segment</p>
+
+    <div class="callout" style="margin-bottom:20px;">
+      <strong>Heads up about the real quiz:</strong> the actual quiz on Wednesday is entirely <strong>multiple choice and true/false</strong> — no calculations to show work and no written answers. The calculation and written questions below are still worth doing (they test the same skills and catch mistakes a multiple-choice guess could hide), just don't expect that exact format on quiz day itself.
+    </div>
 
     <div id="questionList"></div>
 
@@ -243,6 +247,54 @@
         type: 'written',
         prompt: '20. Written answer: your timing diagram tool and your ASCII tool can both take the same 8-bit pattern as input. Explain why the timing diagram and the binary ASCII form always agree on decimal value, even though they look completely different.',
         sample: 'Both are just different ways of displaying the same 8 bits. The timing diagram shows each bit as a high or low voltage level over a time interval; the binary ASCII form shows the same bit as a digit 0 or 1. Converting either representation to decimal uses the same place-value rule, so they always match.'
+      },
+      {
+        type: 'tf',
+        prompt: '21. True or False: The Analytical Engine could be reprogrammed to perform different calculations, while Difference Engine No. 2 could only ever compute using repeated addition.',
+        options: ['True', 'False'],
+        correct: 0,
+        explanation: 'True. The Analytical Engine accepted instructions and data on punched cards, making it general-purpose. Difference Engine No. 2 was a fixed-purpose calculator built entirely around the method of finite differences (addition only).'
+      },
+      {
+        type: 'tf',
+        prompt: '22. True or False: Charles Babbage built a complete, fully working Analytical Engine during his own lifetime.',
+        options: ['True', 'False'],
+        correct: 1,
+        explanation: 'False. Only a small portion (the mill and a printing mechanism) was ever assembled, completed after his death in 1910. Neither the Analytical Engine nor Difference Engine No. 2 was fully built while Babbage was alive.'
+      },
+      {
+        type: 'tf',
+        prompt: '23. True or False: Ada Lovelace is credited with writing the first algorithm intended to be carried out by a machine.',
+        options: ['True', 'False'],
+        correct: 0,
+        explanation: 'True. In her notes translating Luigi Menabrea\u2019s paper on the Analytical Engine, Lovelace included what is now recognized as the first published algorithm meant for a machine to execute.'
+      },
+      {
+        type: 'mc',
+        prompt: '24. Charles Babbage lived from approximately:',
+        options: ['1701 to 1781', '1791 to 1871', '1850 to 1930', '1900 to 1980'],
+        correct: 1,
+        explanation: 'Babbage was born in 1791 and died in 1871 \u2014 he was a 19th-century figure, working decades before any electronic computer existed.'
+      },
+      {
+        type: 'tf',
+        prompt: '25. True or False: One hexadecimal digit always represents exactly 4 bits (one nibble).',
+        options: ['True', 'False'],
+        correct: 0,
+        explanation: 'True. Since 2\u2074 = 16, a single hex digit (0\u2013F) can represent every possible 4-bit pattern with none left over \u2014 that\u2019s exactly why hex lines up so cleanly with binary.'
+      },
+      {
+        type: 'calc',
+        prompt: '26. Convert binary 1010 1111 to hexadecimal. Type it without spaces, e.g. "3F".',
+        answer: 'AF',
+        explanation: 'Split into nibbles: 1010 = A, 1111 = F. Reading them in order gives AF \u2014 no long division needed once you know the nibble-to-hex mapping.'
+      },
+      {
+        type: 'tf',
+        prompt: '27. True or False: A byte (8 bits) can always be written as exactly two hexadecimal digits.',
+        options: ['True', 'False'],
+        correct: 0,
+        explanation: 'True. A byte splits evenly into two 4-bit nibbles, and each nibble maps to exactly one hex digit \u2014 so every byte value from 0 to 255 is some 2-digit hex value from 00 to FF.'
       }
     ];
 
@@ -277,7 +329,8 @@
 
         const label = document.createElement('div');
         label.className = 'q-num';
-        label.textContent = q.type === 'mc' ? 'Multiple choice' : q.type === 'calc' ? 'Calculation' : 'Written answer';
+        const typeLabels = { mc: 'Multiple choice', tf: 'True / False', calc: 'Calculation', written: 'Written answer' };
+        label.textContent = typeLabels[q.type] || 'Question';
         card.appendChild(label);
 
         const prompt = document.createElement('div');
@@ -287,7 +340,7 @@
 
         const saved = state[idx] || {};
 
-        if (q.type === 'mc') {
+        if (q.type === 'mc' || q.type === 'tf') {
           const optsDiv = document.createElement('div');
           optsDiv.className = 'q-options';
           q.options.forEach((opt, oi) => {
