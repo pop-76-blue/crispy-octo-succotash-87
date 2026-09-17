@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Completing the Square — MCR3U1 Review</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#3b4f94; --accent-dark:#2b3a70; --accent-tint:#e8ebf6; }
+
+  .step {
+    background:#fff; border:1px solid #ddd; border-radius:8px; padding:0.9rem 1.1rem;
+    margin-bottom:0.6rem; opacity:0.35; transition:opacity 0.2s;
+  }
+  .step.shown { opacity:1; }
+  .step .tag { font-size:0.78rem; text-transform:uppercase; letter-spacing:0.03em; color:var(--accent-dark); font-weight:700; }
+
+  .procedure-list { background:#fff; border:1px solid #ddd; border-radius:8px; padding:1rem 1.3rem; margin:0.75rem 0; }
+  .procedure-list li { margin-bottom:0.4rem; }
+
+  .input-row { display:flex; gap:1rem; align-items:center; flex-wrap:wrap; margin:1rem 0; }
+  .input-row label { font-weight:600; }
+  .input-row input[type=number] { width:5rem; border:1px solid #bbb; border-radius:6px; padding:0.4rem 0.6rem; font-size:1rem; }
+
+  .demo-grid { display:flex; flex-wrap:wrap; gap:1.5rem; }
+  .controls-col { flex:1; min-width:260px; }
+  .canvas-col { flex:2; min-width:320px; text-align:center; }
+  #graphCanvas { background:#fff; border:1px solid #ddd; border-radius:8px; max-width:100%; }
+
+  .readout { background:#fff; border:1px solid #ddd; border-radius:8px; padding:0.9rem 1.1rem; margin-top:1rem; }
+  .readout div { padding:0.25rem 0; }
+  .readout .k { color:var(--accent-dark); font-weight:600; display:inline-block; min-width:9.5rem; }
+
+  button.choice-btn {
+    border:2px solid var(--accent); background:#fff; color:var(--accent-dark);
+    border-radius:6px; padding:0.4rem 1rem; cursor:pointer; font-weight:600;
+  }
+  button.choice-btn:hover { background:var(--accent-tint); }
+  button.choice-btn:disabled { opacity:0.4; cursor:not-allowed; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../../../index.html">&larr; All courses</a>
+    <a href="../index.html">MCR3U1 — Functions</a>
+    <span class="crumb-current">Completing the Square</span>
+  </div>
+  <div class="wrap">
+    <h1>Completing the Square</h1>
+    <p class="subtitle">MCR3U1 &middot; Prerequisite Review</p>
+
+    <div class="callout">
+      Completing the square rewrites y = x² + bx + c as <strong>y = (x − h)² + k</strong>, which
+      immediately gives you the vertex (h, k) — without graphing anything.
+    </div>
+
+    <div class="panel">
+      <h2>The procedure (leading coefficient = 1)</h2>
+      <ol class="procedure-list">
+        <li>Take half of b, and square it: (b/2)²</li>
+        <li>Add and subtract that value inside the expression — this doesn't change its value: x² + bx + (b/2)² − (b/2)² + c</li>
+        <li>The first three terms are now a perfect square trinomial. Rewrite them as a squared binomial: (x + b/2)²</li>
+        <li>Combine the leftover constants: y = (x + b/2)² + [c − (b/2)²]</li>
+        <li>Read off the vertex: h = −b/2, k = c − (b/2)²</li>
+      </ol>
+
+      <h3>Worked example: y = x² + 6x − 1</h3>
+      <div id="exampleSteps"></div>
+      <button class="choice-btn" id="nextExampleStep">Show next step</button>
+    </div>
+
+    <div class="panel">
+      <h2>Try your own</h2>
+      <p>Enter b and c for y = x² + bx + c (leading coefficient fixed at 1 for this practice set).</p>
+      <div class="input-row">
+        <label>b <input type="number" id="bInput" value="10"></label>
+        <label>c <input type="number" id="cInput" value="20"></label>
+        <button class="choice-btn" id="buildBtn">Show the steps</button>
+      </div>
+      <div id="userSteps"></div>
+
+      <div class="demo demo-grid">
+        <div class="controls-col">
+          <div class="readout" id="readout"><em>Click "Show the steps" to see the vertex, roots, and graph.</em></div>
+        </div>
+        <div class="canvas-col">
+          <canvas id="graphCanvas" width="440" height="440"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>If the leading coefficient isn't 1</h2>
+      <p>Factor it out of the x² and x terms first, complete the square inside the brackets, then
+      distribute the leading coefficient back in.</p>
+      <div class="steps" style="background:#fff; border:1px solid #ddd; border-radius:8px; padding:0.9rem 1.1rem;">
+        <strong>Example:</strong> y = 2x² + 12x + 5
+        <br>1. Factor 2 out of the first two terms: y = 2(x² + 6x) + 5
+        <br>2. Complete the square inside the brackets: half of 6 is 3, 3² = 9 → y = 2(x² + 6x + 9 − 9) + 5
+        <br>3. Rewrite as a square, keep the −9 outside the brackets for now: y = 2[(x + 3)² − 9] + 5
+        <br>4. Distribute the 2 back onto both terms inside the brackets: y = 2(x + 3)² − 18 + 5
+        <br>5. Combine constants: <strong>y = 2(x + 3)² − 13</strong> → vertex (−3, −13)
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>Try this:</strong> Complete the square for y = x² − 12x + 8 on paper — find the vertex and
+      both roots (leave roots in exact radical form, e.g. h ± √k). Then enter b = −12, c = 8 above to
+      check your vertex, roots, and graph.
+    </div>
+
+    <div class="panel">
+      <h2>More practice elsewhere</h2>
+      <ul>
+        <li><a href="https://www.jensenmath.ca/math10-unit-4" target="_blank" rel="noopener">Jensen Math — Grade 10 Unit 4: Quadratics</a> (completing the square lessons and worksheets)</li>
+        <li><a href="https://courseware.cemc.uwaterloo.ca/43" target="_blank" rel="noopener">CEMC Courseware — Quadratic Relations</a> (see "Completing the Square" for interactive practice)</li>
+      </ul>
+    </div>
+  </div>
+
+<script>
+// Worked example stepper
+const exampleSteps = [
+  { tag: "Start", text: "y = x² + 6x − 1" },
+  { tag: "Half of b, squared", text: "b = 6, so (6/2)² = 9" },
+  { tag: "Add and subtract", text: "y = x² + 6x + 9 − 9 − 1" },
+  { tag: "Rewrite as a square", text: "y = (x + 3)² − 9 − 1" },
+  { tag: "Combine constants", text: "y = (x + 3)² − 10" },
+  { tag: "Vertex", text: "h = −3, k = −10 → vertex (−3, −10)" },
+  { tag: "Roots", text: "0 = (x + 3)² − 10 → (x + 3)² = 10 → x = −3 ± √10" }
+];
+let exIndex = 0;
+const exampleArea = document.getElementById('exampleSteps');
+exampleArea.innerHTML = exampleSteps.map((s, i) => `<div class="step" id="exStep${i}"><span class="tag">${s.tag}</span><br>${s.text}</div>`).join('');
+document.getElementById('nextExampleStep').addEventListener('click', () => {
+  if (exIndex < exampleSteps.length) {
+    document.getElementById(`exStep${exIndex}`).classList.add('shown');
+    exIndex++;
+  }
+  if (exIndex >= exampleSteps.length) {
+    const btn = document.getElementById('nextExampleStep');
+    btn.disabled = true;
+    btn.textContent = "All steps shown";
+  }
+});
+
+// User "try your own" stepper + graph
+const bInput = document.getElementById('bInput');
+const cInput = document.getElementById('cInput');
+const buildBtn = document.getElementById('buildBtn');
+const userSteps = document.getElementById('userSteps');
+const readout = document.getElementById('readout');
+
+const canvas = document.getElementById('graphCanvas');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+const scale = 14;
+const originX = W / 2, originY = H / 2;
+
+function toPx(x, y) { return [originX + x * scale, originY - y * scale]; }
+
+function drawGrid() {
+  ctx.clearRect(0, 0, W, H);
+  ctx.strokeStyle = '#eee';
+  ctx.lineWidth = 1;
+  for (let u = -15; u <= 15; u++) {
+    const [x1] = toPx(u, 0);
+    ctx.beginPath(); ctx.moveTo(x1, 0); ctx.lineTo(x1, H); ctx.stroke();
+    const [, y1] = toPx(0, u);
+    ctx.beginPath(); ctx.moveTo(0, y1); ctx.lineTo(W, y1); ctx.stroke();
+  }
+  ctx.strokeStyle = '#999';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(0, originY); ctx.lineTo(W, originY); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(originX, 0); ctx.lineTo(originX, H); ctx.stroke();
+}
+
+function drawParabola(h, k) {
+  ctx.strokeStyle = '#3b4f94';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  let started = false;
+  for (let px = 0; px <= W; px++) {
+    const x = (px - originX) / scale;
+    const y = (x - h) * (x - h) + k;
+    const py = originY - y * scale;
+    if (py < -50 || py > H + 50) { started = false; continue; }
+    if (!started) { ctx.moveTo(px, py); started = true; }
+    else ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+  const [vx, vy] = toPx(h, k);
+  ctx.fillStyle = '#2b3a70';
+  ctx.beginPath(); ctx.arc(vx, vy, 5, 0, Math.PI * 2); ctx.fill();
+}
+
+buildBtn.addEventListener('click', () => {
+  const b = parseFloat(bInput.value) || 0;
+  const c = parseFloat(cInput.value) || 0;
+  const half = b / 2;
+  const halfSq = half * half;
+  const h = -half;
+  const k = c - halfSq;
+
+  const steps = [
+    { tag: "Start", text: `y = x² + ${b}x + ${c}` },
+    { tag: "Half of b, squared", text: `b = ${b}, so (${b}/2)² = ${halfSq}` },
+    { tag: "Add and subtract", text: `y = x² + ${b}x + ${halfSq} − ${halfSq} + ${c}` },
+    { tag: "Rewrite as a square", text: `y = (x ${half >= 0 ? '+ ' + half : '- ' + Math.abs(half)})² ${(c - halfSq) >= 0 ? '+ ' + (c - halfSq) : '- ' + Math.abs(c - halfSq)}` },
+    { tag: "Vertex", text: `h = ${h}, k = ${k.toFixed(2)} → vertex (${h}, ${k.toFixed(2)})` }
+  ];
+
+  userSteps.innerHTML = steps.map(s => `<div class="step shown"><span class="tag">${s.tag}</span><br>${s.text}</div>`).join('');
+
+  drawGrid();
+  drawParabola(h, k);
+
+  let rootsText;
+  if (k < 0) {
+    const r = Math.sqrt(-k);
+    rootsText = `x = ${h} ± √${(-k).toFixed(2)} ≈ ${(h - r).toFixed(2)} and ${(h + r).toFixed(2)}`;
+  } else if (k === 0) {
+    rootsText = `one root at x = ${h}`;
+  } else {
+    rootsText = `no real roots (vertex is above the x-axis and the parabola opens up)`;
+  }
+
+  readout.innerHTML = `
+    <div><span class="k">Vertex:</span> (${h}, ${k.toFixed(2)})</div>
+    <div><span class="k">Axis of symmetry:</span> x = ${h}</div>
+    <div><span class="k">Roots:</span> ${rootsText}</div>
+  `;
+});
+
+// draw a default graph on load
+drawGrid();
+drawParabola(-3, -10);
+</script>
+</body>
+</html>

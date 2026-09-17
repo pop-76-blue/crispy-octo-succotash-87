@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Challenge Questions — Number Systems</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#8a6d1a; --accent-dark:#6b5313; --accent-tint:#f6f0dc; }
+
+  .challenge-tag {
+    display: inline-block;
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--accent-dark);
+    background: var(--accent-tint);
+    padding: 3px 10px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+  }
+
+  .slider-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 14px 0;
+    font-family: var(--sans);
+    font-size: 14px;
+  }
+  .slider-row input[type="range"] { width: 180px; }
+  .slider-row strong { font-family: var(--mono); color: var(--accent-dark); min-width: 20px; display:inline-block; text-align:center; }
+
+  .side-by-side {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    font-family: var(--mono);
+    font-size: 15px;
+    margin: 14px 0;
+    text-align: center;
+  }
+  .side-box {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 10px 16px;
+  }
+  .side-box .side-label { font-family: var(--sans); font-size: 11px; color: var(--ink-soft); display:block; margin-bottom:4px; }
+  .match-yes { color: #2e7d32; font-weight: 700; }
+  .match-no { color: var(--ink-soft); }
+
+  .repunit-display {
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 26px;
+    letter-spacing: 4px;
+    color: var(--accent-dark);
+    margin: 10px 0;
+  }
+  .story-text {
+    font-family: var(--sans);
+    font-size: 14.5px;
+    color: var(--ink-soft);
+    text-align: center;
+    margin: 6px 0 14px;
+  }
+
+  input.conv-input {
+    font-family: var(--mono);
+    font-size: 18px;
+    padding: 6px 10px;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    width: 200px;
+    text-align: center;
+  }
+  .byte-chip-row { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin: 14px 0; }
+  .byte-chip {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 12px;
+    border-radius: 7px;
+    background: var(--accent-tint);
+    font-family: var(--mono);
+  }
+  .byte-chip .hex-val { font-size: 16px; font-weight: 700; color: var(--accent-dark); }
+  .byte-chip .char-val { font-size: 20px; font-weight: 700; }
+  .error-text { text-align:center; color:#b3261e; font-family: var(--sans); font-size: 13.5px; }
+
+  .shift-eq {
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 15px;
+    margin: 10px 0;
+  }
+  .shift-eq .op { color: var(--ink-soft); margin: 0 6px; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../index.html">&larr; TER3MU</a>
+    <span class="crumb-current">Challenge Questions</span>
+  </div>
+
+  <div class="wrap">
+    <h1>Challenge Questions — Number Systems</h1>
+    <p class="subtitle">Optional, harder problems from 1.3 &amp; 1.4 Exercises &mdash; not required, but worth exploring</p>
+
+    <!-- CHALLENGE 1 -->
+    <div class="panel">
+      <span class="challenge-tag">1.4 Exercise 4</span>
+      <h2 style="border:none;padding:0;margin:6px 0 10px;">Why does 300<sub>16</sub> = 100<sub>2</sub> &times; 300<sub>8</sub>?</h2>
+      <p>At first this looks like a coincidence &mdash; three completely different bases producing an equation that balances. It isn't a coincidence: it falls out of the fact that <strong>16 = 2<sup>4</sup></strong>, so 16&sup2; = 2<sup>8</sup>. Splitting that exponent as 2&sup2; &times; 2<sup>6</sup> gives you exactly a base-2 term (100<sub>2</sub> = 2&sup2;) and a base-8 term (2<sup>6</sup> = 8&sup2;, so 300<sub>8</sub> = 3 &times; 8&sup2; carries the "3" and the 8&sup2; part). The leading digit just rides along for the whole calculation.</p>
+
+      <div class="demo">
+        <h3 style="text-align:center;">Try it with any leading digit (0&ndash;7)</h3>
+        <div class="slider-row">
+          <label>Digit d: <input type="range" id="digitSlider" min="0" max="7" value="3"></label>
+          <strong id="digitLabel">3</strong>
+        </div>
+        <div class="side-by-side">
+          <div class="side-box"><span class="side-label">d00<sub>16</sub></span><span id="leftSide"></span></div>
+          <div class="side-box"><span class="side-label">100<sub>2</sub> &times; d00<sub>8</sub></span><span id="rightSide"></span></div>
+        </div>
+        <p style="text-align:center;" id="matchText"></p>
+      </div>
+    </div>
+
+    <!-- CHALLENGE 2 -->
+    <div class="panel">
+      <span class="challenge-tag">1.4 Exercise 5, parts a&ndash;d</span>
+      <h2 style="border:none;padding:0;margin:6px 0 10px;">The Party Invitation Pattern</h2>
+      <p>Suzie invites some friends to a party. Each of those friends invites the same number of new friends, who each do the same again, for a fixed number of rounds. How many people end up at the party &mdash; and what does that total look like once you write it in the same base as the number of friends invited?</p>
+
+      <div class="demo">
+        <div class="slider-row">
+          <label>Friends invited each round (n): <input type="range" id="baseSliderChallenge" min="2" max="12" value="2"></label>
+          <strong id="baseLabelChallenge">2</strong>
+        </div>
+        <div class="slider-row">
+          <label>Number of rounds (r): <input type="range" id="roundsSlider" min="1" max="6" value="5"></label>
+          <strong id="roundsLabel">5</strong>
+        </div>
+        <p class="story-text" id="storyText"></p>
+        <div class="decimal-readout" id="partyDecimal"></div>
+        <p style="text-align:center; font-family:var(--sans); font-size:13px; color:var(--ink-soft); margin:4px 0;">That same total, written in base n:</p>
+        <div class="repunit-display" id="repunitDisplay"></div>
+        <p style="text-align:center; font-family:var(--sans); font-size:13.5px; color:var(--ink-soft);">Notice it's always a string of (r + 1) ones. When n = 10, it looks especially obvious &mdash; try sliding n to 10.</p>
+      </div>
+    </div>
+
+    <!-- CHALLENGE 3 -->
+    <div class="panel">
+      <span class="challenge-tag">1.4 Exercise 6, part c (a &amp; b included too)</span>
+      <h2 style="border:none;padding:0;margin:6px 0 10px;">Hidden Messages in Hex</h2>
+      <p>Convert a decimal number to hexadecimal, split the result into four bytes, and read each byte as an ASCII character &mdash; and sometimes you get an actual word. Here are all three from the original exercise:</p>
+      <table style="width:100%; border-collapse:collapse; font-family:var(--sans); font-size:14px; margin:12px 0;">
+        <tr style="background:var(--accent-tint);"><th style="padding:8px 12px; border:1px solid var(--line); text-align:left;">Decimal</th><th style="padding:8px 12px; border:1px solid var(--line); text-align:left;">Hex</th><th style="padding:8px 12px; border:1px solid var(--line); text-align:left;">Message</th></tr>
+        <tr><td style="padding:8px 12px; border:1px solid var(--line); font-family:var(--mono);">1195983941</td><td style="padding:8px 12px; border:1px solid var(--line); font-family:var(--mono);">47494445</td><td style="padding:8px 12px; border:1px solid var(--line); font-family:var(--mono); font-weight:700;">GIDE</td></tr>
+        <tr><td style="padding:8px 12px; border:1px solid var(--line); font-family:var(--mono);">1147494770</td><td style="padding:8px 12px; border:1px solid var(--line); font-family:var(--mono);">44656172</td><td style="padding:8px 12px; border:1px solid var(--line); font-family:var(--mono); font-weight:700;">Dear</td></tr>
+        <tr><td style="padding:8px 12px; border:1px solid var(--line); font-family:var(--mono);">2053464428 (part c)</td><td style="padding:8px 12px; border:1px solid var(--line); font-family:var(--mono);">&mdash; try it below &mdash;</td><td style="padding:8px 12px; border:1px solid var(--line);">&mdash;</td></tr>
+      </table>
+
+      <div class="demo">
+        <h3 style="text-align:center;">Decode part c yourself (or try your own number)</h3>
+        <div style="text-align:center;">
+          <input type="text" class="conv-input" id="asciiHexInput" value="2053464428">
+        </div>
+        <div id="asciiHexError" class="error-text"></div>
+        <div class="byte-chip-row" id="asciiByteRow"></div>
+        <div class="decimal-readout" id="asciiWordReadout"></div>
+      </div>
+    </div>
+
+    <!-- CHALLENGE 4 -->
+    <div class="panel">
+      <span class="challenge-tag">1.4 Exercise 11, part a</span>
+      <h2 style="border:none;padding:0;margin:6px 0 10px;">Why Hex Bytes Concatenate the Way They Do</h2>
+      <p>For any hex digits m, n, o, p, q, r, s, t: <span style="font-family:var(--mono)">mn:op:qr:st = shift-left-2-bytes(mn:op) + qr:st</span>. In other words, gluing a 4-byte hex number together is the same as taking its upper 2 bytes, shifting them left by 2 bytes (which is the same as multiplying by 16<sup>4</sup>, since 2 bytes = 4 hex digits), and adding the lower 2 bytes back in. This is exactly the SHL operation you already know, just working in units of whole bytes instead of single bits.</p>
+
+      <div class="demo">
+        <h3 style="text-align:center;">Enter an 8-digit hex number (any 4-byte value)</h3>
+        <div style="text-align:center;">
+          <input type="text" class="conv-input" id="fourByteInput" value="12345678">
+        </div>
+        <div id="fourByteError" class="error-text"></div>
+        <div class="shift-eq" id="shiftEqDisplay"></div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>Try this:</strong> In Challenge 2, set n = 10 and r = 3, and predict the repunit result before checking &mdash; it should be a number you could have guessed without any calculation at all once you see the pattern. Then in Challenge 4, pick your own 8-digit hex number and verify the shift-and-add identity holds every time.
+    </div>
+  </div>
+
+  <script>
+    // ---------- CHALLENGE 1 ----------
+    function renderChallenge1() {
+      const d = Number(document.getElementById('digitSlider').value);
+      document.getElementById('digitLabel').textContent = d;
+      const leftHex = `${d}00`;
+      const leftVal = parseInt(leftHex, 16);
+      const rightVal = parseInt('100', 2) * parseInt(`${d}00`, 8);
+      document.getElementById('leftSide').textContent = `${leftHex}\u2081\u2086 = ${leftVal}`;
+      document.getElementById('rightSide').textContent = `${rightVal}`;
+      const match = leftVal === rightVal;
+      document.getElementById('matchText').innerHTML = match
+        ? '<span class="match-yes">&#10003; They match \u2014 for every digit 0\u20137.</span>'
+        : '<span class="match-no">Something\u2019s off \u2014 check the calculation.</span>';
+    }
+    document.getElementById('digitSlider').addEventListener('input', renderChallenge1);
+
+    // ---------- CHALLENGE 2 ----------
+    function digitCharForBase(v) {
+      return v < 10 ? String(v) : String.fromCharCode('A'.charCodeAt(0) + v - 10);
+    }
+    function toBaseString(value, base) {
+      if (value === 0) return '0';
+      let v = value, digits = [];
+      while (v > 0) { digits.push(digitCharForBase(v % base)); v = Math.floor(v / base); }
+      return digits.reverse().join('');
+    }
+
+    function renderChallenge2() {
+      const n = Number(document.getElementById('baseSliderChallenge').value);
+      const r = Number(document.getElementById('roundsSlider').value);
+      document.getElementById('baseLabelChallenge').textContent = n;
+      document.getElementById('roundsLabel').textContent = r;
+
+      document.getElementById('storyText').textContent =
+        `Suzie invites ${n} friends. Each friend invites ${n} more, and this repeats for ${r} round${r === 1 ? '' : 's'} after Suzie.`;
+
+      let total = 0;
+      for (let i = 0; i <= r; i++) total += Math.pow(n, i);
+      document.getElementById('partyDecimal').innerHTML = `Total people at the party: <strong>${total}</strong> (decimal)`;
+      document.getElementById('repunitDisplay').textContent = toBaseString(total, n);
+    }
+    document.getElementById('baseSliderChallenge').addEventListener('input', renderChallenge2);
+    document.getElementById('roundsSlider').addEventListener('input', renderChallenge2);
+
+    // ---------- CHALLENGE 3 ----------
+    function renderChallenge3() {
+      const raw = document.getElementById('asciiHexInput').value.trim();
+      const errBox = document.getElementById('asciiHexError');
+      if (!/^\d+$/.test(raw) || raw.length === 0) {
+        errBox.textContent = 'Enter a whole decimal number.';
+        document.getElementById('asciiByteRow').innerHTML = '';
+        document.getElementById('asciiWordReadout').innerHTML = '';
+        return;
+      }
+      const n = Number(raw);
+      if (n > 4294967295) {
+        errBox.textContent = 'That number needs more than 4 bytes (max is 4294967295 for this exercise).';
+        document.getElementById('asciiByteRow').innerHTML = '';
+        document.getElementById('asciiWordReadout').innerHTML = '';
+        return;
+      }
+      errBox.textContent = '';
+      const hex = n.toString(16).toUpperCase().padStart(8, '0');
+      const row = document.getElementById('asciiByteRow');
+      row.innerHTML = '';
+      let word = '';
+      for (let i = 0; i < 8; i += 2) {
+        const byteHex = hex.slice(i, i + 2);
+        const code = parseInt(byteHex, 16);
+        const ch = (code >= 32 && code <= 126) ? String.fromCharCode(code) : '\u25a1';
+        word += (code >= 32 && code <= 126) ? ch : '?';
+        const chip = document.createElement('div');
+        chip.className = 'byte-chip';
+        chip.innerHTML = `<div class="hex-val">${byteHex}</div><div class="char-val">${ch}</div>`;
+        row.appendChild(chip);
+      }
+      document.getElementById('asciiWordReadout').innerHTML = `hex: <strong>${hex}</strong> &nbsp;&middot;&nbsp; decoded: <strong>${word}</strong>`;
+    }
+    document.getElementById('asciiHexInput').addEventListener('input', renderChallenge3);
+
+    // ---------- CHALLENGE 4 ----------
+    function renderChallenge4() {
+      const raw = document.getElementById('fourByteInput').value.trim();
+      const errBox = document.getElementById('fourByteError');
+      if (!/^[0-9a-fA-F]{1,8}$/.test(raw) || raw.length === 0) {
+        errBox.textContent = 'Enter up to 8 hex digits (0\u20139, A\u2013F).';
+        document.getElementById('shiftEqDisplay').innerHTML = '';
+        return;
+      }
+      errBox.textContent = '';
+      const hex = raw.toUpperCase().padStart(8, '0');
+      const upperHex = hex.slice(0, 4);
+      const lowerHex = hex.slice(4, 8);
+      const upperVal = parseInt(upperHex, 16);
+      const lowerVal = parseInt(lowerHex, 16);
+      const shifted = upperVal * Math.pow(16, 4);
+      const combined = shifted + lowerVal;
+      const whole = parseInt(hex, 16);
+
+      document.getElementById('shiftEqDisplay').innerHTML = `
+        ${upperHex}:${lowerHex} &nbsp;=&nbsp; shift-left-2-bytes(${upperHex}) <span class="op">+</span> ${lowerHex}<br>
+        ${whole} &nbsp;=&nbsp; (${upperVal} &times; 16<sup>4</sup>) <span class="op">+</span> ${lowerVal} &nbsp;=&nbsp; ${shifted} + ${lowerVal} &nbsp;=&nbsp; <strong>${combined}</strong>
+        ${combined === whole ? ' <span class="match-yes">&#10003;</span>' : ' <span class="match-no">mismatch</span>'}
+      `;
+    }
+    document.getElementById('fourByteInput').addEventListener('input', renderChallenge4);
+
+    renderChallenge1();
+    renderChallenge2();
+    renderChallenge3();
+    renderChallenge4();
+  </script>
+</body>
+</html>

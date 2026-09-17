@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Quiz Prep — Quick Reference — MCR3U1 Review</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#3b4f94; --accent-dark:#2b3a70; --accent-tint:#e8ebf6; }
+
+  .topic-card {
+    background:#fff; border:1px solid #ddd; border-left:4px solid var(--accent);
+    border-radius:8px; padding:1rem 1.3rem; margin-bottom:1.1rem;
+  }
+  .topic-card h2 { border-top:none; padding-top:0; margin-top:0; }
+  .topic-card ol, .topic-card ul { margin:0.4rem 0 0.6rem; padding-left:1.3rem; }
+  .topic-card .example {
+    background:var(--accent-tint); border-radius:6px; padding:0.6rem 0.9rem; margin-top:0.5rem; font-size:0.95rem;
+  }
+  .topic-card .go-deeper { margin-top:0.6rem; font-size:0.9rem; }
+  .toc { display:flex; flex-wrap:wrap; gap:0.5rem; margin:1rem 0 1.5rem; }
+  .toc a {
+    text-decoration:none; border:1px solid var(--accent); color:var(--accent-dark);
+    border-radius:6px; padding:0.35rem 0.8rem; font-size:0.9rem; font-weight:600;
+  }
+  .toc a:hover { background:var(--accent-tint); }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../../../index.html">&larr; All courses</a>
+    <a href="../index.html">MCR3U1 — Functions</a>
+    <span class="crumb-current">Quiz Prep — Quick Reference</span>
+  </div>
+  <div class="wrap">
+    <h1>Quiz Prep — Quick Reference</h1>
+    <p class="subtitle">MCR3U1 &middot; Prerequisite Skills Quiz</p>
+
+    <div class="callout">
+      Six topics, one page. This is a condensed procedure reference for last-minute review — for
+      interactive practice on any topic, follow the "Go deeper" link in that section.
+    </div>
+
+    <div class="toc">
+      <a href="#linear-functions">Linear Functions</a>
+      <a href="#linear-systems">Linear Systems</a>
+      <a href="#expanding">Expanding</a>
+      <a href="#factoring">Factoring</a>
+      <a href="#quadratics">Quadratics</a>
+      <a href="#exponents">Exponents</a>
+    </div>
+
+    <div class="topic-card" id="linear-functions">
+      <h2>1. Linear Functions</h2>
+      <p><strong>y = mx + b</strong> — m is slope (rise/run), b is the y-intercept.</p>
+      <ol>
+        <li>Given two points, find slope: m = (y₂ − y₁) / (x₂ − x₁)</li>
+        <li>Substitute one point into y = mx + b and solve for b — or use point-slope form: y − y₁ = m(x − x₁)</li>
+        <li>Parallel lines: same slope. Perpendicular lines: slopes multiply to −1.</li>
+      </ol>
+      <div class="example">Line through (5, 5) and (−10, −4): m = 9/15 = 3/5. Sub (5,5): 5 = 3/5(5) + b → b = 2. y = (3/5)x + 2</div>
+      <div class="go-deeper"><a href="linear-functions.html">Go deeper: Linear Functions &rarr;</a></div>
+    </div>
+
+    <div class="topic-card" id="linear-systems">
+      <h2>2. Linear Systems</h2>
+      <ol>
+        <li><strong>Substitution:</strong> use when a variable is already isolated (or easy to isolate).</li>
+        <li><strong>Elimination:</strong> use when coefficients already match, or can be scaled to match easily — multiply one or both equations, then add or subtract to cancel a variable.</li>
+        <li>Solve for the first variable, then substitute back to find the second. Check both equations.</li>
+      </ol>
+      <div class="example">3x − 5y = −4 and 2x − 3y = −2: ×2 and ×3 to match x-coefficients → 6x − 10y = −8, 6x − 9y = −6 → subtract → −y = −2 → y = 2, x = 2.</div>
+      <div class="go-deeper"><a href="linear-systems.html">Go deeper: Substitution vs. Elimination &rarr;</a></div>
+    </div>
+
+    <div class="topic-card" id="expanding">
+      <h2>3. Expanding &amp; Simplifying</h2>
+      <ol>
+        <li>Distribute every term inside brackets by whatever's multiplying the bracket.</li>
+        <li>For (a + b)², expand as (a + b)(a + b) — don't forget the middle term.</li>
+        <li>Combine like terms at the end, and watch signs when subtracting a whole bracket.</li>
+      </ol>
+      <div class="example">2(3x − 2)² − 3(x − 1)(x + 5) = 2(9x² − 12x + 4) − 3(x² + 4x − 5) = 18x² − 24x + 8 − 3x² − 12x + 15 = 15x² − 36x + 23</div>
+      <div class="go-deeper"><a href="practice-set.html">Go deeper: Practice Set &rarr;</a></div>
+    </div>
+
+    <div class="topic-card" id="factoring">
+      <h2>4. Factoring</h2>
+      <ol>
+        <li>Always look for a GCF first.</li>
+        <li>2 terms → difference of squares: a² − b² = (a − b)(a + b)</li>
+        <li>3 terms → trinomial: find two numbers with product = a×c, sum = b. Simple (a=1): write directly. Complex (a≠1): split the middle term and group.</li>
+        <li>4 terms → group into pairs, common-factor each, factor out the shared binomial.</li>
+        <li>Perfect square trinomial "find k" questions: use b² = 4ac and solve for the missing value.</li>
+      </ol>
+      <div class="example">9x² + kx + 25 is a perfect square: k² = 4(9)(25) = 900 → k = ±30</div>
+      <div class="go-deeper"><a href="factoring-tool.html">Go deeper: Factoring Path Finder &rarr;</a></div>
+    </div>
+
+    <div class="topic-card" id="quadratics">
+      <h2>5. Quadratics</h2>
+      <ol>
+        <li>Vertex form: y = a(x − h)² + k. Vertex (h, k), axis of symmetry x = h, opens up if a &gt; 0, down if a &lt; 0.</li>
+        <li>y-intercept: substitute x = 0.</li>
+        <li>To get vertex form from y = x² + bx + c: complete the square — take half of b, square it, add and subtract it, then rewrite the perfect square trinomial as (x + b/2)².</li>
+        <li>Roots from vertex form: set y = 0 and solve (x − h)² = −k, so x = h ± √(−k) (only if −k ≥ 0).</li>
+      </ol>
+      <div class="example">y = x² + 10x + 20 → (x + 5)² − 5. Vertex (−5, −5). Roots: x = −5 ± √5</div>
+      <div class="go-deeper"><a href="vertex-transformations.html">Go deeper: Vertex Transformations &rarr;</a> &nbsp;|&nbsp; <a href="completing-the-square.html">Completing the Square &rarr;</a></div>
+    </div>
+
+    <div class="topic-card" id="exponents">
+      <h2>6. Exponents</h2>
+      <ol>
+        <li>Same base only: a<sup>m</sup> × a<sup>n</sup> = a<sup>m+n</sup>, a<sup>m</sup> ÷ a<sup>n</sup> = a<sup>m−n</sup></li>
+        <li>Power of a power: (a<sup>m</sup>)<sup>n</sup> = a<sup>mn</sup></li>
+        <li>Negative exponent: a<sup>−n</sup> = 1/a<sup>n</sup>. Zero exponent: a⁰ = 1.</li>
+        <li>Always follow order of operations for anything outside the exponent rules.</li>
+      </ol>
+      <div class="example">(4¹⁵)⁵ × (4⁻¹²)⁶ = 4⁷⁵ × 4⁻⁷² = 4³ = 64</div>
+      <div class="go-deeper"><a href="exponent-laws.html">Go deeper: Exponent Laws Checker &rarr;</a></div>
+    </div>
+
+    <div class="callout">
+      <strong>Try this:</strong> Cover the "example" box in each section above and redo that example
+      cold on paper before checking it. If you get through all six without peeking, you're in good shape
+      for Thursday.
+    </div>
+  </div>
+</body>
+</html>

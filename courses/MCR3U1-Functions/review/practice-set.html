@@ -89,12 +89,21 @@ const questions = [
   { id: "poly2", section: "Expanding & Simplifying", prompt: "Expand and simplify: (x + 7)(x − 3)", answer: "x² − 3x + 7x − 21 = x² + 4x − 21" },
   { id: "poly3", section: "Expanding & Simplifying", prompt: "Expand and simplify: (3u − 2)²", answer: "(3u − 2)(3u − 2) = 9u² − 6u − 6u + 4 = 9u² − 12u + 4" },
   { id: "poly4", section: "Expanding & Simplifying", prompt: "Expand and simplify: 3(x² − 2x + 1) − 2(x² + x − 5)", answer: "3x² − 6x + 3 − 2x² − 2x + 10 = x² − 8x + 13" },
+  { id: "poly5", section: "Expanding & Simplifying", prompt: "Expand and simplify: 2(3x − 2)² − 3(x − 1)(x + 5)", answer: "2(9x² − 12x + 4) − 3(x² + 4x − 5) = 18x² − 24x + 8 − 3x² − 12x + 15 = 15x² − 36x + 23" },
 
   { id: "fac1", section: "Factoring", prompt: "Factor: x² − 2x − 24", answer: "Two numbers with product −24, sum −2: −6 and 4. (x − 6)(x + 4)" },
   { id: "fac2", section: "Factoring", prompt: "Factor: 2x² + 24x + 72", answer: "GCF of 2 first: 2(x² + 12x + 36). Then (x + 6)(x + 6) = 2(x + 6)²" },
   { id: "fac3", section: "Factoring", prompt: "Factor: 4x² − 25", answer: "Difference of squares: (2x)² − (5)² = (2x − 5)(2x + 5)" },
   { id: "fac4", section: "Factoring", prompt: "Factor: 3k² − 10k + 7", answer: "Product = 3×7 = 21, sum = −10 → −3 and −7. 3k² − 3k − 7k + 7 = 3k(k − 1) − 7(k − 1) = (k − 1)(3k − 7)" },
   { id: "fac5", section: "Factoring", prompt: "Factor: 4x + mx − 4y − my", answer: "Group: (4x + mx) − (4y + my) = x(4 + m) − y(4 + m) = (4 + m)(x − y)" },
+  { id: "fac6", section: "Factoring", prompt: "Factor: 6s² − 11st − 10t²", answer: "Product = 6×(−10) = −60, sum = −11 → −15 and 4. 6s² − 15st + 4st − 10t² = 3s(2s − 5t) + 2t(2s − 5t) = (2s − 5t)(3s + 2t)" },
+  { id: "fac7", section: "Factoring", prompt: "Determine the value(s) of k so that x² − 12x + k is a perfect square trinomial.", answer: "Use b² = 4ac: (−12)² = 4(1)(k) → 144 = 4k → k = 36" },
+  { id: "fac8", section: "Factoring", prompt: "Determine the value(s) of k so that 9x² + kx + 25 is a perfect square trinomial.", answer: "Use b² = 4ac: k² = 4(9)(25) = 900 → k = ±30" },
+
+  { id: "cts1", section: "Completing the Square", prompt: "Rewrite y = x² + 6x − 1 in the form y = (x − h)² + k by completing the square. State the vertex.", answer: "Half of 6 is 3, 3² = 9. y = x² + 6x + 9 − 9 − 1 = (x + 3)² − 10. Vertex: (−3, −10)" },
+  { id: "cts2", section: "Completing the Square", prompt: "Rewrite y = x² + 10x + 20 by completing the square, and state the vertex and roots.", answer: "Half of 10 is 5, 5² = 25. y = (x + 5)² − 25 + 20 = (x + 5)² − 5. Vertex: (−5, −5). Roots: x = −5 ± √5" },
+  { id: "cts3", section: "Completing the Square", prompt: "Rewrite y = x² − 6x − 4 by completing the square, and state the vertex and roots.", answer: "Half of −6 is −3, (−3)² = 9. y = (x − 3)² − 9 − 4 = (x − 3)² − 13. Vertex: (3, −13). Roots: x = 3 ± √13" },
+  { id: "cts4", section: "Completing the Square", prompt: "Rewrite y = x² − 12x + 8 by completing the square, and state the vertex and roots.", answer: "Half of −12 is −6, (−6)² = 36. y = (x − 6)² − 36 + 8 = (x − 6)² − 28. Vertex: (6, −28). Roots: x = 6 ± 2√7" },
 
   { id: "quad1", section: "Quadratics", prompt: "State the vertex, axis of symmetry, and direction of opening: y = 2(x + 3)² − 7", answer: "Vertex: (−3, −7). Axis of symmetry: x = −3. Opens up (a = 2 > 0)." },
   { id: "quad2", section: "Quadratics", prompt: "State the y-intercept of y = −3(x − 7)² − 11", answer: "Sub x = 0: y = −3(0 − 7)² − 11 = −3(49) − 11 = −158" },

@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Octal &amp; Other Number Systems</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#8a6d1a; --accent-dark:#6b5313; --accent-tint:#f6f0dc; }
+
+  table.compare {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--sans);
+    font-size: 14px;
+    margin: 16px 0;
+  }
+  table.compare th, table.compare td {
+    border: 1px solid var(--line);
+    padding: 8px 12px;
+    text-align: left;
+  }
+  table.compare th { background: var(--accent-tint); }
+
+  .tab-row { display:flex; justify-content:center; gap:8px; margin-bottom: 20px; flex-wrap: wrap; }
+  input.conv-input {
+    font-family: var(--mono);
+    font-size: 18px;
+    padding: 6px 10px;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    width: 200px;
+    text-align: center;
+  }
+  .binary-groups { display:flex; justify-content:center; gap:6px; flex-wrap:wrap; margin: 12px 0; }
+  .triple-block {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 6px 8px;
+    border-radius: 7px;
+    background: var(--accent-tint);
+    font-family: var(--mono);
+  }
+  .triple-block .oct-digit { font-size: 18px; font-weight: 700; color: var(--accent-dark); }
+  .triple-block .bin-val { font-size: 12px; color: var(--ink-soft); }
+
+  table.remainder {
+    border-collapse: collapse;
+    font-family: var(--mono);
+    font-size: 14px;
+    margin: 10px auto;
+  }
+  table.remainder th, table.remainder td {
+    border: 1px solid var(--line);
+    padding: 6px 16px;
+    text-align: center;
+  }
+  table.remainder th { background: var(--accent-tint); }
+  .readout-bottom-up { text-align:center; font-family: var(--mono); font-size:13px; color:var(--ink-soft); margin-top:6px; }
+  .error-text { text-align:center; color:#b3261e; font-family: var(--sans); font-size: 13.5px; }
+
+  .baseN-row { display:flex; justify-content:center; gap:14px; align-items:center; flex-wrap:wrap; margin: 14px 0; }
+  #baseSlider { width: 200px; }
+  .expand-row {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    flex-wrap: wrap;
+    font-family: var(--mono);
+    font-size: 13px;
+    margin: 14px 0 8px;
+  }
+  .expand-cell {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 6px 9px;
+    text-align: center;
+    min-width: 50px;
+  }
+  .expand-cell .digit { font-size: 16px; font-weight: 700; color: var(--accent-dark); }
+  .expand-cell .place { font-size: 10px; color: var(--ink-soft); margin-top: 2px; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../index.html">&larr; TER3MU</a>
+    <span class="crumb-current">Octal &amp; Other Number Systems</span>
+  </div>
+
+  <div class="wrap">
+    <h1>Octal &amp; Other Number Systems</h1>
+    <p class="subtitle">Unit 1 &nbsp;&middot;&nbsp; 1.4 Other Systems</p>
+
+    <div class="panel">
+      <p>Every number system you've seen so far &mdash; decimal, binary, hex &mdash; follows the exact same rule: pick a base <em>N</em>, allow digits from 0 up to <em>N&minus;1</em>, and a number's value is the sum of each digit times a power of <em>N</em>. Octal (base 8) is just one more example, and it matters here because, like hex, 8 is a power of 2 (2<sup>3</sup> = 8) &mdash; so octal digits also convert to binary in fixed-size groups, this time 3 bits at a time instead of 4.</p>
+      <table class="compare">
+        <tr><th>System</th><th>Base</th><th>Digits</th><th>Bits per digit</th><th>Common use</th></tr>
+        <tr><td>Binary</td><td>2</td><td>0&ndash;1</td><td>1</td><td>What the hardware actually stores</td></tr>
+        <tr><td>Octal</td><td>8</td><td>0&ndash;7</td><td>3</td><td>Older Unix file permissions, some memory/networking addresses</td></tr>
+        <tr><td>Hexadecimal</td><td>16</td><td>0&ndash;9, A&ndash;F</td><td>4</td><td>Everyday shorthand for binary in code</td></tr>
+      </table>
+    </div>
+
+    <div class="tab-row">
+      <button class="op-btn" data-tab="o2db" data-active="true">Octal &rarr; Decimal &amp; Binary</button>
+      <button class="op-btn" data-tab="d2ob">Decimal &rarr; Octal &amp; Binary</button>
+      <button class="op-btn" data-tab="b2od">Binary &rarr; Octal &amp; Decimal</button>
+    </div>
+
+    <!-- OCTAL -> DECIMAL & BINARY -->
+    <div id="panelO2D" class="demo">
+      <h3 style="text-align:center;">Enter an octal number (digits 0&ndash;7)</h3>
+      <div style="text-align:center;">
+        <input type="text" class="conv-input" id="octInput" value="546">
+      </div>
+      <div id="octError" class="error-text"></div>
+
+      <h3 style="text-align:center; margin-top:22px;">As binary (3 bits per octal digit)</h3>
+      <div class="binary-groups" id="octToBinGroups"></div>
+
+      <h3 style="text-align:center; margin-top:22px;">As decimal (place value, base 8)</h3>
+      <div class="expand-row" id="octExpandRow"></div>
+      <div class="decimal-readout" id="octToDecSum"></div>
+    </div>
+
+    <!-- DECIMAL -> OCTAL & BINARY -->
+    <div id="panelD2O" class="demo" style="display:none;">
+      <h3 style="text-align:center;">Enter a decimal number</h3>
+      <div style="text-align:center;">
+        <input type="text" class="conv-input" id="decInputOct" value="358">
+      </div>
+      <table class="remainder" id="remainderTableOct"></table>
+      <div class="readout-bottom-up" id="remainderResultOct"></div>
+
+      <h3 style="text-align:center; margin-top:22px;">That octal result, as binary</h3>
+      <div class="binary-groups" id="decToBinGroupsOct"></div>
+    </div>
+
+    <!-- BINARY -> OCTAL & DECIMAL -->
+    <div id="panelB2O" class="demo" style="display:none;">
+      <h3 style="text-align:center;">Enter a binary number (any length, spaces optional)</h3>
+      <div style="text-align:center;">
+        <input type="text" class="conv-input" id="binInputOct" value="101100110">
+      </div>
+      <div id="binErrorOct" class="error-text"></div>
+
+      <h3 style="text-align:center; margin-top:22px;">Grouped into 3-bit chunks from the right</h3>
+      <div class="binary-groups" id="binToOctGroups"></div>
+      <div class="decimal-readout" id="binToDecReadoutOct" style="margin-top:10px;"></div>
+    </div>
+
+    <div class="callout">
+      <strong>Try this:</strong> Convert octal <span style="font-family:var(--mono)">546</span> to binary by hand (3 bits per digit) before checking the tool. Notice the raw result doesn't line up with a nibble boundary the way hex does &mdash; if you needed it in programmer's byte format, you'd re-pad it to a multiple of 4 bits using the <a href="programmers-format.html">Programmer's Format</a> page.
+    </div>
+
+    <div class="panel">
+      <h2 style="border:none;padding:0;margin:0 0 10px;">Generalizing to any base N</h2>
+      <p>Nothing about place value actually requires base 2, 8, 10, or 16 specifically. For any base <em>N</em> &gt; 1, digits run from 0 to <em>N&minus;1</em> (using letters once you pass 9, the same way hex does), and a number's value is still just the sum of digit &times; N<sup>position</sup>. For example, in base 18, the digits <span style="font-family:var(--mono)">9HA3</span> mean: 9&times;18&sup3; + 17&times;18&sup2; + 10&times;18&sup9; + 3&times;18&#8304; (H is the 17th letter-digit, A is the 10th).</p>
+
+      <h3 style="text-align:center; margin-top:20px;">Base-N Place Value Explorer</h3>
+      <div class="baseN-row">
+        <label>Base (N): <input type="range" id="baseSlider" min="2" max="36" value="18"><strong id="baseLabel">18</strong></label>
+        <input type="text" class="conv-input" id="baseNInput" value="9HA3" style="width:140px;">
+      </div>
+      <div id="baseNError" class="error-text"></div>
+      <div class="expand-row" id="baseNExpandRow"></div>
+      <div class="decimal-readout" id="baseNSum"></div>
+    </div>
+  </div>
+
+  <script>
+    function toSup(n) {
+      const map = {'0':'\u2070','1':'\u00b9','2':'\u00b2','3':'\u00b3','4':'\u2074','5':'\u2075','6':'\u2076','7':'\u2077','8':'\u2078','9':'\u2079'};
+      return String(n).split('').map(d => map[d]).join('');
+    }
+
+    // ---------- OCTAL -> DECIMAL & BINARY ----------
+    function renderOctToDecBin() {
+      const raw = document.getElementById('octInput').value.trim();
+      const errBox = document.getElementById('octError');
+      if (!/^[0-7]+$/.test(raw) || raw.length === 0) {
+        errBox.textContent = 'Enter digits 0\u20137 only.';
+        document.getElementById('octToBinGroups').innerHTML = '';
+        document.getElementById('octExpandRow').innerHTML = '';
+        document.getElementById('octToDecSum').innerHTML = '';
+        return;
+      }
+      errBox.textContent = '';
+
+      const groups = raw.split('').map(ch => ({ oct: ch, bin: parseInt(ch, 8).toString(2).padStart(3, '0') }));
+      const gc = document.getElementById('octToBinGroups');
+      gc.innerHTML = '';
+      groups.forEach(g => {
+        const block = document.createElement('div');
+        block.className = 'triple-block';
+        block.innerHTML = `<div class="oct-digit">${g.oct}</div><div class="bin-val">${g.bin}</div>`;
+        gc.appendChild(block);
+      });
+
+      const expandRow = document.getElementById('octExpandRow');
+      expandRow.innerHTML = '';
+      const n = raw.length;
+      let total = 0, terms = [];
+      raw.split('').forEach((ch, i) => {
+        const position = n - 1 - i;
+        const v = parseInt(ch, 8);
+        total += v * Math.pow(8, position);
+        const cell = document.createElement('div');
+        cell.className = 'expand-cell';
+        cell.innerHTML = `<div class="digit">${ch}</div><div class="place">&times;8<sup>${position}</sup></div>`;
+        expandRow.appendChild(cell);
+        terms.push(`${v}&times;8${toSup(position)}`);
+      });
+      document.getElementById('octToDecSum').innerHTML = `${terms.join(' + ')} = <strong>${total}</strong> (decimal)`;
+    }
+
+    // ---------- DECIMAL -> OCTAL & BINARY ----------
+    function renderDecToOctBin() {
+      const raw = document.getElementById('decInputOct').value.trim();
+      const n = /^\d+$/.test(raw) ? Number(raw) : 0;
+
+      const table = document.getElementById('remainderTableOct');
+      table.innerHTML = '<tr><th>Divide by 8</th><th>Quotient</th><th>Remainder</th></tr>';
+      let steps = [];
+      let cur = n;
+      if (cur === 0) steps.push([0, 0, 0]);
+      while (cur > 0) {
+        const rem = cur % 8;
+        const quot = Math.floor(cur / 8);
+        steps.push([cur, quot, rem]);
+        cur = quot;
+      }
+      steps.forEach(([dividend, quot, rem]) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${dividend}</td><td>${quot}</td><td>${rem}</td>`;
+        table.appendChild(tr);
+      });
+      const oct = steps.map(s => s[2]).reverse().join('') || '0';
+      document.getElementById('remainderResultOct').innerHTML = `Read the remainders bottom to top: <strong>${oct}</strong>`;
+
+      const groups = oct.split('').map(ch => ({ oct: ch, bin: parseInt(ch, 8).toString(2).padStart(3, '0') }));
+      const gc = document.getElementById('decToBinGroupsOct');
+      gc.innerHTML = '';
+      groups.forEach(g => {
+        const block = document.createElement('div');
+        block.className = 'triple-block';
+        block.innerHTML = `<div class="oct-digit">${g.oct}</div><div class="bin-val">${g.bin}</div>`;
+        gc.appendChild(block);
+      });
+    }
+
+    // ---------- BINARY -> OCTAL & DECIMAL ----------
+    function renderBinToOctDec() {
+      const raw = document.getElementById('binInputOct').value.replace(/\s+/g, '');
+      const errBox = document.getElementById('binErrorOct');
+      if (!/^[01]+$/.test(raw) || raw.length === 0) {
+        errBox.textContent = 'Enter digits 0 or 1 only.';
+        document.getElementById('binToOctGroups').innerHTML = '';
+        document.getElementById('binToDecReadoutOct').innerHTML = '';
+        return;
+      }
+      errBox.textContent = '';
+
+      const padLength = Math.ceil(raw.length / 3) * 3;
+      const padded = raw.padStart(padLength, '0');
+      let groups = [];
+      for (let i = 0; i < padded.length; i += 3) {
+        const chunk = padded.slice(i, i + 3);
+        groups.push({ oct: parseInt(chunk, 2).toString(8), bin: chunk });
+      }
+      const gc = document.getElementById('binToOctGroups');
+      gc.innerHTML = '';
+      groups.forEach(g => {
+        const block = document.createElement('div');
+        block.className = 'triple-block';
+        block.innerHTML = `<div class="oct-digit">${g.oct}</div><div class="bin-val">${g.bin}</div>`;
+        gc.appendChild(block);
+      });
+
+      const decimal = parseInt(raw, 2);
+      document.getElementById('binToDecReadoutOct').innerHTML = `decimal: <strong>${decimal}</strong>`;
+    }
+
+    // Tabs
+    document.querySelectorAll('.tab-row .op-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-row .op-btn').forEach(b => b.dataset.active = 'false');
+        btn.dataset.active = 'true';
+        document.getElementById('panelO2D').style.display = btn.dataset.tab === 'o2db' ? '' : 'none';
+        document.getElementById('panelD2O').style.display = btn.dataset.tab === 'd2ob' ? '' : 'none';
+        document.getElementById('panelB2O').style.display = btn.dataset.tab === 'b2od' ? '' : 'none';
+      });
+    });
+
+    document.getElementById('octInput').addEventListener('input', renderOctToDecBin);
+    document.getElementById('decInputOct').addEventListener('input', renderDecToOctBin);
+    document.getElementById('binInputOct').addEventListener('input', renderBinToOctDec);
+
+    // ---------- BASE-N EXPLORER ----------
+    function digitValue(ch) {
+      const c = ch.toUpperCase();
+      if (c >= '0' && c <= '9') return c.charCodeAt(0) - '0'.charCodeAt(0);
+      return c.charCodeAt(0) - 'A'.charCodeAt(0) + 10;
+    }
+    function digitChar(v) {
+      return v < 10 ? String(v) : String.fromCharCode('A'.charCodeAt(0) + v - 10);
+    }
+
+    function renderBaseN() {
+      const base = Number(document.getElementById('baseSlider').value);
+      document.getElementById('baseLabel').textContent = base;
+      const raw = document.getElementById('baseNInput').value.trim().toUpperCase();
+      const errBox = document.getElementById('baseNError');
+
+      if (raw.length === 0 || ![...raw].every(ch => /[0-9A-Z]/.test(ch))) {
+        errBox.textContent = 'Use digits 0\u20139 and letters A\u2013Z only.';
+        document.getElementById('baseNExpandRow').innerHTML = '';
+        document.getElementById('baseNSum').innerHTML = '';
+        return;
+      }
+      const badDigit = [...raw].find(ch => digitValue(ch) >= base);
+      if (badDigit) {
+        errBox.textContent = `"${badDigit}" isn't a valid digit in base ${base} (digits must be less than the base).`;
+        document.getElementById('baseNExpandRow').innerHTML = '';
+        document.getElementById('baseNSum').innerHTML = '';
+        return;
+      }
+      errBox.textContent = '';
+
+      const expandRow = document.getElementById('baseNExpandRow');
+      expandRow.innerHTML = '';
+      const n = raw.length;
+      let total = 0, terms = [];
+      raw.split('').forEach((ch, i) => {
+        const position = n - 1 - i;
+        const v = digitValue(ch);
+        total += v * Math.pow(base, position);
+        const cell = document.createElement('div');
+        cell.className = 'expand-cell';
+        cell.innerHTML = `<div class="digit">${ch}</div><div class="place">(${v})&times;${base}<sup>${position}</sup></div>`;
+        expandRow.appendChild(cell);
+        terms.push(`${v}&times;${base}${toSup(position)}`);
+      });
+      document.getElementById('baseNSum').innerHTML = `${terms.join(' + ')} = <strong>${total}</strong> (decimal)`;
+    }
+
+    document.getElementById('baseSlider').addEventListener('input', renderBaseN);
+    document.getElementById('baseNInput').addEventListener('input', renderBaseN);
+
+    renderOctToDecBin();
+    renderDecToOctBin();
+    renderBinToOctDec();
+    renderBaseN();
+  </script>
+</body>
+</html>

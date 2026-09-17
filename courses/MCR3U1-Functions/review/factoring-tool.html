@@ -94,6 +94,28 @@
     </div>
 
     <div class="panel">
+      <h2>Perfect square trinomials — finding a missing value</h2>
+      <p>A trinomial ax² + bx + c is a perfect square exactly when <strong>b² = 4ac</strong>. That's the
+      test to use whenever a question asks you to find the value of k that makes a trinomial a perfect
+      square — set up that equation and solve for the missing piece.</p>
+
+      <div class="path-col">
+        <h3>Worked example: x² − 12x + k</h3>
+        <div id="psqSteps1"></div>
+        <button class="choice-btn" id="psqNext1">Show next step</button>
+      </div>
+
+      <div class="path-col" style="margin-top:1rem;">
+        <h3>Worked example: 9x² + kx + 25</h3>
+        <div id="psqSteps2"></div>
+        <button class="choice-btn" id="psqNext2">Show next step</button>
+      </div>
+
+      <h3 style="margin-top:1.5rem;">Quick check</h3>
+      <div id="psqQuizArea"></div>
+    </div>
+
+    <div class="panel">
       <h2>Quick check</h2>
       <p>For each polynomial, choose the method you'd reach for <em>first</em> (after checking for a GCF). Then reveal the worked answer.</p>
       <div id="quizArea"></div>
@@ -120,6 +142,7 @@ const branches = {
   2: {
     label: "2 terms — Difference of Squares",
     note: "Only applies when both terms are perfect squares and they're being subtracted: a² − b².",
+    procedure: ["Confirm both terms are perfect squares.", "Confirm they're being subtracted, not added.", "Write a² − b² = (a − b)(a + b), where a and b are the square roots of the two terms."],
     example: "x² − 81",
     steps: [
       { tag: "Recognize", text: "x² and 81 are both perfect squares: x² = (x)², 81 = (9)²." },
@@ -130,6 +153,7 @@ const branches = {
   3: {
     label: "3 terms — Trinomial",
     note: "If the leading coefficient is 1, it's a simple trinomial (find two numbers that multiply to c and add to b). If the leading coefficient isn't 1, it's a complex trinomial (use the product/sum method: find two numbers with product = a×c and sum = b, then split the middle term and group).",
+    procedure: ["Common-factor first if possible.", "Multiply a × c (a = 1 for a simple trinomial).", "Find two numbers with that product whose sum is b.", "Simple trinomial: write those two numbers directly as (x + first)(x + second).", "Complex trinomial: split the middle term using those two numbers, then factor by grouping."],
     example: "2x² − 2x − 40  (complex trinomial — GCF of 2 comes out first)",
     steps: [
       { tag: "Common factor", text: "2x² − 2x − 40 = 2(x² − x − 20)" },
@@ -141,6 +165,7 @@ const branches = {
   4: {
     label: "4 terms — Grouping",
     note: "Split into two pairs, common-factor each pair, then factor out the shared binomial.",
+    procedure: ["Split the four terms into two pairs.", "Common-factor each pair separately.", "Check the two pairs now share the same binomial factor.", "Factor that shared binomial out front."],
     example: "5x³ − 10x² + 3x − 6",
     steps: [
       { tag: "Group in pairs", text: "(5x³ − 10x²) + (3x − 6)" },
@@ -160,7 +185,10 @@ function renderBranch(n) {
 
   const b = branches[n];
   const branchArea = document.getElementById('branchArea');
-  branchArea.innerHTML = `<h3 style="margin-top:0;">${b.label}</h3><p>${b.note}</p><p><strong>Example:</strong> ${b.example}</p>`;
+  branchArea.innerHTML = `<h3 style="margin-top:0;">${b.label}</h3><p>${b.note}</p>
+    <p><strong>General procedure:</strong></p>
+    <ol>${b.procedure.map(p => `<li>${p}</li>`).join('')}</ol>
+    <p><strong>Example:</strong> ${b.example}</p>`;
 
   currentSteps = b.steps;
   stepIndex = 0;
@@ -228,6 +256,74 @@ quizArea.addEventListener('click', (e) => {
     fb.className = 'quiz-feedback correct';
   } else {
     fb.textContent = `Not quite. Correct method: ${q.answer}. ${q.solution}`;
+    fb.className = 'quiz-feedback wrong';
+  }
+});
+
+// Perfect square trinomial worked examples
+const psqSteps1 = [
+  { tag: "Identify a, b, c", text: "x² − 12x + k → a = 1, b = −12, c = k" },
+  { tag: "Apply b² = 4ac", text: "(−12)² = 4(1)(k)" },
+  { tag: "Solve", text: "144 = 4k → k = 36" }
+];
+const psqSteps2 = [
+  { tag: "Identify a, b, c", text: "9x² + kx + 25 → a = 9, b = k, c = 25" },
+  { tag: "Apply b² = 4ac", text: "k² = 4(9)(25) = 900" },
+  { tag: "Solve", text: "k = ±√900 = ±30" }
+];
+
+function setupPsqStepper(steps, containerId, btnId) {
+  let idx = 0;
+  const container = document.getElementById(containerId);
+  container.innerHTML = steps.map((s, i) => `<div class="step" id="${containerId}_${i}"><span class="tag">${s.tag}</span><br>${s.text}</div>`).join('');
+  const btn = document.getElementById(btnId);
+  btn.addEventListener('click', () => {
+    if (idx < steps.length) {
+      document.getElementById(`${containerId}_${idx}`).classList.add('shown');
+      idx++;
+    }
+    if (idx >= steps.length) {
+      btn.disabled = true;
+      btn.textContent = "All steps shown";
+    }
+  });
+}
+setupPsqStepper(psqSteps1, 'psqSteps1', 'psqNext1');
+setupPsqStepper(psqSteps2, 'psqSteps2', 'psqNext2');
+
+const psqQuizQuestions = [
+  { expr: "kx² − 4x + 1", answer: "4", solution: "b² = 4ac → (−4)² = 4(k)(1) → 16 = 4k → k = 4" },
+  { expr: "16y² + ky + 9", answer: "±24", solution: "b² = 4ac → k² = 4(16)(9) = 576 → k = ±24" },
+  { expr: "4x² − 24x + k", answer: "36", solution: "b² = 4ac → (−24)² = 4(4)(k) → 576 = 16k → k = 36" }
+];
+
+const psqQuizArea = document.getElementById('psqQuizArea');
+psqQuizQuestions.forEach((q, i) => {
+  const card = document.createElement('div');
+  card.className = 'quiz-card';
+  card.innerHTML = `
+    <div class="quiz-expr">${q.expr}</div>
+    <div class="prob-row" style="display:flex; gap:0.6rem; align-items:center;">
+      <input type="text" id="psqAns${i}" placeholder="k = ?" style="border:1px solid #bbb; border-radius:6px; padding:0.3rem 0.6rem; width:6rem;">
+      <button class="opt" data-psq="${i}">Check</button>
+    </div>
+    <div class="quiz-feedback" id="psqFb${i}"></div>
+  `;
+  psqQuizArea.appendChild(card);
+});
+
+psqQuizArea.addEventListener('click', (e) => {
+  if (!e.target.dataset.psq) return;
+  const i = e.target.dataset.psq;
+  const q = psqQuizQuestions[i];
+  const raw = document.getElementById(`psqAns${i}`).value.trim().replace(/\s+/g, '');
+  const fb = document.getElementById(`psqFb${i}`);
+  const accepted = [q.answer.replace(/\s+/g, ''), q.answer.replace('±', '-'), q.answer.replace('±', '+')];
+  if (accepted.some(a => a === raw)) {
+    fb.textContent = "Correct — " + q.solution;
+    fb.className = 'quiz-feedback correct';
+  } else {
+    fb.textContent = `Not quite. ${q.solution}`;
     fb.className = 'quiz-feedback wrong';
   }
 });

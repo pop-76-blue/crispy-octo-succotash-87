@@ -103,7 +103,7 @@
 
   <div class="wrap">
     <h1>Unit 1 Quiz Prep — Practice Set</h1>
-    <p class="subtitle">Covers 1.1 Decimal, 1.2 Binary through 1.2.8 Bitwise Operations, 1.3 Hexadecimal, and the Babbage history segment</p>
+    <p class="subtitle">Covers 1.1 Decimal, 1.2 Binary through 1.2.8 Bitwise Operations, 1.3 Hexadecimal &amp; notations, 1.4 Octal, and the Babbage history segment</p>
 
     <div class="callout" style="margin-bottom:20px;">
       <strong>Heads up about the real quiz:</strong> the actual quiz on Wednesday is entirely <strong>multiple choice and true/false</strong> — no calculations to show work and no written answers. The calculation and written questions below are still worth doing (they test the same skills and catch mistakes a multiple-choice guess could hide), just don't expect that exact format on quiz day itself.
@@ -295,6 +295,52 @@
         options: ['True', 'False'],
         correct: 0,
         explanation: 'True. A byte splits evenly into two 4-bit nibbles, and each nibble maps to exactly one hex digit \u2014 so every byte value from 0 to 255 is some 2-digit hex value from 00 to FF.'
+      },
+      {
+        type: 'mc',
+        prompt: '28. Which hex value represents decimal 256?',
+        options: ['64', '100', 'FF', '10'],
+        correct: 1,
+        explanation: '256 = 16\u00b2, so like any power of the base, it appears as a 1 followed by zeroes in that base \u2014 the same reason powers of 2 look like a 1 followed by zeroes in binary. 256 in hex is 100.'
+      },
+      {
+        type: 'calc',
+        prompt: '29. What is FF:FF in decimal?',
+        answer: '65535',
+        explanation: 'FF:FF is just the colon-grouped notation for hex FFFF. F=15 in every position: 15\u00d716\u00b3 + 15\u00d716\u00b2 + 15\u00d716\u00b9 + 15\u00d716\u2070 = 65535 \u2014 one less than 16\u2074 = 65536, the same "all digits maxed out" pattern you saw with all-1s binary numbers.'
+      },
+      {
+        type: 'calc',
+        prompt: '30. Convert binary 11101011000111 to hexadecimal. Type it without spaces.',
+        answer: '3AC7',
+        explanation: 'Group from the right into 4-bit chunks, padding the leftmost group with zeroes: 0011 1010 1100 0111 \u2192 3 A C 7 \u2192 3AC7.'
+      },
+      {
+        type: 'mc',
+        prompt: '31. Which notation would you most likely see written directly inside a Java or C++ program?',
+        options: ['27E\u2081\u2086', '02:7E', '0x27E', 'binary 0010 0111 1110'],
+        correct: 2,
+        explanation: 'The 0x prefix (0x27E) is the standard way hex literals are written in C, C++, Java, and most other programming languages.'
+      },
+      {
+        type: 'tf',
+        prompt: '32. True or False: Octal digits range from 0 to 7, and each octal digit represents exactly 3 binary bits.',
+        options: ['True', 'False'],
+        correct: 0,
+        explanation: 'True. Since 2\u00b3 = 8, every possible 3-bit pattern (000 to 111) maps to exactly one octal digit (0 to 7), the same way 4-bit patterns map to hex digits.'
+      },
+      {
+        type: 'calc',
+        prompt: '33. Convert octal 546 to binary using 3-bit groups (no need to pad to a byte). Type the result without spaces.',
+        answer: '101100110',
+        explanation: '5 = 101, 4 = 100, 6 = 110. Concatenated: 101100110.'
+      },
+      {
+        type: 'mc',
+        prompt: '34. In a general base-N number system, what range of values can a single digit take?',
+        options: ['1 to N', '0 to N', '0 to N\u22121', '1 to N\u22121'],
+        correct: 2,
+        explanation: 'A digit always runs from 0 up to one less than the base. Base 10: 0\u20139. Base 16: 0\u2013F (0\u201315). Base 8: 0\u20137.'
       }
     ];
 
