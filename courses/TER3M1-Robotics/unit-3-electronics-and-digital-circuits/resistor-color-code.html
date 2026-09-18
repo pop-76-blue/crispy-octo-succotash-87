@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Resistor Color Code Decoder</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#8a6d1a; --accent-dark:#6b5313; --accent-tint:#f6f0dc; }
+
+  table.color-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--sans);
+    font-size: 13.5px;
+    margin: 16px 0;
+  }
+  table.color-table th, table.color-table td {
+    border: 1px solid var(--line);
+    padding: 6px 10px;
+    text-align: center;
+  }
+  table.color-table th { background: var(--accent-tint); }
+  .swatch { display:inline-block; width:16px; height:16px; border-radius:3px; border:1px solid rgba(0,0,0,0.2); vertical-align:middle; margin-right:6px; }
+
+  .band-selects { display:flex; justify-content:center; gap:16px; flex-wrap:wrap; margin: 16px 0; }
+  .band-select-block { display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .band-select-block label { font-family: var(--sans); font-size: 12px; color: var(--ink-soft); }
+  .band-select-block select { font-family: var(--sans); font-size: 14px; padding: 6px 8px; border-radius:5px; border:1px solid var(--line); }
+
+  #resistorSvg { display:block; margin: 20px auto; }
+  .error-text { text-align:center; color:#b3261e; font-family: var(--sans); font-size: 13.5px; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../index.html">&larr; TER3MU</a>
+    <span class="crumb-current">Resistor Color Code Decoder</span>
+  </div>
+
+  <div class="wrap">
+    <h1>Resistor Color Code Decoder</h1>
+    <p class="subtitle">Unit 3 &nbsp;&middot;&nbsp; Reading resistance from resistor colours</p>
+
+    <div class="panel">
+      <p>Resistors used in these labs have 4 colour bands, read left to right, with gold or silver always on the right. The first two bands are digits; the third is a multiplier (a power of 10); the fourth is the tolerance.</p>
+      <table class="color-table">
+        <tr><th>Colour</th><th>Digit</th><th>Multiplier</th></tr>
+        <tr><td><span class="swatch" style="background:#000"></span>Black</td><td>0</td><td>&times;10<sup>0</sup></td></tr>
+        <tr><td><span class="swatch" style="background:#7b4a2d"></span>Brown</td><td>1</td><td>&times;10<sup>1</sup></td></tr>
+        <tr><td><span class="swatch" style="background:#d32f2f"></span>Red</td><td>2</td><td>&times;10<sup>2</sup></td></tr>
+        <tr><td><span class="swatch" style="background:#f57c00"></span>Orange</td><td>3</td><td>&times;10<sup>3</sup></td></tr>
+        <tr><td><span class="swatch" style="background:#fdd835"></span>Yellow</td><td>4</td><td>&times;10<sup>4</sup></td></tr>
+        <tr><td><span class="swatch" style="background:#388e3c"></span>Green</td><td>5</td><td>&times;10<sup>5</sup></td></tr>
+        <tr><td><span class="swatch" style="background:#1976d2"></span>Blue</td><td>6</td><td>&times;10<sup>6</sup></td></tr>
+        <tr><td><span class="swatch" style="background:#7b1fa2"></span>Violet</td><td>7</td><td>&times;10<sup>7</sup></td></tr>
+        <tr><td><span class="swatch" style="background:#757575"></span>Gray</td><td>8</td><td>&times;10<sup>8</sup></td></tr>
+        <tr><td><span class="swatch" style="background:#ffffff; border-color:#999"></span>White</td><td>9</td><td>&times;10<sup>9</sup></td></tr>
+      </table>
+    </div>
+
+    <div class="demo">
+      <h3 style="text-align:center;">Pick the four bands</h3>
+      <div class="band-selects" id="bandSelects"></div>
+      <svg id="resistorSvg" width="260" height="90" viewBox="0 0 260 90"></svg>
+      <div class="decimal-readout" id="resistorResult"></div>
+      <div class="error-text" id="resistorError"></div>
+    </div>
+
+    <div class="callout">
+      <strong>Try this:</strong> Set bands to Red, Violet, Yellow, Gold and predict the resistance and tolerance range before checking &mdash; then compare against the 2.2M&Omega; worked example from class.
+    </div>
+  </div>
+
+  <script>
+    const digitColors = [
+      { name: 'Black', hex: '#000000', digit: 0 },
+      { name: 'Brown', hex: '#7b4a2d', digit: 1 },
+      { name: 'Red', hex: '#d32f2f', digit: 2 },
+      { name: 'Orange', hex: '#f57c00', digit: 3 },
+      { name: 'Yellow', hex: '#fdd835', digit: 4 },
+      { name: 'Green', hex: '#388e3c', digit: 5 },
+      { name: 'Blue', hex: '#1976d2', digit: 6 },
+      { name: 'Violet', hex: '#7b1fa2', digit: 7 },
+      { name: 'Gray', hex: '#757575', digit: 8 },
+      { name: 'White', hex: '#ffffff', digit: 9 }
+    ];
+    const toleranceColors = [
+      { name: 'Gold', hex: '#c9a227', pct: 5 },
+      { name: 'Silver', hex: '#c0c0c0', pct: 10 }
+    ];
+
+    let selected = { band1: 2, band2: 2, band3: 5, band4: 0 }; // Red Red Green Gold -> demo default matches 22x10^5
+
+    function buildSelects() {
+      const container = document.getElementById('bandSelects');
+      container.innerHTML = '';
+
+      function makeSelect(id, options, labelText, selectedIndex) {
+        const block = document.createElement('div');
+        block.className = 'band-select-block';
+        const label = document.createElement('label');
+        label.textContent = labelText;
+        const select = document.createElement('select');
+        options.forEach((opt, i) => {
+          const o = document.createElement('option');
+          o.value = i;
+          o.textContent = opt.name;
+          if (i === selectedIndex) o.selected = true;
+          select.appendChild(o);
+        });
+        select.addEventListener('change', () => {
+          selected[id] = Number(select.value);
+          render();
+        });
+        block.appendChild(label);
+        block.appendChild(select);
+        container.appendChild(block);
+      }
+
+      makeSelect('band1', digitColors, 'Band 1 (digit)', selected.band1);
+      makeSelect('band2', digitColors, 'Band 2 (digit)', selected.band2);
+      makeSelect('band3', digitColors, 'Band 3 (multiplier)', selected.band3);
+      makeSelect('band4', toleranceColors, 'Band 4 (tolerance)', selected.band4);
+    }
+
+    function drawResistor() {
+      const svg = document.getElementById('resistorSvg');
+      const c1 = digitColors[selected.band1].hex;
+      const c2 = digitColors[selected.band2].hex;
+      const c3 = digitColors[selected.band3].hex;
+      const c4 = toleranceColors[selected.band4].hex;
+
+      svg.innerHTML = `
+        <line x1="0" y1="45" x2="260" y2="45" stroke="#999" stroke-width="3"/>
+        <rect x="60" y="20" width="140" height="50" rx="20" fill="#e8c896" stroke="#c9a876" stroke-width="2"/>
+        <rect x="90" y="20" width="12" height="50" fill="${c1}" stroke="#0002"/>
+        <rect x="110" y="20" width="12" height="50" fill="${c2}" stroke="#0002"/>
+        <rect x="130" y="20" width="12" height="50" fill="${c3}" stroke="#0002"/>
+        <rect x="170" y="20" width="12" height="50" fill="${c4}" stroke="#0002"/>
+      `;
+    }
+
+    function formatOhms(v) {
+      if (v >= 1e6) return (v / 1e6).toString().replace(/\.?0+$/, '') + 'M\u03a9';
+      if (v >= 1e3) return (v / 1e3).toString().replace(/\.?0+$/, '') + 'k\u03a9';
+      return v + '\u03a9';
+    }
+
+    function render() {
+      drawResistor();
+      const d1 = digitColors[selected.band1].digit;
+      const d2 = digitColors[selected.band2].digit;
+      const mult = Math.pow(10, digitColors[selected.band3].digit);
+      const pct = toleranceColors[selected.band4].pct;
+
+      const base = (d1 * 10 + d2);
+      const value = base * mult;
+      const low = value * (1 - pct / 100);
+      const high = value * (1 + pct / 100);
+
+      document.getElementById('resistorResult').innerHTML =
+        `${d1}${d2} &times; 10<sup>${digitColors[selected.band3].digit}</sup> = <strong>${value.toLocaleString()}\u03a9</strong> (${formatOhms(value)}) &nbsp;&middot;&nbsp; \u00b1${pct}% range: ${formatOhms(Math.round(low))} to ${formatOhms(Math.round(high))}`;
+      document.getElementById('resistorError').textContent = '';
+    }
+
+    buildSelects();
+    render();
+  </script>
+</body>
+</html>

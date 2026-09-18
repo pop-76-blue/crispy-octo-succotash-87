@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TinkerCAD Setup Guide</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#8a6d1a; --accent-dark:#6b5313; --accent-tint:#f6f0dc; }
+  .step-list { counter-reset: step; list-style: none; padding: 0; margin: 0; }
+  .step-item {
+    counter-increment: step;
+    position: relative;
+    padding: 4px 0 4px 46px;
+    margin-bottom: 18px;
+  }
+  .step-item::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .step-title { font-weight: 700; margin-bottom: 4px; }
+  .step-desc { color: var(--ink-soft); font-size: 14.5px; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../index.html">&larr; TER3MU</a>
+    <span class="crumb-current">TinkerCAD Setup Guide</span>
+  </div>
+
+  <div class="wrap">
+    <h1>TinkerCAD Setup Guide</h1>
+    <p class="subtitle">Unit 3 &nbsp;&middot;&nbsp; Preparation &mdash; before Lab 1</p>
+
+    <div class="panel">
+      <p>TinkerCAD is a free, browser-based tool for designing and simulating electronic circuits &mdash; no software install needed. Every lab in this unit gets built and saved inside it.</p>
+    </div>
+
+    <div class="panel">
+      <ol class="step-list">
+        <li class="step-item">
+          <div class="step-title">Create an account</div>
+          <div class="step-desc">Go to <a href="https://www.tinkercad.com" target="_blank" rel="noopener">tinkercad.com</a> and choose <strong>Sign In</strong>, then <strong>Create a personal account</strong> if you don't already have one.</div>
+        </li>
+        <li class="step-item">
+          <div class="step-title">Sign in</div>
+          <div class="step-desc">Once your account exists, sign in at the same address.</div>
+        </li>
+        <li class="step-item">
+          <div class="step-title">Find the Learning Center</div>
+          <div class="step-desc">From the main page, choose <strong>Resources</strong>, then <strong>Learning Center</strong>, then <strong>Learn Circuits</strong>.</div>
+        </li>
+        <li class="step-item">
+          <div class="step-title">Do the starter lessons</div>
+          <div class="step-desc">Work through as many of the circuit lessons shown as you can &mdash; <em>Start Simulating</em>, <em>Editing Components</em>, and <em>Wiring Components</em> cover exactly the skills the labs need.</div>
+        </li>
+        <li class="step-item">
+          <div class="step-title">Know your way home</div>
+          <div class="step-desc">Click the TinkerCAD icon in the top-left corner any time to get back to your Home Page and see all your saved designs.</div>
+        </li>
+        <li class="step-item">
+          <div class="step-title">Start a new circuit</div>
+          <div class="step-desc">From your Home Page, click <strong>+ New</strong> and choose <strong>Circuit</strong> to open a blank workspace for a lab.</div>
+        </li>
+      </ol>
+    </div>
+
+    <div class="callout">
+      <strong>Try this:</strong> Before Lab 1, complete at least the "Start Simulating" and "Wiring Components" lessons in the Learning Center &mdash; they walk through exactly the click-drag-and-release wiring motion Lab 1 will ask you to do.
+    </div>
+  </div>
+</body>
+</html>

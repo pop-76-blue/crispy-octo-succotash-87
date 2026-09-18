@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Breadboard Basics</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#8a6d1a; --accent-dark:#6b5313; --accent-tint:#f6f0dc; }
+
+  .board-scroll { overflow-x: auto; padding: 10px 4px; }
+  .board {
+    display: inline-grid;
+    grid-auto-rows: 26px;
+    gap: 3px;
+    font-family: var(--mono);
+    font-size: 10px;
+  }
+  .hole {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    cursor: pointer;
+    transition: background 0.12s ease, border-color 0.12s ease, transform 0.12s ease;
+  }
+  .hole:hover { transform: scale(1.15); }
+  .hole[data-highlight="true"] {
+    background: var(--accent);
+    border-color: var(--accent-dark);
+  }
+  .rail-plus { background: #fbe3e3; }
+  .rail-minus { background: #e3ecfb; }
+  .row-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-soft);
+    font-weight: 700;
+  }
+  .rail-label { color: var(--ink-soft); font-weight: 700; display:flex; align-items:center; justify-content:center; }
+
+  .explain-panel {
+    font-family: var(--sans);
+    font-size: 14.5px;
+    background: var(--accent-tint);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    margin-top: 16px;
+    min-height: 22px;
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../index.html">&larr; TER3MU</a>
+    <span class="crumb-current">Breadboard Basics</span>
+  </div>
+
+  <div class="wrap">
+    <h1>Breadboard Basics</h1>
+    <p class="subtitle">Unit 3 &nbsp;&middot;&nbsp; Breadboards &mdash; what's actually connected to what</p>
+
+    <div class="panel">
+      <p>A breadboard looks like a plain grid of holes, but underneath, metal clips join certain holes together into groups. Nothing is connected to anything else unless you know these rules:</p>
+      <ul>
+        <li><strong>The two power rails</strong> at the top and bottom (marked + and &minus;) each run the <em>full length</em> of the board as one long connected strip.</li>
+        <li><strong>The main terminal area</strong> is split top and bottom by a center gap. Within each half, every hole in the <em>same column</em> (5 holes, rows a&ndash;e or f&ndash;j) is connected &mdash; but nothing crosses the center gap.</li>
+      </ul>
+    </div>
+
+    <div class="demo">
+      <h3 style="text-align:center;">Click any hole to see what it's connected to</h3>
+      <div class="board-scroll">
+        <div class="board" id="board"></div>
+      </div>
+      <div class="explain-panel" id="explainPanel">Click a hole above to get started.</div>
+    </div>
+
+    <div class="callout">
+      <strong>Try this:</strong> Click a hole in row <span style="font-family:var(--mono)">c</span>, column 5, then click row <span style="font-family:var(--mono)">g</span>, same column 5 &mdash; predict first whether they're connected. Then click two holes in the top + rail that are far apart and predict whether <em>those</em> are connected.
+    </div>
+  </div>
+
+  <script>
+    const COLS = 16;
+    const rowsTop = ['a', 'b', 'c', 'd', 'e'];
+    const rowsBottom = ['f', 'g', 'h', 'i', 'j'];
+
+    function buildBoard() {
+      const board = document.getElementById('board');
+      board.style.gridTemplateColumns = `28px repeat(${COLS}, 26px)`;
+      board.innerHTML = '';
+
+      function addRow(rowBuilder) {
+        rowBuilder();
+      }
+
+      // Column number header
+      const headerLabel = document.createElement('div');
+      board.appendChild(headerLabel);
+      for (let c = 1; c <= COLS; c++) {
+        const lbl = document.createElement('div');
+        lbl.className = 'row-label';
+        lbl.textContent = c % 5 === 0 ? c : '';
+        board.appendChild(lbl);
+      }
+
+      // Top power rails
+      addPowerRow(board, '+', 'top-plus', 'rail-plus');
+      addPowerRow(board, '\u2212', 'top-minus', 'rail-minus');
+
+      // spacer
+      addSpacerRow(board);
+
+      // Top terminal rows a-e
+      rowsTop.forEach(r => addTerminalRow(board, r, 'colA'));
+
+      // gap row (visual only)
+      addSpacerRow(board, true);
+
+      // Bottom terminal rows f-j
+      rowsBottom.forEach(r => addTerminalRow(board, r, 'colB'));
+
+      // spacer
+      addSpacerRow(board);
+
+      // Bottom power rails
+      addPowerRow(board, '+', 'bottom-plus', 'rail-plus');
+      addPowerRow(board, '\u2212', 'bottom-minus', 'rail-minus');
+    }
+
+    function addPowerRow(board, symbol, net, cls) {
+      const lbl = document.createElement('div');
+      lbl.className = 'rail-label';
+      lbl.textContent = symbol;
+      board.appendChild(lbl);
+      for (let c = 1; c <= COLS; c++) {
+        const hole = document.createElement('div');
+        hole.className = 'hole ' + cls;
+        hole.dataset.net = net;
+        hole.addEventListener('click', () => selectNet(net, describeNet(net)));
+        board.appendChild(hole);
+      }
+    }
+
+    function addTerminalRow(board, rowLetter, colPrefix) {
+      const lbl = document.createElement('div');
+      lbl.className = 'row-label';
+      lbl.textContent = rowLetter;
+      board.appendChild(lbl);
+      for (let c = 1; c <= COLS; c++) {
+        const net = `${colPrefix}-${c}`;
+        const hole = document.createElement('div');
+        hole.className = 'hole';
+        hole.dataset.net = net;
+        hole.addEventListener('click', () => selectNet(net, describeNet(net)));
+        board.appendChild(hole);
+      }
+    }
+
+    function addSpacerRow(board, isGap) {
+      const lbl = document.createElement('div');
+      board.appendChild(lbl);
+      for (let c = 1; c <= COLS; c++) {
+        const spacer = document.createElement('div');
+        spacer.style.height = isGap ? '10px' : '6px';
+        board.appendChild(spacer);
+      }
+    }
+
+    function describeNet(net) {
+      if (net === 'top-plus') return 'This is the top <strong>+</strong> power rail. It runs the full length of the board as one connected strip \u2014 every hole here is joined to every other hole in this rail.';
+      if (net === 'top-minus') return 'This is the top <strong>\u2212</strong> power rail. Like the + rail, it runs the full length of the board as one strip.';
+      if (net === 'bottom-plus') return 'This is the bottom <strong>+</strong> power rail \u2014 a separate strip from the top one, also running the full length.';
+      if (net === 'bottom-minus') return 'This is the bottom <strong>\u2212</strong> power rail \u2014 a separate strip from the top one, also running the full length.';
+      const [prefix, col] = net.split('-');
+      const half = prefix === 'colA' ? 'top half (rows a\u2013e)' : 'bottom half (rows f\u2013j)';
+      return `This hole is one of 5 connected points in column ${col}, ${half}. It is <strong>not</strong> connected to the other half of the same column \u2014 the center gap breaks that connection.`;
+    }
+
+    function selectNet(net, text) {
+      document.querySelectorAll('.hole').forEach(h => {
+        h.dataset.highlight = (h.dataset.net === net) ? 'true' : 'false';
+      });
+      document.getElementById('explainPanel').innerHTML = text;
+    }
+
+    buildBoard();
+  </script>
+</body>
+</html>

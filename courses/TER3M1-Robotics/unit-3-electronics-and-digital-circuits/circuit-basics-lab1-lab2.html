@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Circuit Basics — Lab 1 &amp; Lab 2</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#8a6d1a; --accent-dark:#6b5313; --accent-tint:#f6f0dc; }
+
+  table.compare {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--sans);
+    font-size: 14px;
+    margin: 16px 0;
+  }
+  table.compare th, table.compare td {
+    border: 1px solid var(--line);
+    padding: 8px 12px;
+    text-align: left;
+  }
+  table.compare th { background: var(--accent-tint); }
+
+  .switch-row { display:flex; justify-content:center; gap:14px; margin: 16px 0; }
+  .switch-block { display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .switch-block .label { font-family: var(--sans); font-size: 12px; color: var(--ink-soft); }
+  .target-display {
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--accent-dark);
+    margin: 6px 0 14px;
+  }
+  .feedback { text-align:center; font-family: var(--sans); font-size: 15px; margin-top: 10px; min-height: 22px; }
+  .feedback.correct { color: #2e7d32; font-weight: 700; }
+  .new-target-btn {
+    display: block;
+    margin: 14px auto 0;
+    font-family: var(--sans);
+    font-size: 13.5px;
+    padding: 7px 16px;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../index.html">&larr; TER3MU</a>
+    <span class="crumb-current">Circuit Basics — Lab 1 &amp; 2</span>
+  </div>
+
+  <div class="wrap">
+    <h1>Circuit Basics — Lab 1 &amp; Lab 2</h1>
+    <p class="subtitle">Unit 3 &nbsp;&middot;&nbsp; Concepts behind the simple electric circuit labs</p>
+
+    <div class="panel">
+      <h2 style="border:none;padding:0;margin:0 0 10px;">What a simple circuit needs</h2>
+      <p>Every circuit in Lab 1 needs the same three things: a <strong>voltage source</strong> (a battery), a <strong>load</strong> that uses the electricity (a lightbulb), and a <strong>closed path</strong> of wire connecting them. Add a <strong>switch</strong> in that path and you can open or close it on demand.</p>
+      <p><strong>Conventional current flow</strong> is the convention used throughout this unit: current is treated as flowing from the battery's <strong>positive</strong> terminal, through the circuit, to the <strong>negative</strong> terminal. A circuit only lights up when this path is unbroken &mdash; that's what "closing the circuit" means.</p>
+    </div>
+
+    <div class="panel">
+      <h2 style="border:none;padding:0;margin:0 0 10px;">Batteries in series</h2>
+      <p>Connecting batteries positive-to-negative in a chain (in <strong>series</strong>) adds their voltages together. Two 1.5V batteries in series supply 3V to the rest of the circuit &mdash; which is exactly why Lab 1 has you add a second battery partway through.</p>
+    </div>
+
+    <div class="panel">
+      <h2 style="border:none;padding:0;margin:0 0 10px;">Series vs. parallel — the difference that matters</h2>
+      <p>Lab 1 wires each bulb with its own switch, each pair forming an independent branch (<strong>parallel</strong>). Lab 2 asks you to rebuild the same idea with everything on <strong>one single path</strong> (<strong>series</strong>) instead. The difference matters a lot once current is flowing:</p>
+      <table class="compare">
+        <tr><th></th><th>Series (Lab 2)</th><th>Parallel (Lab 1)</th></tr>
+        <tr><td>Paths for current</td><td>Exactly one, shared by everything</td><td>One separate branch per bulb</td></tr>
+        <tr><td>If one switch turns off</td><td>Every bulb goes out &mdash; the single path is broken</td><td>Only that bulb's branch goes out; the rest stay lit</td></tr>
+        <tr><td>Current through each bulb</td><td>The same everywhere in the loop</td><td>Can differ, and splits across branches</td></tr>
+      </table>
+      <p>You'll measure exactly these effects with a multimeter in the labs that come after this one.</p>
+    </div>
+
+    <div class="demo">
+      <h3 style="text-align:center;">Binary Switch Predictor</h3>
+      <p style="text-align:center; color:var(--ink-soft); font-size:14px;">Lab 1 finishes with four bulbs, each controlled by its own switch &mdash; enough to represent any binary number from 0000 to 1111. Predict the switch pattern before checking.</p>
+      <div class="target-display" id="targetDisplay"></div>
+      <div class="switch-row" id="switchRow"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="new-target-btn" id="newTargetBtn">New target</button>
+    </div>
+
+    <div class="callout">
+      <strong>Try this:</strong> Once you've matched a few targets above, open the full <a href="../unit-1-number-systems/binary-decimal-converter.html">Binary &harr; Decimal Converter</a> from Unit 1 and toggle the same pattern there &mdash; it's the identical logic, just switches instead of bit toggles.
+    </div>
+  </div>
+
+  <script>
+    const BULBS = 4;
+    let switches = [0, 0, 0, 0];
+    let target = 0;
+
+    function randomTarget() {
+      target = Math.floor(Math.random() * 16);
+      document.getElementById('targetDisplay').textContent = `Target: ${target} (decimal)`;
+      switches = [0, 0, 0, 0];
+      document.getElementById('feedback').textContent = '';
+      document.getElementById('feedback').className = 'feedback';
+      render();
+    }
+
+    function render() {
+      const row = document.getElementById('switchRow');
+      row.innerHTML = '';
+      switches.forEach((v, i) => {
+        const block = document.createElement('div');
+        block.className = 'switch-block';
+        const bit = document.createElement('div');
+        bit.className = 'bit';
+        bit.dataset.on = v;
+        bit.textContent = v;
+        bit.addEventListener('click', () => {
+          switches[i] = switches[i] ? 0 : 1;
+          checkAnswer();
+          render();
+        });
+        const label = document.createElement('div');
+        label.className = 'label';
+        label.textContent = `Bulb ${i + 1}`;
+        block.appendChild(bit);
+        block.appendChild(label);
+        row.appendChild(block);
+      });
+    }
+
+    function checkAnswer() {
+      const value = parseInt(switches.join(''), 2);
+      const feedback = document.getElementById('feedback');
+      if (value === target) {
+        feedback.textContent = `Correct! ${switches.join('')} = ${target}`;
+        feedback.className = 'feedback correct';
+      } else {
+        feedback.textContent = `That's currently ${value} \u2014 keep adjusting.`;
+        feedback.className = 'feedback';
+      }
+    }
+
+    document.getElementById('newTargetBtn').addEventListener('click', randomTarget);
+    randomTarget();
+  </script>
+</body>
+</html>

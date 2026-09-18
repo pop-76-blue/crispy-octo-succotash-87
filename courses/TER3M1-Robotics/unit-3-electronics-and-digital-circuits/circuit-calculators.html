@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Circuit Calculators</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#8a6d1a; --accent-dark:#6b5313; --accent-tint:#f6f0dc; }
+  .tab-row { display:flex; justify-content:center; gap:8px; margin-bottom: 20px; flex-wrap: wrap; }
+
+  .field-row { display:flex; justify-content:center; align-items:center; gap:10px; margin: 12px 0; flex-wrap: wrap; }
+  .field-row label { font-family: var(--sans); font-size: 14px; display:flex; align-items:center; gap:6px; }
+  .field-row input[type="text"], .field-row input[type="number"] {
+    font-family: var(--mono);
+    font-size: 16px;
+    padding: 6px 10px;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    width: 110px;
+    text-align: center;
+  }
+  .field-row input[disabled] { background: var(--accent-tint); color: var(--accent-dark); font-weight: 700; }
+  .solve-toggle { display:flex; justify-content:center; gap:8px; margin: 10px 0 18px; flex-wrap: wrap; }
+
+  .resistor-rows { display:flex; flex-direction:column; gap:8px; align-items:center; margin: 14px 0; }
+  .resistor-row { display:flex; align-items:center; gap:8px; }
+  .resistor-row input {
+    font-family: var(--mono);
+    font-size: 15px;
+    padding: 5px 8px;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    width: 100px;
+    text-align: center;
+  }
+  .small-btn {
+    font-family: var(--sans);
+    font-size: 13px;
+    padding: 5px 10px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .small-btn.add { border-color: var(--accent); color: var(--accent-dark); }
+  .formula-note {
+    text-align: center;
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin: 8px 0;
+  }
+  .warning-text { text-align:center; color:#b3261e; font-family: var(--sans); font-size: 13.5px; margin-top: 8px; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../index.html">&larr; TER3MU</a>
+    <span class="crumb-current">Circuit Calculators</span>
+  </div>
+
+  <div class="wrap">
+    <h1>Circuit Calculators</h1>
+    <p class="subtitle">Unit 3 &nbsp;&middot;&nbsp; Ohm's Law, resistor networks, and LED sizing &mdash; the formulas that recur across Labs 3&ndash;8</p>
+
+    <div class="tab-row">
+      <button class="op-btn" data-tab="ohms" data-active="true">Ohm's Law</button>
+      <button class="op-btn" data-tab="network">Series / Parallel Resistance</button>
+      <button class="op-btn" data-tab="led">LED Resistor Sizing</button>
+    </div>
+
+    <!-- OHM'S LAW -->
+    <div id="panelOhms" class="demo">
+      <h3 style="text-align:center;">V = I &times; R</h3>
+      <p style="text-align:center; color:var(--ink-soft); font-size:13.5px;">Pick which value to solve for, then fill in the other two.</p>
+      <div class="solve-toggle">
+        <button class="op-btn" data-solve="V" data-active="true">Solve for V</button>
+        <button class="op-btn" data-solve="I">Solve for I</button>
+        <button class="op-btn" data-solve="R">Solve for R</button>
+      </div>
+      <div class="field-row">
+        <label>Voltage (V): <input type="text" id="ohmV" value="3"></label>
+        <label>Current (mA): <input type="text" id="ohmI" value="62.5"></label>
+        <label>Resistance (&Omega;): <input type="text" id="ohmR" value="48"></label>
+      </div>
+      <div class="decimal-readout" id="ohmResult"></div>
+    </div>
+
+    <!-- SERIES/PARALLEL RESISTANCE -->
+    <div id="panelNetwork" class="demo" style="display:none;">
+      <h3 style="text-align:center;">Total Resistance of a Resistor Network</h3>
+      <div class="solve-toggle">
+        <button class="op-btn" data-mode="series" data-active="true">Series</button>
+        <button class="op-btn" data-mode="parallel">Parallel</button>
+      </div>
+      <div class="resistor-rows" id="resistorRows"></div>
+      <div style="text-align:center;">
+        <button class="small-btn add" id="addResistorBtn">+ Add resistor</button>
+      </div>
+      <div class="formula-note" id="formulaNote"></div>
+      <div class="decimal-readout" id="networkResult"></div>
+    </div>
+
+    <!-- LED RESISTOR SIZING -->
+    <div id="panelLed" class="demo" style="display:none;">
+      <h3 style="text-align:center;">R = (V<sub>s</sub> &minus; V<sub>L</sub>) / I</h3>
+      <p style="text-align:center; color:var(--ink-soft); font-size:13.5px;">The safe current range for these LEDs is 12&ndash;20 mA.</p>
+      <div class="field-row">
+        <label>Supply voltage V<sub>s</sub>: <input type="text" id="ledVs" value="4.5"></label>
+        <label>LED forward voltage V<sub>L</sub>: <input type="text" id="ledVl" value="2"></label>
+        <label>Desired current (mA): <input type="text" id="ledI" value="18"></label>
+      </div>
+      <div class="decimal-readout" id="ledResult"></div>
+      <div class="warning-text" id="ledWarning"></div>
+    </div>
+
+    <div class="callout">
+      <strong>Try this:</strong> In Ohm's Law, set V = 9 and R = 45, solve for I &mdash; then compare to Lab 7d's schematic (9V, 45&Omega;). In LED Sizing, try Vs = 3, VL = 2, I = 20mA and check it matches the 50&Omega; worked example from the LED slide.
+    </div>
+  </div>
+
+  <script>
+    // ---------------- OHM'S LAW ----------------
+    let solveFor = 'V';
+    function parseNum(id) {
+      const v = parseFloat(document.getElementById(id).value);
+      return isNaN(v) ? null : v;
+    }
+    function renderOhms() {
+      const vIn = document.getElementById('ohmV');
+      const iIn = document.getElementById('ohmI');
+      const rIn = document.getElementById('ohmR');
+      vIn.disabled = solveFor === 'V';
+      iIn.disabled = solveFor === 'I';
+      rIn.disabled = solveFor === 'R';
+
+      const V = parseNum('ohmV');
+      const Imilli = parseNum('ohmI');
+      const R = parseNum('ohmR');
+      const I = Imilli === null ? null : Imilli / 1000;
+
+      let result = document.getElementById('ohmResult');
+      if (solveFor === 'V') {
+        if (I === null || R === null) { result.textContent = 'Enter I and R.'; return; }
+        const computed = I * R;
+        vIn.value = computed.toFixed(3).replace(/\.?0+$/, '');
+        result.innerHTML = `V = I &times; R = ${I}A &times; ${R}\u03a9 = <strong>${computed.toFixed(3)} V</strong>`;
+      } else if (solveFor === 'I') {
+        if (V === null || R === null || R === 0) { result.textContent = 'Enter V and a non-zero R.'; return; }
+        const computedI = V / R;
+        iIn.value = (computedI * 1000).toFixed(3).replace(/\.?0+$/, '');
+        result.innerHTML = `I = V / R = ${V}V / ${R}\u03a9 = <strong>${(computedI*1000).toFixed(3)} mA</strong> (${computedI.toFixed(5)} A)`;
+      } else {
+        if (V === null || I === null || I === 0) { result.textContent = 'Enter V and a non-zero I.'; return; }
+        const computedR = V / I;
+        rIn.value = computedR.toFixed(3).replace(/\.?0+$/, '');
+        result.innerHTML = `R = V / I = ${V}V / ${I}A = <strong>${computedR.toFixed(3)} \u03a9</strong>`;
+      }
+    }
+    document.querySelectorAll('#panelOhms .solve-toggle .op-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#panelOhms .solve-toggle .op-btn').forEach(b => b.dataset.active = 'false');
+        btn.dataset.active = 'true';
+        solveFor = btn.dataset.solve;
+        renderOhms();
+      });
+    });
+    ['ohmV', 'ohmI', 'ohmR'].forEach(id => document.getElementById(id).addEventListener('input', renderOhms));
+
+    // ---------------- SERIES/PARALLEL RESISTANCE ----------------
+    let networkMode = 'series';
+    let resistorValues = [150, 220, 1000];
+
+    function renderResistorRows() {
+      const container = document.getElementById('resistorRows');
+      container.innerHTML = '';
+      resistorValues.forEach((val, i) => {
+        const row = document.createElement('div');
+        row.className = 'resistor-row';
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = val;
+        input.addEventListener('input', () => {
+          resistorValues[i] = parseFloat(input.value) || 0;
+          renderNetworkResult();
+        });
+        const label = document.createElement('span');
+        label.textContent = `R${i + 1} (\u03a9)`;
+        label.style.fontFamily = 'var(--sans)';
+        label.style.fontSize = '13px';
+        label.style.color = 'var(--ink-soft)';
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'small-btn';
+        removeBtn.textContent = '\u2212';
+        removeBtn.addEventListener('click', () => {
+          if (resistorValues.length > 1) {
+            resistorValues.splice(i, 1);
+            renderResistorRows();
+            renderNetworkResult();
+          }
+        });
+        row.appendChild(label);
+        row.appendChild(input);
+        row.appendChild(removeBtn);
+        container.appendChild(row);
+      });
+    }
+
+    function renderNetworkResult() {
+      const note = document.getElementById('formulaNote');
+      const result = document.getElementById('networkResult');
+      const vals = resistorValues.filter(v => v > 0);
+      if (vals.length === 0) { result.textContent = 'Enter at least one resistor value.'; return; }
+
+      if (networkMode === 'series') {
+        const total = vals.reduce((a, b) => a + b, 0);
+        note.textContent = 'RT = R1 + R2 + R3 + ... + Rn';
+        result.innerHTML = `${vals.join(' + ')} = <strong>${total.toFixed(3).replace(/\.?0+$/, '')} \u03a9</strong>`;
+      } else {
+        const reciprocalSum = vals.reduce((a, b) => a + 1 / b, 0);
+        const total = 1 / reciprocalSum;
+        note.textContent = '1/RT = 1/R1 + 1/R2 + 1/R3 + ... + 1/Rn';
+        result.innerHTML = `1/RT = ${vals.map(v => `1/${v}`).join(' + ')} &rArr; <strong>${total.toFixed(3)} \u03a9</strong>`;
+      }
+    }
+
+    document.getElementById('addResistorBtn').addEventListener('click', () => {
+      resistorValues.push(100);
+      renderResistorRows();
+      renderNetworkResult();
+    });
+    document.querySelectorAll('#panelNetwork .solve-toggle .op-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#panelNetwork .solve-toggle .op-btn').forEach(b => b.dataset.active = 'false');
+        btn.dataset.active = 'true';
+        networkMode = btn.dataset.mode;
+        renderNetworkResult();
+      });
+    });
+
+    // ---------------- LED RESISTOR SIZING ----------------
+    function renderLed() {
+      const Vs = parseNum('ledVs');
+      const Vl = parseNum('ledVl');
+      const Imilli = parseNum('ledI');
+      const result = document.getElementById('ledResult');
+      const warning = document.getElementById('ledWarning');
+      warning.textContent = '';
+
+      if (Vs === null || Vl === null || Imilli === null || Imilli === 0) {
+        result.textContent = 'Fill in all three values.';
+        return;
+      }
+      const I = Imilli / 1000;
+      const R = (Vs - Vl) / I;
+      result.innerHTML = `R = (${Vs}V &minus; ${Vl}V) / ${I}A = <strong>${R.toFixed(2)} \u03a9</strong>`;
+      if (Imilli < 12 || Imilli > 20) {
+        warning.textContent = `${Imilli} mA is outside the safe 12\u201320 mA range for these LEDs.`;
+      }
+      if (Vs <= Vl) {
+        warning.textContent = 'Supply voltage must be greater than the LED\u2019s forward voltage.';
+      }
+    }
+    ['ledVs', 'ledVl', 'ledI'].forEach(id => document.getElementById(id).addEventListener('input', renderLed));
+
+    // ---------------- TABS ----------------
+    document.querySelectorAll('.tab-row .op-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-row .op-btn').forEach(b => b.dataset.active = 'false');
+        btn.dataset.active = 'true';
+        document.getElementById('panelOhms').style.display = btn.dataset.tab === 'ohms' ? '' : 'none';
+        document.getElementById('panelNetwork').style.display = btn.dataset.tab === 'network' ? '' : 'none';
+        document.getElementById('panelLed').style.display = btn.dataset.tab === 'led' ? '' : 'none';
+      });
+    });
+
+    renderOhms();
+    renderResistorRows();
+    renderNetworkResult();
+    renderLed();
+  </script>
+</body>
+</html>
