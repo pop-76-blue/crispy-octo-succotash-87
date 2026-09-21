@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Speed &amp; Velocity - SPH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root {
+    --accent: #1a5f8a;
+    --accent-dark: #123f5c;
+    --accent-tint: #e6f0f6;
+  }
+  .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+  @media (max-width: 600px) { .calc-grid { grid-template-columns: 1fr; } }
+  .field-row { margin-bottom: 12px; }
+  .field-row label { display: block; font-size: 13.5px; color: var(--ink-soft); margin-bottom: 4px; }
+  .field-row input {
+    width: 100%; padding: 8px 10px; font-family: var(--mono); font-size: 15px;
+    border: 1px solid var(--line); border-radius: 6px;
+  }
+  .result-box {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+    padding: 16px; text-align: center;
+  }
+  .result-box .num { font-family: var(--mono); font-size: 22px; font-weight: 700; color: var(--accent-dark); }
+  .result-box .lbl { font-size: 13px; color: var(--ink-soft); margin-top: 4px; }
+  .compare-note { font-size: 13.5px; color: var(--ink-soft); margin-top: 10px; text-align: center; }
+  .conv-slider-row { margin: 16px 0; }
+  .conv-slider-row input[type=range] { width: 100%; }
+  .conv-readout { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+  .conv-readout .box { font-family: var(--mono); font-size: 20px; font-weight: 700; color: var(--accent-dark); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Home</a>
+  <a href="../index.html">SPH3U</a>
+  <span class="crumb-current">Speed &amp; Velocity</span>
+</div>
+
+<div class="wrap">
+  <h1>1.2 Speed &amp; Velocity</h1>
+  <p class="subtitle">Speed is a scalar. Velocity is a vector. They're easy to mix up &mdash; here's how to tell them apart.</p>
+
+  <div class="panel">
+    <p><strong>Average speed (v<sub>avg</sub>)</strong> is the total <em>distance</em> travelled, divided by the total time:</p>
+    <p style="text-align:center; font-family: var(--mono); font-size:18px;">v<sub>avg</sub> = &Delta;d<sub>total</sub> / &Delta;t &nbsp; (scalar)</p>
+    <p><strong>Average velocity (v<sub>avg</sub>)</strong> is the <em>displacement</em>, divided by the total time:</p>
+    <p style="text-align:center; font-family: var(--mono); font-size:18px;">v<sub>avg</sub> = &Delta;d / &Delta;t &nbsp; (vector)</p>
+    <p>Units for both: m/s (or km/h). The two are only equal when you move in a straight line without
+    ever reversing direction.</p>
+  </div>
+
+  <h2>Try it: Speed vs. Velocity Calculator</h2>
+  <div class="demo">
+    <p>Enter the distance actually walked, the net displacement, and the time taken.</p>
+    <div class="calc-grid">
+      <div>
+        <div class="field-row">
+          <label>Total distance travelled (m)</label>
+          <input type="number" id="distIn" value="120">
+        </div>
+        <div class="field-row">
+          <label>Net displacement (m) &mdash; use negative for "backward"</label>
+          <input type="number" id="dispIn" value="40">
+        </div>
+        <div class="field-row">
+          <label>Time (s)</label>
+          <input type="number" id="timeIn" value="20">
+        </div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:12px; justify-content:center;">
+        <div class="result-box">
+          <div class="num" id="speedOut">&mdash;</div>
+          <div class="lbl">Average speed</div>
+        </div>
+        <div class="result-box">
+          <div class="num" id="velOut">&mdash;</div>
+          <div class="lbl">Average velocity</div>
+        </div>
+      </div>
+    </div>
+    <div class="compare-note" id="compareNote"></div>
+  </div>
+
+  <h2>Converting Units: km/h &harr; m/s</h2>
+  <div class="panel">
+    <p>Use the factor label method &mdash; multiply by a fraction that cancels the units you don't want:</p>
+    <p style="text-align:center; font-family: var(--mono);">72 km/h &times; (1000 m / 1 km) &times; (1 h / 3600 s) = 20 m/s</p>
+  </div>
+  <div class="demo">
+    <div class="conv-slider-row">
+      <label>Speed: <strong id="kmhLabel">72</strong> km/h</label>
+      <input type="range" id="kmhSlider" min="0" max="200" value="72" step="1">
+    </div>
+    <div class="conv-readout">
+      <div>km/h: <span class="box" id="kmhBox">72</span></div>
+      <div>m/s: <span class="box" id="msBox">20.0</span></div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>Try this:</strong> A dog runs in a straight line 43 m in 28 s, then turns around and
+    runs 15 m back toward where it started, taking another 10 s. Before using the calculator,
+    predict whether its average speed or average velocity will be the bigger number over the whole
+    38 s. Then plug in the total distance (58 m), the net displacement (28 m), and the time (38 s)
+    to check.
+  </div>
+
+  <p class="page-foot">SPH3U Study Hub</p>
+</div>
+
+<script>
+function renderCalc() {
+  const dist = Number(document.getElementById('distIn').value);
+  const disp = Number(document.getElementById('dispIn').value);
+  const time = Number(document.getElementById('timeIn').value);
+
+  const speedOut = document.getElementById('speedOut');
+  const velOut = document.getElementById('velOut');
+  const note = document.getElementById('compareNote');
+
+  if (!time || isNaN(dist) || isNaN(disp)) {
+    speedOut.textContent = "\u2014";
+    velOut.textContent = "\u2014";
+    note.textContent = "";
+    return;
+  }
+
+  const speed = dist / time;
+  const vel = disp / time;
+  speedOut.textContent = speed.toFixed(2) + " m/s";
+  velOut.textContent = (vel >= 0 ? vel.toFixed(2) : "\u2212" + Math.abs(vel).toFixed(2)) + " m/s" + (vel !== 0 ? " [" + (vel > 0 ? "forward" : "backward") + "]" : "");
+
+  if (Math.abs(speed - Math.abs(vel)) < 0.001) {
+    note.textContent = "Distance equals |displacement| here \u2014 this motion never reversed direction.";
+  } else {
+    note.textContent = "Speed is bigger than |velocity| here \u2014 some of the distance travelled cancelled out because the motion changed direction.";
+  }
+}
+['distIn','dispIn','timeIn'].forEach(id => document.getElementById(id).addEventListener('input', renderCalc));
+renderCalc();
+
+function renderConv() {
+  const kmh = Number(document.getElementById('kmhSlider').value);
+  document.getElementById('kmhLabel').textContent = kmh;
+  document.getElementById('kmhBox').textContent = kmh;
+  document.getElementById('msBox').textContent = (kmh * 1000 / 3600).toFixed(2);
+}
+document.getElementById('kmhSlider').addEventListener('input', renderConv);
+renderConv();
+</script>
+
+</body>
+</html>

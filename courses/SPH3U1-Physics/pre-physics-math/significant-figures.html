@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Significant Figures - SPH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root {
+    --accent: #1a5f8a;
+    --accent-dark: #123f5c;
+    --accent-tint: #e6f0f6;
+  }
+  .rule-list { margin: 0; padding-left: 20px; }
+  .rule-list li { margin-bottom: 10px; }
+  .sig-input-row {
+    display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+    margin: 14px 0;
+  }
+  .sig-input-row input {
+    font-family: var(--mono); font-size: 20px; padding: 8px 12px;
+    border: 1px solid var(--line); border-radius: 6px; width: 220px;
+  }
+  .digit-display {
+    font-family: var(--mono); font-size: 28px; text-align: center;
+    margin: 18px 0; letter-spacing: 2px;
+  }
+  .digit-display span { display: inline-block; padding: 2px 4px; border-radius: 4px; }
+  .digit-display span.sig { background: var(--accent-tint); color: var(--accent-dark); font-weight: 700; border-bottom: 3px solid var(--accent); }
+  .digit-display span.notsig { color: var(--ink-soft); opacity: 0.5; }
+  .sig-result {
+    text-align: center; font-size: 16px; margin-top: 6px;
+  }
+  .sig-result strong { font-size: 20px; color: var(--accent-dark); }
+  .example-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0; }
+  @media (max-width: 600px) { .example-grid { grid-template-columns: 1fr; } }
+  .example-box {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 6px;
+    padding: 10px 14px; font-size: 14px;
+  }
+  .example-box .val { font-family: var(--mono); font-weight: 700; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Home</a>
+  <a href="../index.html">SPH3U</a>
+  <span class="crumb-current">Significant Figures</span>
+</div>
+
+<div class="wrap">
+  <h1>Significant Figures</h1>
+  <p class="subtitle">Also called "sig figs" &mdash; a way of showing how precise a measurement is.</p>
+
+  <div class="panel">
+    <p>Every measurement has some uncertainty. Significant figures are the digits in a
+    measurement that are actually known with confidence &mdash; measured or reasonably estimated.
+    A recorded value like <strong>7.90 cm</strong> tells you more about the precision of the
+    measuring tool than <strong>8 cm</strong> does, even though they're close to the same number.</p>
+  </div>
+
+  <h2>The Rules</h2>
+  <div class="panel">
+    <ol class="rule-list">
+      <li><strong>Digits 1&ndash;9 are always significant.</strong><br>e.g. 369 has 3 significant digits.</li>
+      <li><strong>Zeros between two significant digits are always significant.</strong><br>e.g. 3007 has 4 significant digits.</li>
+      <li><strong>Zeros placed before other digits (leading zeros) are never significant.</strong><br>e.g. 0.0032 has 2 significant digits.</li>
+      <li><strong>Zeros placed after other digits, and after a decimal point, are significant.</strong><br>e.g. 7.90 has 3 significant digits.</li>
+      <li><strong>Zeros at the very end of a number with no decimal point are ambiguous.</strong> We can't tell if they were measured.<br>e.g. 8000 might have 1, 2, 3, or 4 significant digits depending on how it was measured.</li>
+      <li><strong>Every digit in scientific notation is significant.</strong><br>e.g. 5.900 &times; 10<sup>3</sup> has 4 significant digits &mdash; this is why scientists prefer scientific notation for ambiguous cases like rule 5.</li>
+    </ol>
+  </div>
+
+  <h2>Try it: Sig Fig Checker</h2>
+  <div class="demo">
+    <p>Type a number below (like <span class="val">0.0032</span> or <span class="val">10.900</span>) and see which digits count.</p>
+    <div class="sig-input-row">
+      <input type="text" id="sigInput" placeholder="e.g. 0.0032" value="0.0032">
+      <button class="op-btn" id="sigCheckBtn" data-active="true">Check</button>
+    </div>
+    <div class="digit-display" id="digitDisplay"></div>
+    <div class="sig-result" id="sigResult"></div>
+  </div>
+
+  <h2>Sig Figs in Calculations</h2>
+  <div class="panel">
+    <p><strong>Multiplying / dividing:</strong> your answer can only have as many significant
+    digits as the <em>least precise</em> number in the calculation.</p>
+    <div class="example-box">
+      <span class="val">0.21 &times; 1603 = 336.63</span> &rarr; 0.21 has 2 sig figs, so round to
+      <span class="val">3.4 &times; 10<sup>2</sup></span>
+    </div>
+    <p style="margin-top:16px;"><strong>Adding / subtracting:</strong> your answer can only show as
+    many <em>decimal places</em> as the measurement with the fewest decimal places.</p>
+    <div class="example-box">
+      <span class="val">3.2 + 3.19 &minus; 2.007 = 4.383</span> &rarr; 3.2 has only 1 decimal place, so round to
+      <span class="val">4.4</span>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>Try this:</strong> Before typing anything into the checker above, predict how many
+    significant digits are in <strong>0.040500</strong> and in <strong>1 200</strong>. Write down
+    your reasoning for each rule you used, then check both in the tool. If your answer for
+    <strong>1 200</strong> doesn't match, think about why that one is a trick question.
+  </div>
+
+  <p class="page-foot">SPH3U Study Hub</p>
+</div>
+
+<script>
+function analyzeSigFigs(raw) {
+  let s = raw.trim();
+  if (s === "" || isNaN(Number(s.replace(/\s/g,'')))) return null;
+
+  // Handle scientific notation input like 5.9e3 or 5.900x10^3 style typed as 5.900e3
+  let sciMatch = s.match(/^-?\d*\.?\d+e[+-]?\d+$/i);
+  let isSci = !!sciMatch;
+
+  let signStripped = s.replace(/^-/, '');
+  let digitsInfo = []; // {char, sig}
+
+  if (isSci) {
+    let mantissa = signStripped.split(/e/i)[0];
+    let chars = mantissa.replace('.', '').split('');
+    // In scientific notation, every digit in the mantissa is significant
+    for (let c of mantissa) {
+      if (c === '.') { digitsInfo.push({char: '.', sig: null}); continue; }
+      digitsInfo.push({char: c, sig: true});
+    }
+    let expPart = signStripped.split(/e/i)[1];
+    digitsInfo.push({char: 'x10^' + expPart, sig: null, label: true});
+    let count = mantissa.replace('.', '').replace(/^0+/, '').length || mantissa.replace('.', '').length;
+    return { digitsInfo, count: mantissa.replace('.', '').length, note: "Scientific notation: every digit in the coefficient is significant." };
+  }
+
+  let hasDecimal = signStripped.indexOf('.') !== -1;
+  let intPart = hasDecimal ? signStripped.split('.')[0] : signStripped;
+  let fracPart = hasDecimal ? signStripped.split('.')[1] : "";
+
+  let allDigits = (intPart + fracPart).split('');
+  // Determine significance digit by digit using positions
+  let fullStr = intPart + (hasDecimal ? '.' + fracPart : '');
+  let chars = fullStr.split('');
+
+  // Find first nonzero digit index (ignoring the decimal point char)
+  let digitChars = chars.filter(c => c !== '.');
+  let firstNonZeroIdx = digitChars.findIndex(c => c !== '0');
+
+  let sigFlags = [];
+  if (firstNonZeroIdx === -1) {
+    // all zero, e.g. "0" or "0.0"
+    sigFlags = digitChars.map(() => false);
+  } else {
+    for (let i = 0; i < digitChars.length; i++) {
+      if (i < firstNonZeroIdx) {
+        sigFlags.push(false); // leading zero
+      } else {
+        sigFlags.push(true); // will refine trailing-zero-no-decimal case below
+      }
+    }
+    // Trailing zero ambiguity: zeros at the very end with NO decimal point are not counted as significant
+    if (!hasDecimal) {
+      let i = digitChars.length - 1;
+      while (i > firstNonZeroIdx && digitChars[i] === '0') {
+        sigFlags[i] = false;
+        i--;
+      }
+    }
+  }
+
+  // Rebuild digitsInfo including the decimal point for display, mapping sigFlags back
+  let di = 0;
+  for (let c of chars) {
+    if (c === '.') { digitsInfo.push({char: '.', sig: null}); }
+    else { digitsInfo.push({char: c, sig: sigFlags[di]}); di++; }
+  }
+
+  let count = sigFlags.filter(Boolean).length;
+  let note = "";
+  if (!hasDecimal && /0+$/.test(intPart) && firstNonZeroIdx !== -1) {
+    note = "Trailing zeros with no decimal point are ambiguous, so they're not counted here. Write it in scientific notation to be exact.";
+  }
+
+  return { digitsInfo, count, note };
+}
+
+function renderSigFigs() {
+  let raw = document.getElementById('sigInput').value;
+  let result = analyzeSigFigs(raw);
+  let displayEl = document.getElementById('digitDisplay');
+  let resultEl = document.getElementById('sigResult');
+
+  if (!result) {
+    displayEl.innerHTML = '<span style="color:var(--ink-soft); font-size:16px;">Enter a valid number</span>';
+    resultEl.innerHTML = '';
+    return;
+  }
+
+  displayEl.innerHTML = result.digitsInfo.map(d => {
+    if (d.sig === null) return '<span>' + d.char + '</span>';
+    return '<span class="' + (d.sig ? 'sig' : 'notsig') + '">' + d.char + '</span>';
+  }).join('');
+
+  resultEl.innerHTML = '<strong>' + result.count + '</strong> significant digit' + (result.count === 1 ? '' : 's') +
+    (result.note ? '<br><span style="color:var(--ink-soft); font-size:13.5px;">' + result.note + '</span>' : '');
+}
+
+document.getElementById('sigCheckBtn').addEventListener('click', renderSigFigs);
+document.getElementById('sigInput').addEventListener('keyup', function(e){ if (e.key === 'Enter') renderSigFigs(); });
+renderSigFigs();
+</script>
+
+</body>
+</html>

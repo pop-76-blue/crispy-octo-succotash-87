@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Distance &amp; Displacement - SPH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root {
+    --accent: #1a5f8a;
+    --accent-dark: #123f5c;
+    --accent-tint: #e6f0f6;
+  }
+  .slider-row { margin: 16px 0; }
+  .slider-row label { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 4px; }
+  .slider-row input[type=range] { width: 100%; }
+  .numberline-wrap { position: relative; height: 90px; margin: 30px 10px 50px; }
+  .numberline-track {
+    position: absolute; top: 45px; left: 0; right: 0; height: 4px; background: var(--line); border-radius: 2px;
+  }
+  .nl-marker {
+    position: absolute; top: 30px; width: 2px; height: 34px; background: var(--ink-soft);
+    transform: translateX(-1px);
+  }
+  .nl-marker.cabin { background: var(--accent-dark); width: 3px; }
+  .nl-label {
+    position: absolute; top: 66px; font-size: 12px; color: var(--ink-soft); transform: translateX(-50%);
+    white-space: nowrap;
+  }
+  .nl-label.cabin-label { color: var(--accent-dark); font-weight: 700; top: -18px; }
+  .nl-arrow {
+    position: absolute; top: 41px; height: 8px; border-radius: 4px;
+  }
+  .nl-arrow.leg1 { background: rgba(26,95,138,0.55); }
+  .nl-arrow.leg2 { background: rgba(138,60,26,0.5); top: 53px; }
+  .readout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 20px; }
+  @media (max-width: 600px) { .readout-grid { grid-template-columns: 1fr; } }
+  .readout-box {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+    padding: 14px 18px; text-align: center;
+  }
+  .readout-box .num { font-family: var(--mono); font-size: 24px; font-weight: 700; color: var(--accent-dark); }
+  .readout-box .lbl { font-size: 13px; color: var(--ink-soft); margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Home</a>
+  <a href="../index.html">SPH3U</a>
+  <span class="crumb-current">Distance &amp; Displacement</span>
+</div>
+
+<div class="wrap">
+  <h1>1.1 Distance &amp; Displacement</h1>
+  <p class="subtitle">Scalars, vectors, and the difference between "how far you walked" and "where you ended up."</p>
+
+  <h2>Scalars vs. Vectors</h2>
+  <div class="panel">
+    <p><strong>Scalars</strong> are quantities with only a magnitude (a value) &mdash; e.g. temperature, mass, distance.</p>
+    <p><strong>Vectors</strong> are quantities with both a magnitude <em>and</em> a direction &mdash; e.g. displacement, velocity, force.</p>
+    <p>In this course we write a direction in square brackets, like <strong>13 m [right]</strong> or <strong>35 km [N30&deg;W]</strong>.</p>
+  </div>
+
+  <h2>Distance vs. Displacement</h2>
+  <div class="panel">
+    <p><strong>Distance</strong> is the total length of the path travelled &mdash; it only adds up, it never subtracts.</p>
+    <p><strong>Position (d)</strong> is your distance and direction from a reference point.</p>
+    <p><strong>Displacement (&Delta;d)</strong> is the change in position: &Delta;d = d<sub>final</sub> &minus; d<sub>initial</sub>.
+    It only cares about start and end &mdash; not the path in between.</p>
+    <p>If you change position more than once, total displacement is the sum of each individual displacement:
+    &Delta;d<sub>T</sub> = &Delta;d<sub>1</sub> + &Delta;d<sub>2</sub> + &hellip;</p>
+  </div>
+
+  <h2>Try it: The Cabin Hike</h2>
+  <div class="demo">
+    <p>Set a starting position and a turning point relative to a cabin (position 0). South is negative,
+    North is positive &mdash; matching the sign convention we use all course (up/North/East/right = positive).</p>
+
+    <div class="slider-row">
+      <label><span>Start position (relative to cabin)</span> <span id="startVal">&minus;67 km</span></label>
+      <input type="range" id="startSlider" min="-100" max="100" value="-67" step="1">
+    </div>
+    <div class="slider-row">
+      <label><span>Turning point / lookout (relative to cabin)</span> <span id="endVal">88 km</span></label>
+      <input type="range" id="endSlider" min="-100" max="100" value="88" step="1">
+    </div>
+    <div class="slider-row">
+      <label style="display:inline-flex; gap:8px; align-items:center;">
+        <input type="checkbox" id="returnCheck"> Then return to the cabin (position 0)
+      </label>
+    </div>
+
+    <div class="numberline-wrap" id="numberlineWrap">
+      <div class="numberline-track"></div>
+    </div>
+
+    <div class="readout-grid">
+      <div class="readout-box">
+        <div class="num" id="distanceOut">0 km</div>
+        <div class="lbl">Total distance travelled</div>
+      </div>
+      <div class="readout-box">
+        <div class="num" id="displacementOut">0 km</div>
+        <div class="lbl">Total displacement</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>Try this:</strong> Albert starts 67 km south of a cabin, then hikes past the cabin to a
+    lookout 88 km north of the cabin. Before touching the sliders, calculate by hand: (a) his
+    displacement for the hike to the lookout, and (b) his <em>total</em> displacement if he then
+    returns to the cabin. Set the sliders to match and check both answers.
+  </div>
+
+  <p class="page-foot">SPH3U Study Hub</p>
+</div>
+
+<script>
+const RANGE_MIN = -120, RANGE_MAX = 120;
+function posToPercent(pos) {
+  return ((pos - RANGE_MIN) / (RANGE_MAX - RANGE_MIN)) * 100;
+}
+
+function render() {
+  const start = Number(document.getElementById('startSlider').value);
+  const end = Number(document.getElementById('endSlider').value);
+  const returning = document.getElementById('returnCheck').checked;
+
+  document.getElementById('startVal').textContent = (start >= 0 ? start : "\u2212" + Math.abs(start)) + " km";
+  document.getElementById('endVal').textContent = (end >= 0 ? end : "\u2212" + Math.abs(end)) + " km";
+
+  const wrap = document.getElementById('numberlineWrap');
+  wrap.querySelectorAll('.nl-marker, .nl-label, .nl-arrow').forEach(el => el.remove());
+  const track = wrap.querySelector('.numberline-track');
+
+  function addMarker(pos, label, isCabin) {
+    const pct = posToPercent(pos);
+    const m = document.createElement('div');
+    m.className = 'nl-marker' + (isCabin ? ' cabin' : '');
+    m.style.left = pct + '%';
+    wrap.appendChild(m);
+    const l = document.createElement('div');
+    l.className = 'nl-label' + (isCabin ? ' cabin-label' : '');
+    l.style.left = pct + '%';
+    l.textContent = label;
+    wrap.appendChild(l);
+  }
+  function addArrow(from, to, cls) {
+    const p1 = posToPercent(Math.min(from,to));
+    const p2 = posToPercent(Math.max(from,to));
+    const a = document.createElement('div');
+    a.className = 'nl-arrow ' + cls;
+    a.style.left = p1 + '%';
+    a.style.width = (p2 - p1) + '%';
+    wrap.appendChild(a);
+  }
+
+  addMarker(0, 'Cabin (0)', true);
+  addMarker(start, 'Start', false);
+  addMarker(end, 'Lookout', false);
+  addArrow(start, end, 'leg1');
+
+  let totalDistance = Math.abs(end - start);
+  let totalDisplacement = end - start;
+
+  if (returning) {
+    addArrow(end, 0, 'leg2');
+    totalDistance += Math.abs(0 - end);
+    totalDisplacement = 0 - start;
+  }
+
+  function fmtKm(v) {
+    const rounded = Math.round(v * 10) / 10;
+    return (rounded === 0 ? "0" : (rounded > 0 ? rounded : "\u2212" + Math.abs(rounded))) + " km" +
+      (rounded !== 0 ? " [" + (rounded > 0 ? "N" : "S") + "]" : "");
+  }
+
+  document.getElementById('distanceOut').textContent = Math.round(totalDistance * 10) / 10 + " km";
+  document.getElementById('displacementOut').textContent = fmtKm(totalDisplacement);
+}
+
+['startSlider','endSlider'].forEach(id => document.getElementById(id).addEventListener('input', render));
+document.getElementById('returnCheck').addEventListener('change', render);
+render();
+</script>
+
+</body>
+</html>

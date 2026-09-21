@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Motion Graphs - SPH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root {
+    --accent: #1a5f8a;
+    --accent-dark: #123f5c;
+    --accent-tint: #e6f0f6;
+  }
+  table.motion-table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 14px 0; }
+  table.motion-table th, table.motion-table td { border: 1px solid var(--line); padding: 8px 10px; text-align: center; }
+  table.motion-table th { background: var(--accent-tint); color: var(--accent-dark); }
+  .flow-steps { margin: 0; padding-left: 20px; }
+  .flow-steps li { margin-bottom: 8px; }
+  .graph-wrap { max-width: 380px; margin: 10px auto; }
+  svg.qgraph { width: 100%; height: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+  .qbtns { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin: 14px 0; }
+  .feedback { text-align: center; font-size: 14.5px; margin-top: 10px; min-height: 40px; }
+  .feedback.correct { color: #1a6b3a; }
+  .feedback.incorrect { color: #a83232; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Home</a>
+  <a href="../index.html">SPH3U</a>
+  <span class="crumb-current">Motion Graphs</span>
+</div>
+
+<div class="wrap">
+  <h1>1.5 Motion Graphs</h1>
+  <p class="subtitle">Connecting position-time, velocity-time, and acceleration-time graphs.</p>
+
+  <div class="panel">
+    <p>The same motion can be shown three ways. Once you know how to read one, you can sketch the
+    other two.</p>
+    <table class="motion-table">
+      <thead><tr><th>Motion</th><th>d-t graph</th><th>v-t graph</th><th>Velocity</th><th>Acceleration</th></tr></thead>
+      <tbody>
+        <tr><td>Stopped / stationary</td><td>Horizontal line</td><td>Line on the v = 0 axis</td><td>v = 0</td><td>a = 0</td></tr>
+        <tr><td>Constant velocity</td><td>Straight sloped line</td><td>Horizontal line (above or below 0)</td><td>v = constant</td><td>a = 0</td></tr>
+        <tr><td>Speeding up</td><td>Curve getting steeper</td><td>Sloped line moving away from 0</td><td>|v| increasing</td><td>a same sign as v</td></tr>
+        <tr><td>Slowing down</td><td>Curve flattening out</td><td>Sloped line moving toward 0</td><td>|v| decreasing</td><td>a opposite sign to v</td></tr>
+      </tbody>
+    </table>
+    <p>Going from d-t to v-t: <strong>slope</strong> of the d-t graph becomes the height of the v-t
+    graph. Going from v-t to d-t: <strong>area</strong> under the v-t graph becomes the change in
+    height on the d-t graph.</p>
+  </div>
+
+  <h2>The Decision Flowchart</h2>
+  <div class="panel">
+    <p>When you're handed a v-t graph and asked to describe the motion, work through this:</p>
+    <ol class="flow-steps">
+      <li>Is the line <strong>horizontal at v = 0</strong>? &rarr; the object is <strong>at rest</strong>.</li>
+      <li>Is the line <strong>horizontal but not at v = 0</strong>? &rarr; <strong>constant velocity</strong>.</li>
+      <li>Is the line sloped and moving <strong>away from zero</strong> (getting more positive or more
+      negative)? &rarr; <strong>speeding up</strong>.</li>
+      <li>Is the line sloped and moving <strong>toward zero</strong>? &rarr; <strong>slowing down</strong>.</li>
+    </ol>
+  </div>
+
+  <h2>Try it: Classify the Graph</h2>
+  <div class="demo">
+    <p>Read the little velocity-time graph below and pick what's happening. Use the flowchart above if you get stuck.</p>
+    <div class="graph-wrap">
+      <svg id="qGraph" class="qgraph" viewBox="0 0 300 220"></svg>
+    </div>
+    <div class="qbtns">
+      <button class="op-btn" data-ans="rest">At rest</button>
+      <button class="op-btn" data-ans="constant">Constant velocity</button>
+      <button class="op-btn" data-ans="speeding">Speeding up</button>
+      <button class="op-btn" data-ans="slowing">Slowing down</button>
+    </div>
+    <div class="feedback" id="feedback"></div>
+    <div style="text-align:center;">
+      <button class="op-btn" id="nextBtn">New Graph</button>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>Try this:</strong> Before clicking an answer, sketch (on paper) what the matching d-t
+    graph would look like for the v-t graph shown. Only after you've sketched it, click your answer
+    and see if the explanation matches your sketch.
+  </div>
+
+  <p class="page-foot">SPH3U Study Hub</p>
+</div>
+
+<script>
+const svgNS = "http://www.w3.org/2000/svg";
+const svg = document.getElementById('qGraph');
+const PAD_L = 45, PAD_R = 15, PAD_T = 15, PAD_B = 30;
+const PLOT_W = 300 - PAD_L - PAD_R;
+const PLOT_H = 220 - PAD_T - PAD_B;
+const V_RANGE = 30; // -30 to 30
+
+function xOf(frac) { return PAD_L + frac * PLOT_W; }
+function yOf(v) { return PAD_T + PLOT_H/2 - (v / V_RANGE) * (PLOT_H/2); }
+function el(tag, attrs) {
+  const e = document.createElementNS(svgNS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  return e;
+}
+
+const scenarios = [
+  {v1: 0, v2: 0, ans: "rest", explain: "The line sits flat right on v = 0 \u2014 the object never moves. That's rest."},
+  {v1: 20, v2: 20, ans: "constant", explain: "The line is flat, but above zero \u2014 constant positive velocity."},
+  {v1: -18, v2: -18, ans: "constant", explain: "The line is flat, below zero \u2014 constant velocity in the negative direction."},
+  {v1: 4, v2: 24, ans: "speeding", explain: "The line slopes upward, moving away from zero (more positive) \u2014 speeding up."},
+  {v1: 24, v2: 4, ans: "slowing", explain: "The line slopes downward but stays positive, moving toward zero \u2014 slowing down."},
+  {v1: -6, v2: -26, ans: "speeding", explain: "The line moves further from zero into negative territory \u2014 speeding up, just in the negative direction."},
+  {v1: -26, v2: -6, ans: "slowing", explain: "The line moves from a large negative value toward zero \u2014 slowing down, even though it's still negative."},
+  {v1: 10, v2: 0, ans: "slowing", explain: "Velocity decreases toward zero \u2014 slowing down, coming to a stop."},
+];
+
+let current = null, answered = false;
+
+function drawGraph(s) {
+  svg.innerHTML = "";
+  svg.appendChild(el('line', {x1:PAD_L, y1:PAD_T, x2:PAD_L, y2:PAD_T+PLOT_H, stroke:'var(--ink-soft)', 'stroke-width':1.5}));
+  const zeroY = yOf(0);
+  svg.appendChild(el('line', {x1:PAD_L, y1:zeroY, x2:PAD_L+PLOT_W, y2:zeroY, stroke:'var(--ink-soft)', 'stroke-width':1.5}));
+
+  const zeroLbl = el('text', {x:PAD_L-8, y:zeroY+4, 'text-anchor':'end', 'font-size':11, fill:'var(--ink-soft)'});
+  zeroLbl.textContent = "0"; svg.appendChild(zeroLbl);
+  const plusLbl = el('text', {x:PAD_L-8, y:PAD_T+8, 'text-anchor':'end', 'font-size':11, fill:'var(--ink-soft)'});
+  plusLbl.textContent = "+"; svg.appendChild(plusLbl);
+  const minusLbl = el('text', {x:PAD_L-8, y:PAD_T+PLOT_H, 'text-anchor':'end', 'font-size':11, fill:'var(--ink-soft)'});
+  minusLbl.textContent = "\u2212"; svg.appendChild(minusLbl);
+  const timeLbl = el('text', {x:PAD_L+PLOT_W/2, y:PAD_T+PLOT_H+22, 'text-anchor':'middle', 'font-size':11, fill:'var(--ink-soft)'});
+  timeLbl.textContent = "time"; svg.appendChild(timeLbl);
+  const vLbl = el('text', {x:14, y:PAD_T+PLOT_H/2, 'text-anchor':'middle', 'font-size':11, fill:'var(--ink-soft)', transform:'rotate(-90 14 ' + (PAD_T+PLOT_H/2) + ')'});
+  vLbl.textContent = "velocity"; svg.appendChild(vLbl);
+
+  const x1 = xOf(0.1), x2 = xOf(0.9);
+  const y1 = yOf(s.v1), y2 = yOf(s.v2);
+  svg.appendChild(el('line', {x1, y1, x2, y2, stroke:'var(--accent-dark)', 'stroke-width':3}));
+}
+
+function newQuestion() {
+  current = scenarios[Math.floor(Math.random() * scenarios.length)];
+  answered = false;
+  drawGraph(current);
+  document.getElementById('feedback').textContent = "";
+  document.getElementById('feedback').className = "feedback";
+}
+
+document.querySelectorAll('.qbtns .op-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    if (answered) return;
+    answered = true;
+    const fb = document.getElementById('feedback');
+    if (this.dataset.ans === current.ans) {
+      fb.className = "feedback correct";
+      fb.textContent = "Correct! " + current.explain;
+    } else {
+      fb.className = "feedback incorrect";
+      fb.textContent = "Not quite. " + current.explain;
+    }
+  });
+});
+document.getElementById('nextBtn').addEventListener('click', newQuestion);
+newQuestion();
+</script>
+
+</body>
+</html>

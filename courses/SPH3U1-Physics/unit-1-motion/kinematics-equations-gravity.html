@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kinematics Equations &amp; Gravity - SPH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root {
+    --accent: #1a5f8a;
+    --accent-dark: #123f5c;
+    --accent-tint: #e6f0f6;
+  }
+  .big5-list { list-style: none; padding: 0; margin: 14px 0; }
+  .big5-list li {
+    font-family: var(--mono); font-size: 16px; background: var(--surface);
+    border: 1px solid var(--line); border-radius: 6px; padding: 10px 16px; margin-bottom: 8px;
+  }
+  .big5-list .missing { color: var(--ink-soft); font-size: 12px; font-family: var(--sans); margin-left: 10px; }
+  .solver-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px,1fr)); gap: 12px; margin: 16px 0; }
+  .solver-field label { display:block; font-size:13px; color: var(--ink-soft); margin-bottom: 4px; }
+  .solver-field input { width: 100%; padding: 8px 10px; font-family: var(--mono); font-size: 15px; border: 1px solid var(--line); border-radius: 6px; }
+  .solver-field input:disabled { background: var(--accent-tint); color: var(--accent-dark); font-weight: 700; }
+  .solve-results { margin-top: 16px; }
+  .solve-results .res-line { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 10px 14px; margin-bottom: 8px; font-family: var(--mono); font-size: 15px; }
+  .solve-error { color: #a83232; font-size: 14px; }
+  .checkbox-row { display: flex; gap: 8px; align-items: center; margin: 10px 0; font-size: 14px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Home</a>
+  <a href="../index.html">SPH3U</a>
+  <span class="crumb-current">Kinematics Equations &amp; Gravity</span>
+</div>
+
+<div class="wrap">
+  <h1>1.6 Kinematics Equations &amp; Gravity</h1>
+  <p class="subtitle">The "Big Five" equations, and free fall near Earth's surface.</p>
+
+  <div class="panel">
+    <p>Each of the Big Five relates <strong>four</strong> of these five quantities: initial velocity
+    (v<sub>1</sub>), final velocity (v<sub>2</sub>), acceleration (a), displacement (&Delta;d), and
+    time (&Delta;t). Each equation leaves exactly one quantity out &mdash; that's the clue for which
+    one to use.</p>
+    <ul class="big5-list">
+      <li>v<sub>2</sub> = v<sub>1</sub> + a&Delta;t <span class="missing">(no &Delta;d)</span></li>
+      <li>&Delta;d = v<sub>1</sub>&Delta;t + &frac12;a&Delta;t&sup2; <span class="missing">(no v<sub>2</sub>)</span></li>
+      <li>&Delta;d = v<sub>2</sub>&Delta;t &minus; &frac12;a&Delta;t&sup2; <span class="missing">(no v<sub>1</sub>)</span></li>
+      <li>&Delta;d = &frac12;(v<sub>1</sub> + v<sub>2</sub>)&Delta;t <span class="missing">(no a)</span></li>
+      <li>v<sub>2</sub>&sup2; = v<sub>1</sub>&sup2; + 2a&Delta;d <span class="missing">(no &Delta;t)</span></li>
+    </ul>
+    <p>Sign convention: we usually assign <strong>+</strong> to forward, North, East, up, and right,
+    and <strong>&minus;</strong> to the opposite directions.</p>
+  </div>
+
+  <h2>Try it: Big Five Solver</h2>
+  <div class="demo">
+    <p>Fill in <strong>exactly four</strong> of the five fields and leave the one you want to solve
+    for blank, then click Solve.</p>
+
+    <div class="checkbox-row">
+      <input type="checkbox" id="freefallCheck"> Assume free fall (a = &minus;9.8 m/s&sup2;, taking down as negative)
+    </div>
+
+    <div class="solver-grid">
+      <div class="solver-field"><label>v&#8321; (m/s)</label><input type="text" id="v1In" placeholder="e.g. 0"></div>
+      <div class="solver-field"><label>v&#8322; (m/s)</label><input type="text" id="v2In" placeholder="e.g. 20"></div>
+      <div class="solver-field"><label>a (m/s&sup2;)</label><input type="text" id="aIn" placeholder="e.g. 2"></div>
+      <div class="solver-field"><label>&Delta;d (m)</label><input type="text" id="ddIn" placeholder=""></div>
+      <div class="solver-field"><label>&Delta;t (s)</label><input type="text" id="dtIn" placeholder="e.g. 10"></div>
+    </div>
+
+    <button class="op-btn" id="solveBtn" data-active="true">Solve</button>
+
+    <div class="solve-results" id="solveResults"></div>
+  </div>
+
+  <h2>Acceleration Due to Gravity</h2>
+  <div class="panel">
+    <p>Near Earth's surface, every falling (or thrown) object accelerates downward at
+    <strong>g = 9.8 m/s&sup2;</strong> &mdash; as long as we ignore air resistance, which we do for
+    this course. If down is negative in your sign convention, substitute <strong>a = &minus;9.8 m/s&sup2;</strong>
+    into the Big Five.</p>
+  </div>
+
+  <div class="callout">
+    <strong>Try this:</strong> A rocket accelerates upward from rest to 451 m/s in 12.3 s. Before
+    using the solver, decide which of the Big Five you'd use (which variable is missing?) and
+    calculate the acceleration by hand. Then enter v<sub>1</sub> = 0, v<sub>2</sub> = 451,
+    &Delta;t = 12.3, leave a blank, and check.
+  </div>
+
+  <p class="page-foot">SPH3U Study Hub</p>
+</div>
+
+<script>
+function num(id) {
+  const v = document.getElementById(id).value.trim();
+  return v === "" ? null : Number(v);
+}
+
+const EQS = [
+  {
+    name: "v\u2082 = v\u2081 + a\u0394t",
+    vars: ["v1","v2","a","dt"],
+    solve: {
+      v2: (x) => x.v1 + x.a * x.dt,
+      v1: (x) => x.v2 - x.a * x.dt,
+      a:  (x) => x.dt === 0 ? null : (x.v2 - x.v1) / x.dt,
+      dt: (x) => x.a === 0 ? null : (x.v2 - x.v1) / x.a,
+    }
+  },
+  {
+    name: "\u0394d = v\u2081\u0394t + \u00bda\u0394t\u00b2",
+    vars: ["v1","dd","a","dt"],
+    solve: {
+      dd: (x) => x.v1 * x.dt + 0.5 * x.a * x.dt * x.dt,
+      v1: (x) => x.dt === 0 ? null : (x.dd - 0.5 * x.a * x.dt * x.dt) / x.dt,
+      a:  (x) => x.dt === 0 ? null : 2 * (x.dd - x.v1 * x.dt) / (x.dt * x.dt),
+      dt: (x) => {
+        if (x.a === 0) return x.v1 === 0 ? null : [x.dd / x.v1];
+        const disc = x.v1*x.v1 + 2*x.a*x.dd;
+        if (disc < 0) return null;
+        const r1 = (-x.v1 + Math.sqrt(disc)) / x.a;
+        const r2 = (-x.v1 - Math.sqrt(disc)) / x.a;
+        return [r1, r2];
+      }
+    }
+  },
+  {
+    name: "\u0394d = v\u2082\u0394t \u2212 \u00bda\u0394t\u00b2",
+    vars: ["v2","dd","a","dt"],
+    solve: {
+      dd: (x) => x.v2 * x.dt - 0.5 * x.a * x.dt * x.dt,
+      v2: (x) => x.dt === 0 ? null : (x.dd + 0.5 * x.a * x.dt * x.dt) / x.dt,
+      a:  (x) => x.dt === 0 ? null : 2 * (x.v2 * x.dt - x.dd) / (x.dt * x.dt),
+      dt: (x) => {
+        if (x.a === 0) return x.v2 === 0 ? null : [x.dd / x.v2];
+        const disc = x.v2*x.v2 - 2*x.a*x.dd;
+        if (disc < 0) return null;
+        const r1 = (x.v2 + Math.sqrt(disc)) / x.a;
+        const r2 = (x.v2 - Math.sqrt(disc)) / x.a;
+        return [r1, r2];
+      }
+    }
+  },
+  {
+    name: "\u0394d = \u00bd(v\u2081+v\u2082)\u0394t",
+    vars: ["v1","v2","dd","dt"],
+    solve: {
+      dd: (x) => 0.5 * (x.v1 + x.v2) * x.dt,
+      v1: (x) => x.dt === 0 ? null : (2 * x.dd / x.dt) - x.v2,
+      v2: (x) => x.dt === 0 ? null : (2 * x.dd / x.dt) - x.v1,
+      dt: (x) => (x.v1 + x.v2) === 0 ? null : 2 * x.dd / (x.v1 + x.v2),
+    }
+  },
+  {
+    name: "v\u2082\u00b2 = v\u2081\u00b2 + 2a\u0394d",
+    vars: ["v1","v2","a","dd"],
+    solve: {
+      v2: (x) => { const s = x.v1*x.v1 + 2*x.a*x.dd; return s < 0 ? null : [Math.sqrt(s), -Math.sqrt(s)]; },
+      v1: (x) => { const s = x.v2*x.v2 - 2*x.a*x.dd; return s < 0 ? null : [Math.sqrt(s), -Math.sqrt(s)]; },
+      a:  (x) => x.dd === 0 ? null : (x.v2*x.v2 - x.v1*x.v1) / (2 * x.dd),
+      dd: (x) => x.a === 0 ? null : (x.v2*x.v2 - x.v1*x.v1) / (2 * x.a),
+    }
+  },
+];
+
+function solveAll() {
+  const resultsEl = document.getElementById('solveResults');
+  const raw = { v1: num('v1In'), v2: num('v2In'), a: num('aIn'), dd: num('ddIn'), dt: num('dtIn') };
+
+  const blanks = Object.keys(raw).filter(k => raw[k] === null);
+  if (blanks.length !== 1) {
+    resultsEl.innerHTML = '<div class="solve-error">Leave exactly one field blank (the one you want to solve for). Currently blank: ' + (blanks.length === 0 ? "none" : blanks.join(", ")) + '.</div>';
+    return;
+  }
+  const target = blanks[0];
+  const labelMap = {v1:"v\u2081", v2:"v\u2082", a:"a", dd:"\u0394d", dt:"\u0394t"};
+  const unitMap = {v1:"m/s", v2:"m/s", a:"m/s\u00b2", dd:"m", dt:"s"};
+
+  let lines = [];
+  for (const eq of EQS) {
+    if (!eq.vars.includes(target)) continue;
+    let val;
+    try {
+      val = eq.solve[target](raw);
+    } catch (e) {
+      val = null;
+    }
+    if (val === null || val === undefined) continue;
+    if (Array.isArray(val)) {
+      val.forEach((v, i) => {
+        if (isNaN(v) || !isFinite(v)) return;
+        lines.push('<div class="res-line">Using ' + eq.name + ' &rarr; ' + labelMap[target] + ' = ' + v.toFixed(3) + ' ' + unitMap[target] + ' <span style="color:var(--ink-soft); font-size:12.5px;">(root ' + (i+1) + ')</span></div>');
+      });
+    } else {
+      if (isNaN(val) || !isFinite(val)) continue;
+      lines.push('<div class="res-line">Using ' + eq.name + ' &rarr; ' + labelMap[target] + ' = ' + val.toFixed(3) + ' ' + unitMap[target] + '</div>');
+    }
+  }
+
+  if (lines.length === 0) {
+    resultsEl.innerHTML = '<div class="solve-error">Couldn\'t solve with the given values &mdash; check for a division by zero or a negative number under a square root.</div>';
+  } else {
+    resultsEl.innerHTML = lines.join("");
+  }
+}
+
+document.getElementById('solveBtn').addEventListener('click', solveAll);
+
+document.getElementById('freefallCheck').addEventListener('change', function() {
+  const aIn = document.getElementById('aIn');
+  if (this.checked) {
+    aIn.value = "-9.8";
+    aIn.disabled = true;
+  } else {
+    aIn.disabled = false;
+    aIn.value = "";
+  }
+});
+</script>
+
+</body>
+</html>

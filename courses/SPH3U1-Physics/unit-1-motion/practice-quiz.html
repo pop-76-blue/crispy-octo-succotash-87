@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Practice Quiz - SPH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root {
+    --accent: #1a5f8a;
+    --accent-dark: #123f5c;
+    --accent-tint: #e6f0f6;
+  }
+  .qcard {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 16px 20px; margin-bottom: 14px;
+  }
+  .qcard.correct { border-left: 4px solid #1a6b3a; }
+  .qcard.incorrect { border-left: 4px solid #a83232; }
+  .qnum {
+    display: inline-block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em;
+    background: var(--accent-tint); color: var(--accent-dark); padding: 2px 8px; border-radius: 10px;
+    margin-bottom: 8px;
+  }
+  .qprompt { font-size: 15px; margin-bottom: 10px; }
+  .qoptions { display: flex; flex-direction: column; gap: 6px; }
+  .qoptions label { display: flex; gap: 8px; align-items: center; font-size: 14.5px; cursor: pointer; }
+  .qnumeric input {
+    font-family: var(--mono); font-size: 15px; padding: 6px 10px; border: 1px solid var(--line);
+    border-radius: 6px; width: 140px;
+  }
+  .qfeedback { margin-top: 10px; font-size: 14px; padding-top: 10px; border-top: 1px dashed var(--line); display: none; }
+  .qfeedback.show { display: block; }
+  .qfeedback.correct-text { color: #1a6b3a; }
+  .qfeedback.incorrect-text { color: #a83232; }
+  #scoreBox {
+    text-align: center; padding: 20px; background: var(--accent-tint); border-radius: var(--radius);
+    margin: 20px 0; display: none;
+  }
+  #scoreBox.show { display: block; }
+  #scoreBox .score-num { font-size: 32px; font-weight: 700; color: var(--accent-dark); font-family: var(--mono); }
+  #submitBtn { display: block; margin: 20px auto; }
+  .retry-note { text-align: center; font-size: 13px; color: var(--ink-soft); margin-top: -10px; margin-bottom: 20px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Home</a>
+  <a href="../index.html">SPH3U</a>
+  <span class="crumb-current">Practice Quiz</span>
+</div>
+
+<div class="wrap">
+  <h1>Practice Quiz &mdash; Monday</h1>
+  <p class="subtitle">10 questions, same topics as the real quiz: sig figs, scientific notation, displacement, velocity, position-time graphs.</p>
+
+  <div class="callout">
+    Answer everything, then hit <strong>Submit</strong> at the bottom to grade yourself and see
+    explanations. This resets each time you reload the page &mdash; take it as many times as you want.
+  </div>
+
+  <div id="quizContainer"></div>
+
+  <button class="op-btn" id="submitBtn" data-active="true">Submit Quiz</button>
+
+  <div id="scoreBox">
+    <div class="score-num" id="scoreNum">0 / 10</div>
+    <div id="scoreMsg" style="margin-top: 6px; font-size: 14px; color: var(--ink-soft);"></div>
+  </div>
+  <p class="retry-note" id="retryNote"></p>
+
+  <p class="page-foot">SPH3U Study Hub</p>
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    type: "mc",
+    tag: "Sig Figs",
+    prompt: "How many significant digits are in 0.070 40?",
+    options: ["2", "3", "4", "5"],
+    correct: 2,
+    explain: "The two leading zeros don't count. The zero between 7 and 4 counts (between two significant digits), and the trailing zero after the decimal point counts too. That's 7, 0, 4, 0 &mdash; 4 significant digits."
+  },
+  {
+    type: "mc",
+    tag: "Sig Figs",
+    prompt: "A measurement is recorded as 8 000 m with no decimal point. How many significant digits does it definitely have?",
+    options: ["4", "3", "1", "It's ambiguous"],
+    correct: 3,
+    explain: "Trailing zeros with no decimal point are ambiguous &mdash; we can't tell from the number alone whether they were measured. Writing it in scientific notation (e.g. 8.000 \u00d7 10\u00b3) would remove the ambiguity."
+  },
+  {
+    type: "mc",
+    tag: "Sci. Notation",
+    prompt: "Convert 0.000 000 56 to scientific notation.",
+    options: ["5.6 \u00d7 10\u2077", "5.6 \u00d7 10\u207b\u2077", "56 \u00d7 10\u207b\u2078", "0.56 \u00d7 10\u207b\u2076"],
+    correct: 1,
+    explain: "Move the decimal point 7 places to the right to get a coefficient between 1 and 10 (5.6), and since the original number is less than 1, the exponent is negative: 5.6 \u00d7 10\u207b\u2077."
+  },
+  {
+    type: "mc",
+    tag: "Sci. Notation",
+    prompt: "Simplify: (3.2 \u00d7 10\u2074) \u00d7 (5 \u00d7 10\u207b\u00b2)",
+    options: ["1.6 \u00d7 10\u00b2", "1.6 \u00d7 10\u00b3", "16 \u00d7 10\u00b2", "1.6 \u00d7 10\u2076"],
+    correct: 1,
+    explain: "Multiply coefficients: 3.2 \u00d7 5 = 16. Add exponents: 4 + (\u22122) = 2. That gives 16 \u00d7 10\u00b2, which still needs to be renormalized to 1.6 \u00d7 10\u00b3."
+  },
+  {
+    type: "numeric",
+    tag: "Displacement",
+    prompt: "A cyclist rides 12 km east, then turns around and rides 5 km west. What is the magnitude of the total displacement, in km?",
+    correct: 7,
+    tolerance: 0.2,
+    explain: "Taking east as positive: 12 km + (\u22125 km) = 7 km. The displacement is 7 km [E]."
+  },
+  {
+    type: "numeric",
+    tag: "Distance",
+    prompt: "Using the same cyclist (12 km east, then 5 km west), what is the total distance travelled, in km?",
+    correct: 17,
+    tolerance: 0.2,
+    explain: "Distance just adds up regardless of direction: 12 km + 5 km = 17 km."
+  },
+  {
+    type: "mc",
+    tag: "Velocity",
+    prompt: "A runner completes one lap of a 400 m track in 52 s, finishing back at the starting point. What is the average velocity?",
+    options: ["7.7 m/s", "0 m/s", "400 m/s", "52 m/s"],
+    correct: 1,
+    explain: "Average velocity depends on displacement, not distance. Since the runner ends up exactly where they started, the displacement &mdash; and therefore the average velocity &mdash; is 0 m/s."
+  },
+  {
+    type: "numeric",
+    tag: "Speed",
+    prompt: "Same runner: 400 m in 52 s. What is the average speed, in m/s? (round to 1 decimal place)",
+    correct: 7.7,
+    tolerance: 0.15,
+    explain: "Average speed = total distance \u00f7 time = 400 m \u00f7 52 s \u2248 7.7 m/s."
+  },
+  {
+    type: "numeric",
+    tag: "Position-Time Graphs",
+    prompt: "A position-time graph is a straight line from (0 s, 2 m) to (6 s, 26 m). What is the velocity, in m/s?",
+    correct: 4,
+    tolerance: 0.1,
+    explain: "v = \u0394d / \u0394t = (26 m \u2212 2 m) / (6 s \u2212 0 s) = 24 m / 6 s = 4 m/s."
+  },
+  {
+    type: "mc",
+    tag: "Position-Time Graphs",
+    prompt: "On a curved (non-uniform) d-t graph, the slope of a line joining two separate points on the curve gives you the:",
+    options: ["Instantaneous velocity", "Average velocity", "Acceleration", "Total distance"],
+    correct: 1,
+    explain: "A line joining two points on the curve is called a secant, and its slope is the average velocity over that time interval. A tangent at a single point gives instantaneous velocity instead."
+  },
+];
+
+const container = document.getElementById('quizContainer');
+
+QUESTIONS.forEach((q, i) => {
+  const card = document.createElement('div');
+  card.className = 'qcard';
+  card.dataset.index = i;
+
+  let inner = '<div class="qnum">Q' + (i+1) + ' \u00b7 ' + q.tag + '</div>';
+  inner += '<div class="qprompt">' + q.prompt + '</div>';
+
+  if (q.type === 'mc') {
+    inner += '<div class="qoptions">';
+    q.options.forEach((opt, oi) => {
+      inner += '<label><input type="radio" name="q' + i + '" value="' + oi + '"> ' + opt + '</label>';
+    });
+    inner += '</div>';
+  } else {
+    inner += '<div class="qnumeric"><input type="text" id="q' + i + 'input" placeholder="your answer"></div>';
+  }
+
+  inner += '<div class="qfeedback" id="q' + i + 'feedback"></div>';
+  card.innerHTML = inner;
+  container.appendChild(card);
+});
+
+document.getElementById('submitBtn').addEventListener('click', function() {
+  let score = 0;
+  QUESTIONS.forEach((q, i) => {
+    const card = document.querySelector('.qcard[data-index="' + i + '"]');
+    const fb = document.getElementById('q' + i + 'feedback');
+    let isCorrect = false;
+    let userAnswerText = "";
+
+    if (q.type === 'mc') {
+      const checked = document.querySelector('input[name="q' + i + '"]:checked');
+      if (checked) {
+        isCorrect = Number(checked.value) === q.correct;
+        userAnswerText = q.options[Number(checked.value)];
+      } else {
+        userAnswerText = "(no answer selected)";
+      }
+    } else {
+      const val = document.getElementById('q' + i + 'input').value.trim();
+      const num = Number(val);
+      if (val !== "" && !isNaN(num)) {
+        isCorrect = Math.abs(num - q.correct) <= q.tolerance;
+        userAnswerText = val;
+      } else {
+        userAnswerText = "(no answer entered)";
+      }
+    }
+
+    if (isCorrect) score++;
+    card.classList.remove('correct', 'incorrect');
+    card.classList.add(isCorrect ? 'correct' : 'incorrect');
+
+    fb.classList.add('show');
+    fb.classList.add(isCorrect ? 'correct-text' : 'incorrect-text');
+    let correctText = q.type === 'mc' ? q.options[q.correct] : q.correct;
+    fb.innerHTML = (isCorrect ? '<strong>Correct!</strong> ' : ('<strong>Not quite.</strong> Correct answer: ' + correctText + '. ')) + q.explain;
+  });
+
+  const scoreBox = document.getElementById('scoreBox');
+  scoreBox.classList.add('show');
+  document.getElementById('scoreNum').textContent = score + " / " + QUESTIONS.length;
+  let msg;
+  if (score >= 9) msg = "Excellent \u2014 you're ready for Monday.";
+  else if (score >= 7) msg = "Solid! Review the ones you missed, then you're set.";
+  else if (score >= 5) msg = "Getting there \u2014 go back through the explaner pages for anything you missed.";
+  else msg = "Worth another pass through the topic pages before Monday.";
+  document.getElementById('scoreMsg').textContent = msg;
+  document.getElementById('retryNote').textContent = "Reload this page for a fresh attempt.";
+
+  scoreBox.scrollIntoView({behavior: 'smooth', block: 'center'});
+});
+</script>
+
+</body>
+</html>

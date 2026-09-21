@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scientific Notation - SPH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root {
+    --accent: #1a5f8a;
+    --accent-dark: #123f5c;
+    --accent-tint: #e6f0f6;
+  }
+  .conv-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin: 14px 0; }
+  .conv-row input {
+    font-family: var(--mono); font-size: 18px; padding: 8px 12px;
+    border: 1px solid var(--line); border-radius: 6px; width: 200px;
+  }
+  .conv-arrow { font-size: 22px; color: var(--accent); }
+  .conv-output {
+    font-family: var(--mono); font-size: 22px; background: var(--accent-tint);
+    color: var(--accent-dark); padding: 10px 18px; border-radius: 6px; min-width: 160px; text-align: center;
+  }
+  .practice-problem {
+    font-family: var(--mono); font-size: 20px; text-align: center; margin: 16px 0;
+    padding: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+  }
+  .practice-answer {
+    text-align: center; font-family: var(--mono); font-size: 18px; margin-top: 10px;
+    color: var(--accent-dark); font-weight: 700; min-height: 24px;
+  }
+  .op-row { display: flex; gap: 8px; justify-content: center; margin: 10px 0; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Home</a>
+  <a href="../index.html">SPH3U</a>
+  <span class="crumb-current">Scientific Notation</span>
+</div>
+
+<div class="wrap">
+  <h1>Scientific Notation</h1>
+  <p class="subtitle">A compact way to write very large or very small numbers.</p>
+
+  <div class="panel">
+    <p>A number in scientific notation always looks like:</p>
+    <p style="text-align:center; font-size: 20px; font-family: var(--mono);">a &times; 10<sup>n</sup></p>
+    <p>where <strong>a</strong> is a single non-zero digit followed by any decimal places you need
+    (1 &le; a &lt; 10), and <strong>n</strong> is an integer (positive for large numbers, negative for
+    small numbers).</p>
+    <p>e.g. 3 856 = <strong>3.856 &times; 10<sup>3</sup></strong>, and 0.000 031 = <strong>3.1 &times; 10<sup>-5</sup></strong></p>
+  </div>
+
+  <h2>Try it: Standard &harr; Scientific Converter</h2>
+  <div class="demo">
+    <p>Type a standard number to see it in scientific notation:</p>
+    <div class="conv-row">
+      <input type="text" id="stdInput" placeholder="e.g. 2000000" value="2000000">
+      <span class="conv-arrow">&rarr;</span>
+      <div class="conv-output" id="sciOutput"></div>
+    </div>
+
+    <p style="margin-top:24px;">Or type a coefficient and exponent to see the standard form:</p>
+    <div class="conv-row">
+      <input type="text" id="coefInput" placeholder="coefficient" value="4.0005" style="width:120px;">
+      <span style="font-family: var(--mono); font-size:18px;">&times; 10</span>
+      <input type="text" id="expInput" placeholder="exponent" value="-1" style="width:80px;">
+      <span class="conv-arrow">&rarr;</span>
+      <div class="conv-output" id="stdOutput"></div>
+    </div>
+  </div>
+
+  <h2>Multiplying &amp; Dividing</h2>
+  <div class="panel">
+    <p><strong>Multiply:</strong> multiply the coefficients, <em>add</em> the exponents.</p>
+    <div class="example-box" style="background:var(--surface); border:1px solid var(--line); border-radius:6px; padding:10px 14px; font-family: var(--mono);">
+      (2 &times; 10<sup>-4</sup>)(8.1 &times; 10<sup>-1</sup>) = (2 &times; 8.1) &times; 10<sup>(-4)+(-1)</sup> = 16.2 &times; 10<sup>-5</sup> = 1.62 &times; 10<sup>-4</sup>
+    </div>
+    <p style="margin-top:16px;"><strong>Divide:</strong> divide the coefficients, <em>subtract</em> the exponents.</p>
+    <div class="example-box" style="background:var(--surface); border:1px solid var(--line); border-radius:6px; padding:10px 14px; font-family: var(--mono);">
+      (7.1 &times; 10<sup>6</sup>) &divide; (8.2 &times; 10<sup>1</sup>) = (7.1 &divide; 8.2) &times; 10<sup>6-1</sup> &asymp; 0.866 &times; 10<sup>5</sup> = 8.66 &times; 10<sup>4</sup>
+    </div>
+    <p style="margin-top:16px;"><strong>Powers:</strong> raise the coefficient to the power, and <em>multiply</em> the exponent by the power.</p>
+    <div class="example-box" style="background:var(--surface); border:1px solid var(--line); border-radius:6px; padding:10px 14px; font-family: var(--mono);">
+      (6 &times; 10<sup>-5</sup>)<sup>3</sup> = 6<sup>3</sup> &times; 10<sup>-5&times;3</sup> = 216 &times; 10<sup>-15</sup> = 2.16 &times; 10<sup>-13</sup>
+    </div>
+  </div>
+
+  <h2>Practice</h2>
+  <div class="demo">
+    <p>Pick an operation, try the problem in your head or on paper, then reveal the answer.</p>
+    <div class="op-row">
+      <button class="op-btn" data-op="mul" data-active="true">Multiply</button>
+      <button class="op-btn" data-op="div">Divide</button>
+      <button class="op-btn" data-op="pow">Power</button>
+    </div>
+    <div class="practice-problem" id="practiceProblem"></div>
+    <div style="text-align:center;">
+      <button class="op-btn" id="newProblemBtn">New Problem</button>
+      <button class="op-btn" id="revealBtn">Reveal Answer</button>
+    </div>
+    <div class="practice-answer" id="practiceAnswer"></div>
+  </div>
+
+  <div class="callout">
+    <strong>Try this:</strong> The average distance from Earth to the Sun is about
+    150 000 000 km. Before using the converter above, write down what you think that is
+    in scientific notation. Then check it &mdash; and try converting it to metres too.
+  </div>
+
+  <p class="page-foot">SPH3U Study Hub</p>
+</div>
+
+<script>
+function toScientific(numStr) {
+  let n = Number(numStr.replace(/\s/g, ''));
+  if (isNaN(n) || numStr.trim() === "") return null;
+  if (n === 0) return "0";
+  let sign = n < 0 ? "-" : "";
+  n = Math.abs(n);
+  let exp = Math.floor(Math.log10(n));
+  let coeff = n / Math.pow(10, exp);
+  // fix rounding edge cases like 9.9999999 -> 10
+  if (coeff >= 10) { coeff /= 10; exp += 1; }
+  if (coeff < 1) { coeff *= 10; exp -= 1; }
+  let coeffStr = parseFloat(coeff.toPrecision(6)).toString();
+  return sign + coeffStr + " x 10^" + exp;
+}
+
+function toStandard(coefStr, expStr) {
+  let coef = Number(coefStr);
+  let exp = Number(expStr);
+  if (isNaN(coef) || isNaN(exp)) return null;
+  let val = coef * Math.pow(10, exp);
+  if (Math.abs(val) >= 1e21 || (Math.abs(val) < 1e-6 && val !== 0)) {
+    return val.toExponential(6);
+  }
+  // avoid floating point noise
+  let str = val.toPrecision(12);
+  let num = parseFloat(str);
+  return num.toLocaleString('en-US', {maximumFractionDigits: 20, useGrouping: false});
+}
+
+function updateStdToSci() {
+  let out = toScientific(document.getElementById('stdInput').value);
+  document.getElementById('sciOutput').textContent = out === null ? "?" : out;
+}
+function updateSciToStd() {
+  let out = toStandard(document.getElementById('coefInput').value, document.getElementById('expInput').value);
+  document.getElementById('stdOutput').textContent = out === null ? "?" : out;
+}
+document.getElementById('stdInput').addEventListener('input', updateStdToSci);
+document.getElementById('coefInput').addEventListener('input', updateSciToStd);
+document.getElementById('expInput').addEventListener('input', updateSciToStd);
+updateStdToSci();
+updateSciToStd();
+
+// Practice generator
+let currentOp = 'mul';
+let currentProblem = null;
+
+function randCoeff() {
+  return Math.round((1 + Math.random() * 8.9) * 100) / 100;
+}
+function randExp(lo, hi) {
+  return Math.floor(Math.random() * (hi - lo + 1)) + lo;
+}
+function fmt(coef, exp) {
+  return coef + " x 10^" + exp;
+}
+
+function generateProblem() {
+  if (currentOp === 'mul' || currentOp === 'div') {
+    let c1 = randCoeff(), e1 = randExp(-6, 6);
+    let c2 = randCoeff(), e2 = randExp(-6, 6);
+    let symbol = currentOp === 'mul' ? '\u00d7' : '\u00f7';
+    let resultVal, resultCoeff, resultExp;
+    if (currentOp === 'mul') {
+      resultVal = c1 * c2;
+      resultExp = e1 + e2;
+    } else {
+      resultVal = c1 / c2;
+      resultExp = e1 - e2;
+    }
+    resultCoeff = resultVal;
+    while (resultCoeff >= 10) { resultCoeff /= 10; resultExp += 1; }
+    while (resultCoeff < 1) { resultCoeff *= 10; resultExp -= 1; }
+    resultCoeff = Math.round(resultCoeff * 1000) / 1000;
+    currentProblem = {
+      text: "(" + fmt(c1, e1) + ") " + symbol + " (" + fmt(c2, e2) + ")",
+      answer: fmt(resultCoeff, resultExp)
+    };
+  } else {
+    let c1 = randCoeff(), e1 = randExp(-4, 4);
+    let p = randExp(2, 4);
+    let resultCoeff = Math.pow(c1, p);
+    let resultExp = e1 * p;
+    while (resultCoeff >= 10) { resultCoeff /= 10; resultExp += 1; }
+    while (resultCoeff < 1 && resultCoeff !== 0) { resultCoeff *= 10; resultExp -= 1; }
+    resultCoeff = Math.round(resultCoeff * 1000) / 1000;
+    currentProblem = {
+      text: "(" + fmt(c1, e1) + ")<sup>" + p + "</sup>",
+      answer: fmt(resultCoeff, resultExp)
+    };
+  }
+  document.getElementById('practiceProblem').innerHTML = currentProblem.text;
+  document.getElementById('practiceAnswer').textContent = "";
+}
+
+document.querySelectorAll('.op-row .op-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.op-row .op-btn').forEach(b => b.dataset.active = "false");
+    this.dataset.active = "true";
+    currentOp = this.dataset.op;
+    generateProblem();
+  });
+});
+document.getElementById('newProblemBtn').addEventListener('click', generateProblem);
+document.getElementById('revealBtn').addEventListener('click', function() {
+  document.getElementById('practiceAnswer').textContent = "\u2248 " + currentProblem.answer;
+});
+
+generateProblem();
+</script>
+
+</body>
+</html>

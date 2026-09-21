@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monday's Quiz Prep - SPH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root {
+    --accent: #1a5f8a;
+    --accent-dark: #123f5c;
+    --accent-tint: #e6f0f6;
+  }
+  .quickref-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0; }
+  @media (max-width: 650px) { .quickref-grid { grid-template-columns: 1fr; } }
+  .quickref-box {
+    background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--accent);
+    border-radius: var(--radius); padding: 14px 18px;
+  }
+  .quickref-box h3 { margin-top: 0; }
+  .quickref-box a { font-size: 13px; }
+  details.practice {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 12px 18px; margin-bottom: 12px;
+  }
+  details.practice summary {
+    cursor: pointer; font-weight: 600; color: var(--accent-dark); padding: 4px 0;
+  }
+  details.practice .ans { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line); font-family: var(--mono); }
+  .topic-tag {
+    display: inline-block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em;
+    background: var(--accent-tint); color: var(--accent-dark); padding: 2px 8px; border-radius: 10px;
+    margin-bottom: 6px;
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Home</a>
+  <a href="../index.html">SPH3U</a>
+  <span class="crumb-current">Quiz Prep</span>
+</div>
+
+<div class="wrap">
+  <h1>Monday's Quiz Prep</h1>
+  <p class="subtitle">Covers: significant figures, scientific notation, displacement, velocity, and position-time graphs.</p>
+
+  <div class="callout">
+    Need the full explainer and interactive tool for a topic instead of just a quick review?
+    Jump to <a href="../pre-physics-math/significant-figures.html">Significant Figures</a>,
+    <a href="../pre-physics-math/scientific-notation.html">Scientific Notation</a>,
+    <a href="distance-displacement.html">Distance &amp; Displacement</a>,
+    <a href="speed-velocity.html">Speed &amp; Velocity</a>, or
+    <a href="position-time-graphs.html">Position-Time Graphs</a>.
+  </div>
+
+  <h2>Quick Reference</h2>
+  <div class="quickref-grid">
+    <div class="quickref-box">
+      <h3>Significant Figures</h3>
+      <p>1&ndash;9 always count. Zeros between digits count. Leading zeros never count. Trailing
+      zeros count only if there's a decimal point. Everything in scientific notation counts.</p>
+    </div>
+    <div class="quickref-box">
+      <h3>Scientific Notation</h3>
+      <p>a &times; 10<sup>n</sup>, where 1 &le; a &lt; 10. Multiply: add exponents. Divide: subtract
+      exponents. Power: multiply the exponent, raise the coefficient.</p>
+    </div>
+    <div class="quickref-box">
+      <h3>Distance &amp; Displacement</h3>
+      <p>Distance only adds up (scalar). Displacement is final position minus initial position
+      (vector) &mdash; it can cancel out on a round trip.</p>
+    </div>
+    <div class="quickref-box">
+      <h3>Speed &amp; Velocity</h3>
+      <p>Speed = total distance &divide; time (scalar). Velocity = displacement &divide; time (vector).
+      They're only equal if you never change direction.</p>
+    </div>
+    <div class="quickref-box">
+      <h3>Position-Time Graphs</h3>
+      <p>Straight line = constant velocity. Slope between two points = average velocity. Curved graph:
+      slope of a tangent at one point = instantaneous velocity.</p>
+    </div>
+  </div>
+
+  <h2>Mixed Practice</h2>
+  <p>Try each problem on paper first, then click to reveal the answer.</p>
+
+  <details class="practice">
+    <summary><span class="topic-tag">Sig Figs</span><br>How many significant digits are in 0.070 40?</summary>
+    <div class="ans">4 significant digits. The two leading zeros don't count (rule 3), but the zero
+    between 7 and 4, and the trailing zero after the decimal point, both count (rules 2 and 4).</div>
+  </details>
+
+  <details class="practice">
+    <summary><span class="topic-tag">Sci. Notation</span><br>Convert 0.000 000 56 to scientific notation.</summary>
+    <div class="ans">5.6 &times; 10<sup>-7</sup></div>
+  </details>
+
+  <details class="practice">
+    <summary><span class="topic-tag">Sci. Notation</span><br>Simplify: (3.2 &times; 10<sup>4</sup>) &times; (5 &times; 10<sup>-2</sup>)</summary>
+    <div class="ans">(3.2 &times; 5) &times; 10<sup>4+(-2)</sup> = 16 &times; 10<sup>2</sup> = 1.6 &times; 10<sup>3</sup></div>
+  </details>
+
+  <details class="practice">
+    <summary><span class="topic-tag">Displacement</span><br>A cyclist rides 12 km east, then turns around and rides 5 km west. Find the total distance travelled and the total displacement.</summary>
+    <div class="ans">Distance = 12 + 5 = 17 km.<br>Displacement = 12 km [E] &minus; 5 km [E] = 7 km [E]
+    (since 5 km west is &minus;5 km [E]).</div>
+  </details>
+
+  <details class="practice">
+    <summary><span class="topic-tag">Speed &amp; Velocity</span><br>A runner completes one lap of a 400 m track in 52 s, finishing back at the start. Find the average speed and average velocity.</summary>
+    <div class="ans">Average speed = 400 m &divide; 52 s &asymp; 7.7 m/s.<br>Average velocity = 0 m/s &mdash;
+    the displacement is zero because the runner ends up back where they started.</div>
+  </details>
+
+  <details class="practice">
+    <summary><span class="topic-tag">Position-Time Graphs</span><br>A position-time graph is a straight line from (0 s, 2 m) to (6 s, 26 m). Find the velocity.</summary>
+    <div class="ans">v = &Delta;d / &Delta;t = (26 m &minus; 2 m) / (6 s &minus; 0 s) = 24 m / 6 s = 4 m/s</div>
+  </details>
+
+  <details class="practice">
+    <summary><span class="topic-tag">Position-Time Graphs</span><br>On a curved (non-uniform) d-t graph, what's the difference between finding average velocity and instantaneous velocity?</summary>
+    <div class="ans">Average velocity uses a <strong>secant</strong> line between two points on the curve.
+    Instantaneous velocity uses a <strong>tangent</strong> line at a single point &mdash; a straight
+    line that touches the curve at just that one spot, going in the same direction as the curve
+    there.</div>
+  </details>
+
+  <div class="callout">
+    Want a graded run-through instead? Take the <a href="practice-quiz.html">10-question Practice Quiz</a>.
+  </div>
+
+  <h2>More Practice</h2>
+  <div class="panel">
+    <p>The Physics Classroom's interactive lets you sketch a motion and see the matching d-t and v-t
+    graphs update in real time &mdash; good for building intuition fast before the quiz:</p>
+    <p><a href="https://www.physicsclassroom.com/interactive/1d-kinematics/graph-that-motion" target="_blank" rel="noopener">Graph That Motion (physicsclassroom.com)</a></p>
+  </div>
+
+  <div class="callout">
+    <strong>Try this:</strong> Time yourself doing all seven practice problems above without looking
+    at the answers first. If you get through them in under 10 minutes with no mistakes, you're in
+    good shape for Monday.
+  </div>
+
+  <p class="page-foot">SPH3U Study Hub</p>
+</div>
+
+</body>
+</html>

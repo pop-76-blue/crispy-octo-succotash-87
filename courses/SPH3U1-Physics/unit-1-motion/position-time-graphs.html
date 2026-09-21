@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Position-Time Graphs - SPH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root {
+    --accent: #1a5f8a;
+    --accent-dark: #123f5c;
+    --accent-tint: #e6f0f6;
+  }
+  .graph-wrap { max-width: 560px; margin: 10px auto; }
+  svg { width: 100%; height: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+  .axis-line { stroke: var(--ink-soft); stroke-width: 1.5; }
+  .curve-path { fill: none; stroke: var(--accent); stroke-width: 2.5; }
+  .secant-line { stroke: #b5452e; stroke-width: 2.5; }
+  .pt-marker { fill: var(--ink); stroke: var(--surface); stroke-width: 1.5; }
+  .tick-label { font-size: 11px; fill: var(--ink-soft); font-family: var(--sans); }
+  .slider-block { margin: 14px 0; }
+  .slider-block label { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 4px; }
+  .slider-block input[type=range] { width: 100%; }
+  .readout-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 16px; }
+  @media (max-width: 600px) { .readout-grid { grid-template-columns: 1fr; } }
+  .readout-box {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+    padding: 12px; text-align: center;
+  }
+  .readout-box .num { font-family: var(--mono); font-size: 19px; font-weight: 700; color: var(--accent-dark); }
+  .readout-box .lbl { font-size: 12.5px; color: var(--ink-soft); margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Home</a>
+  <a href="../index.html">SPH3U</a>
+  <span class="crumb-current">Position-Time Graphs</span>
+</div>
+
+<div class="wrap">
+  <h1>1.3 Position-Time Graphs</h1>
+  <p class="subtitle">Reading a d-t graph, and finding velocity from its slope.</p>
+
+  <div class="panel">
+    <p>A position-time (d-t) graph lets you do two things:</p>
+    <ol>
+      <li><strong>Read it</strong> to find the <strong>instantaneous position</strong> at any time.</li>
+      <li><strong>Find the slope</strong> to get <strong>velocity</strong>.</li>
+    </ol>
+    <p>If the graph is a <strong>straight line</strong>, the slope between any two points is the same
+    &mdash; that's <strong>constant velocity</strong>, and average velocity = instantaneous velocity
+    everywhere.</p>
+    <p>If the graph is <strong>curved</strong>, the slope changes over time &mdash; the object is
+    accelerating. To find velocity you now have two choices:</p>
+    <ul>
+      <li>Slope between <strong>two points on the curve</strong> (a <em>secant</em> line) &rarr; <strong>average velocity</strong> over that interval.</li>
+      <li>Slope of a <strong>tangent</strong> at one single point &rarr; <strong>instantaneous velocity</strong> at that moment.</li>
+    </ul>
+  </div>
+
+  <h2>Try it: Secant &amp; Tangent Explorer</h2>
+  <div class="demo">
+    <p>This curve shows a rabbit's position over time, d(t) = 2t&sup2;. Drag the two sliders to move
+    points A and B along the curve and watch the secant line and the average velocity update.</p>
+
+    <div class="graph-wrap">
+      <svg id="graphSvg" viewBox="0 0 500 320"></svg>
+    </div>
+
+    <div class="slider-block">
+      <label><span>Point A: t<sub>1</sub></span> <span id="t1Label">0.0 s</span></label>
+      <input type="range" id="t1Slider" min="0" max="5" value="0" step="0.1">
+    </div>
+    <div class="slider-block">
+      <label><span>Point B: t<sub>2</sub></span> <span id="t2Label">5.0 s</span></label>
+      <input type="range" id="t2Slider" min="0" max="5" value="5" step="0.1">
+    </div>
+
+    <div class="readout-grid">
+      <div class="readout-box">
+        <div class="num" id="d1Out">0 m</div>
+        <div class="lbl">Position at A</div>
+      </div>
+      <div class="readout-box">
+        <div class="num" id="d2Out">50 m</div>
+        <div class="lbl">Position at B</div>
+      </div>
+      <div class="readout-box">
+        <div class="num" id="velOut">10 m/s</div>
+        <div class="lbl" id="velLbl">Average velocity, A&rarr;B</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>Try this:</strong> Set t<sub>1</sub> = 0 and t<sub>2</sub> = 5 to match the original
+    "rabbit" question &mdash; before checking the readout, calculate the rabbit's average velocity
+    over the first 5 seconds by hand. Then drag t<sub>1</sub> and t<sub>2</sub> very close together
+    around t = 3 s. What does the secant line start to look like, and what does that tell you about
+    instantaneous velocity at t = 3 s?
+  </div>
+
+  <p class="page-foot">SPH3U Study Hub</p>
+</div>
+
+<script>
+const svgNS = "http://www.w3.org/2000/svg";
+const svg = document.getElementById('graphSvg');
+
+const PAD_L = 55, PAD_R = 20, PAD_T = 20, PAD_B = 40;
+const PLOT_W = 500 - PAD_L - PAD_R;
+const PLOT_H = 320 - PAD_T - PAD_B;
+const T_MAX = 5, D_MAX = 50;
+
+function xOf(t) { return PAD_L + (t / T_MAX) * PLOT_W; }
+function yOf(d) { return (PAD_T + PLOT_H) - (d / D_MAX) * PLOT_H; }
+function dOf(t) { return 2 * t * t; }
+
+function el(tag, attrs) {
+  const e = document.createElementNS(svgNS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  return e;
+}
+
+function drawStatic() {
+  svg.innerHTML = "";
+  // axes
+  svg.appendChild(el('line', {class:'axis-line', x1:PAD_L, y1:PAD_T, x2:PAD_L, y2:PAD_T+PLOT_H}));
+  svg.appendChild(el('line', {class:'axis-line', x1:PAD_L, y1:PAD_T+PLOT_H, x2:PAD_L+PLOT_W, y2:PAD_T+PLOT_H}));
+  // ticks
+  for (let t = 0; t <= T_MAX; t++) {
+    const x = xOf(t);
+    svg.appendChild(el('line', {class:'axis-line', x1:x, y1:PAD_T+PLOT_H, x2:x, y2:PAD_T+PLOT_H+5}));
+    const lbl = el('text', {class:'tick-label', x:x, y:PAD_T+PLOT_H+18, 'text-anchor':'middle'});
+    lbl.textContent = t;
+    svg.appendChild(lbl);
+  }
+  for (let d = 0; d <= D_MAX; d += 10) {
+    const y = yOf(d);
+    svg.appendChild(el('line', {class:'axis-line', x1:PAD_L-5, y1:y, x2:PAD_L, y2:y}));
+    const lbl = el('text', {class:'tick-label', x:PAD_L-10, y:y+4, 'text-anchor':'end'});
+    lbl.textContent = d;
+    svg.appendChild(lbl);
+  }
+  const xAxisLbl = el('text', {class:'tick-label', x:PAD_L+PLOT_W/2, y:310, 'text-anchor':'middle'});
+  xAxisLbl.textContent = "Time t (s)";
+  svg.appendChild(xAxisLbl);
+  const yAxisLbl = el('text', {class:'tick-label', x:14, y:PAD_T+PLOT_H/2, 'text-anchor':'middle', transform:'rotate(-90 14 ' + (PAD_T+PLOT_H/2) + ')'});
+  yAxisLbl.textContent = "Position d (m)";
+  svg.appendChild(yAxisLbl);
+
+  // curve
+  let path = "M ";
+  for (let t = 0; t <= T_MAX + 0.001; t += 0.05) {
+    const x = xOf(t), y = yOf(dOf(t));
+    path += x.toFixed(1) + " " + y.toFixed(1) + " L ";
+  }
+  path = path.slice(0, -2);
+  svg.appendChild(el('path', {class:'curve-path', d: path}));
+}
+
+let secantLine = null, ptA = null, ptB = null;
+
+function render() {
+  const t1 = Number(document.getElementById('t1Slider').value);
+  const t2 = Number(document.getElementById('t2Slider').value);
+  document.getElementById('t1Label').textContent = t1.toFixed(1) + " s";
+  document.getElementById('t2Label').textContent = t2.toFixed(1) + " s";
+
+  const d1 = dOf(t1), d2 = dOf(t2);
+  document.getElementById('d1Out').textContent = d1.toFixed(1) + " m";
+  document.getElementById('d2Out').textContent = d2.toFixed(1) + " m";
+
+  drawStatic();
+
+  const x1 = xOf(t1), y1 = yOf(d1), x2 = xOf(t2), y2 = yOf(d2);
+  svg.appendChild(el('line', {class:'secant-line', x1:x1, y1:y1, x2:x2, y2:y2}));
+  svg.appendChild(el('circle', {class:'pt-marker', cx:x1, cy:y1, r:5}));
+  svg.appendChild(el('circle', {class:'pt-marker', cx:x2, cy:y2, r:5}));
+
+  const dt = t2 - t1;
+  const velOut = document.getElementById('velOut');
+  const velLbl = document.getElementById('velLbl');
+  if (Math.abs(dt) < 0.15) {
+    const instV = 4 * ((t1 + t2) / 2); // derivative of 2t^2 is 4t
+    velOut.textContent = instV.toFixed(1) + " m/s";
+    velLbl.textContent = "Instantaneous velocity (tangent, t \u2248 " + ((t1+t2)/2).toFixed(1) + " s)";
+  } else {
+    const avgV = (d2 - d1) / dt;
+    velOut.textContent = avgV.toFixed(1) + " m/s";
+    velLbl.textContent = "Average velocity, A\u2192B";
+  }
+}
+
+['t1Slider','t2Slider'].forEach(id => document.getElementById(id).addEventListener('input', render));
+render();
+</script>
+
+</body>
+</html>
