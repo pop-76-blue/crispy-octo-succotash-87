@@ -52,7 +52,7 @@
 </div>
 
 <div class="wrap">
-  <h1>Practice Quiz &mdash; Monday</h1>
+  <h1>Practice Quiz</h1>
   <p class="subtitle">10 questions, same topics as the real quiz: sig figs, scientific notation, displacement, velocity, position-time graphs.</p>
 
   <div class="callout">
@@ -223,10 +223,10 @@ document.getElementById('submitBtn').addEventListener('click', function() {
   scoreBox.classList.add('show');
   document.getElementById('scoreNum').textContent = score + " / " + QUESTIONS.length;
   let msg;
-  if (score >= 9) msg = "Excellent \u2014 you're ready for Monday.";
+  if (score >= 9) msg = "Excellent \u2014 you're ready for the quiz.";
   else if (score >= 7) msg = "Solid! Review the ones you missed, then you're set.";
   else if (score >= 5) msg = "Getting there \u2014 go back through the explaner pages for anything you missed.";
-  else msg = "Worth another pass through the topic pages before Monday.";
+  else msg = "Worth another pass through the topic pages before the quiz.";
   document.getElementById('scoreMsg').textContent = msg;
   document.getElementById('retryNote').textContent = "Reload this page for a fresh attempt.";
 
