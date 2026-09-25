@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Measuring Current — Series vs. Parallel</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#8a6d1a; --accent-dark:#6b5313; --accent-tint:#f6f0dc; }
+
+  .checkpoint-row { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin: 16px 0; }
+  .checkpoint {
+    display:flex; flex-direction:column; align-items:center; gap:4px;
+    background: var(--accent-tint);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    font-family: var(--mono);
+  }
+  .checkpoint .cp-label { font-family: var(--sans); font-size: 11px; color: var(--ink-soft); }
+  .checkpoint .cp-value { font-size: 18px; font-weight: 700; color: var(--accent-dark); }
+
+  input.conv-input {
+    font-family: var(--mono);
+    font-size: 18px;
+    padding: 6px 10px;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    width: 140px;
+    text-align: center;
+  }
+
+  .branch-rows { display:flex; flex-direction:column; gap:8px; align-items:center; margin: 14px 0; }
+  .branch-row { display:flex; align-items:center; gap:8px; }
+  .branch-row input {
+    font-family: var(--mono);
+    font-size: 15px;
+    padding: 5px 8px;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    width: 100px;
+    text-align: center;
+  }
+  .small-btn {
+    font-family: var(--sans);
+    font-size: 13px;
+    padding: 5px 10px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .small-btn.add { border-color: var(--accent); color: var(--accent-dark); }
+
+  table.worked {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--sans);
+    font-size: 13.5px;
+    margin: 14px 0;
+  }
+  table.worked th, table.worked td {
+    border: 1px solid var(--line);
+    padding: 7px 10px;
+    text-align: center;
+  }
+  table.worked th { background: var(--accent-tint); }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../index.html">&larr; TER3M1</a>
+    <span class="crumb-current">Measuring Current — Series vs. Parallel</span>
+  </div>
+
+  <div class="wrap">
+    <h1>Measuring Current — Series vs. Parallel</h1>
+    <p class="subtitle">Unit 3 &nbsp;&middot;&nbsp; Lab 3 (Definitions &amp; Formulas) &middot; Labs 3a&ndash;e &amp; 4a&ndash;k (Measuring Current)</p>
+
+    <div class="panel">
+      <p>You already know the rule from Lab 3: to measure current, the multimeter must always be placed <strong>in series</strong> with the component, never in parallel. Labs 3a&ndash;e and 4a&ndash;k use that rule to reveal two very different behaviors, depending on how the rest of the circuit is wired.</p>
+    </div>
+
+    <div class="demo">
+      <h3 style="text-align:center;">Series circuits: current is identical everywhere</h3>
+      <p style="text-align:center; color:var(--ink-soft); font-size:13.5px;">In a series loop there's only one path, so the same current passes every point &mdash; before the first bulb, between any two bulbs, or coming back into the battery. Set one value and watch it appear everywhere.</p>
+      <div style="text-align:center;">
+        <input type="text" class="conv-input" id="seriesCurrentInput" value="15.5"> mA
+      </div>
+      <div class="checkpoint-row" id="checkpointRow"></div>
+      <table class="worked">
+        <tr><th>From Lab 3b/3c/3d</th><th>Between bulbs 1&ndash;2</th><th>Between bulbs 2&ndash;3</th><th>Between bulbs 3&ndash;4</th><th>Returning to battery</th></tr>
+        <tr><td>Measured (4 bulbs in series)</td><td>15.5 mA</td><td>15.5 mA</td><td>15.5 mA</td><td>15.5 mA</td></tr>
+      </table>
+    </div>
+
+    <div class="demo">
+      <h3 style="text-align:center;">Parallel circuits: current splits, then sums back up</h3>
+      <p style="text-align:center; color:var(--ink-soft); font-size:13.5px;">Each parallel branch gets its own share of current. Whatever leaves the battery is exactly the sum of every branch, and that same total is what returns.</p>
+      <div class="branch-rows" id="branchRows"></div>
+      <div style="text-align:center;">
+        <button class="small-btn add" id="addBranchBtn">+ Add branch</button>
+      </div>
+      <div class="decimal-readout" id="branchTotal"></div>
+      <table class="worked">
+        <tr><th>From Lab 4c</th><th>Branch 1 (bulb 1)</th><th>Branch 2 (bulb 2)</th><th>Leaving/returning to battery</th></tr>
+        <tr><td>Measured (2 bulbs in parallel)</td><td>60.0 mA</td><td>60.0 mA</td><td>120 mA</td></tr>
+      </table>
+    </div>
+
+    <div class="panel">
+      <h2 style="border:none;padding:0;margin:0 0 10px;">Mixed circuits (Lab 4e)</h2>
+      <p>Lab 4e wires bulbs 1 and 2 in series with each other, then puts that whole pair in parallel with bulb 3. That's not a contradiction of the two rules above &mdash; it's both at once: bulbs 1 and 2 share one current (they're in series with each other), and that shared value becomes just <em>one branch's</em> current in the parallel sum with bulb 3. The calculator above still applies &mdash; you'd just enter the series pair's shared current as a single branch.</p>
+    </div>
+
+    <div class="callout">
+      <strong>Try this:</strong> In the parallel calculator, enter 60 mA for two branches and predict the total before checking (it should match Lab 4c's 120 mA). Then add a third branch of 60 mA and predict the new total &mdash; this is exactly the setup in Lab 4d.
+    </div>
+  </div>
+
+  <script>
+    const CHECKPOINTS = ['Before bulb 1', 'Between bulbs 1\u20132', 'Between bulbs 2\u20133', 'Returning to battery'];
+
+    function renderCheckpoints() {
+      const raw = document.getElementById('seriesCurrentInput').value.trim();
+      const val = parseFloat(raw);
+      const row = document.getElementById('checkpointRow');
+      row.innerHTML = '';
+      CHECKPOINTS.forEach(label => {
+        const cp = document.createElement('div');
+        cp.className = 'checkpoint';
+        cp.innerHTML = `<div class="cp-value">${isNaN(val) ? '\u2014' : val + ' mA'}</div><div class="cp-label">${label}</div>`;
+        row.appendChild(cp);
+      });
+    }
+    document.getElementById('seriesCurrentInput').addEventListener('input', renderCheckpoints);
+
+    let branchValues = [60, 60];
+    function renderBranchRows() {
+      const container = document.getElementById('branchRows');
+      container.innerHTML = '';
+      branchValues.forEach((val, i) => {
+        const row = document.createElement('div');
+        row.className = 'branch-row';
+        const label = document.createElement('span');
+        label.textContent = `Branch ${i + 1} (mA)`;
+        label.style.fontFamily = 'var(--sans)';
+        label.style.fontSize = '13px';
+        label.style.color = 'var(--ink-soft)';
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = val;
+        input.addEventListener('input', () => {
+          branchValues[i] = parseFloat(input.value) || 0;
+          renderBranchTotal();
+        });
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'small-btn';
+        removeBtn.textContent = '\u2212';
+        removeBtn.addEventListener('click', () => {
+          if (branchValues.length > 1) {
+            branchValues.splice(i, 1);
+            renderBranchRows();
+            renderBranchTotal();
+          }
+        });
+        row.appendChild(label);
+        row.appendChild(input);
+        row.appendChild(removeBtn);
+        container.appendChild(row);
+      });
+    }
+
+    function renderBranchTotal() {
+      const total = branchValues.reduce((a, b) => a + b, 0);
+      document.getElementById('branchTotal').innerHTML =
+        `${branchValues.map(v => v + ' mA').join(' + ')} = <strong>${total.toFixed(2).replace(/\.?0+$/, '')} mA</strong> leaving and returning to the battery`;
+    }
+
+    document.getElementById('addBranchBtn').addEventListener('click', () => {
+      branchValues.push(60);
+      renderBranchRows();
+      renderBranchTotal();
+    });
+
+    renderCheckpoints();
+    renderBranchRows();
+    renderBranchTotal();
+  </script>
+</body>
+</html>
