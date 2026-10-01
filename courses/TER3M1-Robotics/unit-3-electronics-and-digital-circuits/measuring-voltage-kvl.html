@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Measuring Voltage &amp; Kirchhoff's Voltage Law</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#8a6d1a; --accent-dark:#6b5313; --accent-tint:#f6f0dc; }
+
+  table.compare {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--sans);
+    font-size: 14px;
+    margin: 16px 0;
+  }
+  table.compare th, table.compare td {
+    border: 1px solid var(--line);
+    padding: 8px 12px;
+    text-align: left;
+  }
+  table.compare th { background: var(--accent-tint); }
+
+  .row-group { display:flex; flex-direction:column; gap:8px; align-items:center; margin: 14px 0; }
+  .value-row { display:flex; align-items:center; gap:8px; }
+  .value-row input {
+    font-family: var(--mono);
+    font-size: 15px;
+    padding: 5px 8px;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    width: 100px;
+    text-align: center;
+  }
+  .small-btn {
+    font-family: var(--sans);
+    font-size: 13px;
+    padding: 5px 10px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .small-btn.add { border-color: var(--accent); color: var(--accent-dark); }
+  input.supply-input {
+    font-family: var(--mono);
+    font-size: 16px;
+    padding: 6px 10px;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    width: 110px;
+    text-align: center;
+  }
+  .match-yes { color: #2e7d32; font-weight: 700; }
+  .match-no { color: #b3261e; font-weight: 700; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../index.html">&larr; TER3M1</a>
+    <span class="crumb-current">Measuring Voltage &amp; KVL</span>
+  </div>
+
+  <div class="wrap">
+    <h1>Measuring Voltage &amp; Kirchhoff's Voltage Law</h1>
+    <p class="subtitle">Unit 3 &nbsp;&middot;&nbsp; Lab 7a&ndash;c &mdash; the third multimeter mode, and the rule that governs it</p>
+
+    <div class="panel">
+      <p><strong>Kirchhoff's Voltage Law:</strong> the voltage supplied to a circuit equals the sum of every voltage drop around any complete loop.</p>
+      <p style="text-align:center; font-family:var(--mono); font-size:16px;">V<sub>A</sub> = V<sub>1</sub> + V<sub>2</sub> + V<sub>3</sub> + &hellip; + V<sub>n</sub></p>
+      <p>Every time current passes through a component, it "spends" some voltage &mdash; that's a voltage drop. In a <strong>series</strong> circuit, those drops add up to exactly the supply voltage. In a <strong>parallel</strong> circuit, every branch sees the <em>same</em> voltage drop, regardless of that branch's resistance &mdash; it's the current through each branch that differs instead, so <span style="font-family:var(--mono)">V = IR</span> still holds for each one individually.</p>
+      <p>This is the mirror image of what you already found for current: in series, <strong>current</strong> is identical everywhere and <strong>voltage</strong> splits; in parallel, <strong>voltage</strong> is identical everywhere and <strong>current</strong> splits.</p>
+    </div>
+
+    <div class="panel">
+      <h2 style="border:none;padding:0;margin:0 0 10px;">Measuring voltage</h2>
+      <p>To measure a voltage drop, the multimeter must be set to Voltage and connected <strong>in parallel</strong> with the component being measured, with the circuit's power still on &mdash; the opposite wiring from current mode, but like current mode, the circuit stays powered (unlike resistance mode, which needs the power removed).</p>
+    </div>
+
+    <div class="demo">
+      <h3 style="text-align:center;">Series voltage drops: do they add up to the supply?</h3>
+      <div style="text-align:center;">
+        Supply voltage: <input type="text" class="supply-input" id="supplyInput" value="8.86"> V
+      </div>
+      <div class="row-group" id="seriesDropRows"></div>
+      <div style="text-align:center;">
+        <button class="small-btn add" id="addDropBtn">+ Add a drop</button>
+      </div>
+      <div class="decimal-readout" id="seriesDropResult"></div>
+    </div>
+
+    <div class="demo">
+      <h3 style="text-align:center;">Parallel branches: are they all the same voltage?</h3>
+      <div class="row-group" id="parallelVoltRows"></div>
+      <div style="text-align:center;">
+        <button class="small-btn add" id="addParallelBtn">+ Add a branch</button>
+      </div>
+      <div class="decimal-readout" id="parallelVoltResult"></div>
+    </div>
+
+    <div class="panel">
+      <h2 style="border:none;padding:0;margin:0 0 10px;">Worked example from Lab 7c</h2>
+      <table class="compare">
+        <tr><th></th><th>Current</th><th>Voltage</th><th>Resistance</th></tr>
+        <tr><td>Bulb 1</td><td>69.2 mA</td><td>3.32 V</td><td>48 &Omega;</td></tr>
+        <tr><td>Resistor 1</td><td>69.2 mA</td><td>5.54 V</td><td>80 &Omega;</td></tr>
+        <tr><td><strong>Sub-circuit A total</strong></td><td>69.2 mA</td><td><strong>8.86 V</strong></td><td>128 &Omega;</td></tr>
+      </table>
+      <p>3.32V + 5.54V = 8.86V &mdash; Bulb 1 and Resistor 1 are in series with each other inside sub-circuit A, and their drops sum exactly to that sub-circuit's total voltage, confirming KVL with real measured numbers.</p>
+    </div>
+
+    <div class="callout">
+      <strong>Try this:</strong> In the series checker, enter 3.32 and 5.54 with a supply of 8.86 and confirm it matches. Then predict: if sub-circuit A and sub-circuit B are wired in parallel with each other (as Lab 7c shows), what voltage should each one read? Check it against the table above.
+    </div>
+  </div>
+
+  <script>
+    let seriesDrops = [3.32, 5.54];
+    function renderSeriesDrops() {
+      const container = document.getElementById('seriesDropRows');
+      container.innerHTML = '';
+      seriesDrops.forEach((val, i) => {
+        const row = document.createElement('div');
+        row.className = 'value-row';
+        const label = document.createElement('span');
+        label.textContent = `Drop ${i + 1} (V)`;
+        label.style.fontFamily = 'var(--sans)';
+        label.style.fontSize = '13px';
+        label.style.color = 'var(--ink-soft)';
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = val;
+        input.addEventListener('input', () => {
+          seriesDrops[i] = parseFloat(input.value) || 0;
+          renderSeriesResult();
+        });
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'small-btn';
+        removeBtn.textContent = '\u2212';
+        removeBtn.addEventListener('click', () => {
+          if (seriesDrops.length > 1) {
+            seriesDrops.splice(i, 1);
+            renderSeriesDrops();
+            renderSeriesResult();
+          }
+        });
+        row.appendChild(label);
+        row.appendChild(input);
+        row.appendChild(removeBtn);
+        container.appendChild(row);
+      });
+    }
+    function renderSeriesResult() {
+      const supply = parseFloat(document.getElementById('supplyInput').value) || 0;
+      const sum = seriesDrops.reduce((a, b) => a + b, 0);
+      const match = Math.abs(sum - supply) < 0.01;
+      document.getElementById('seriesDropResult').innerHTML =
+        `${seriesDrops.join('V + ')}V = <strong>${sum.toFixed(2)}V</strong> &nbsp;&middot;&nbsp; supply: ${supply}V &nbsp;` +
+        (match ? '<span class="match-yes">&#10003; matches KVL</span>' : '<span class="match-no">doesn\u2019t match \u2014 check your drops</span>');
+    }
+    document.getElementById('supplyInput').addEventListener('input', renderSeriesResult);
+    document.getElementById('addDropBtn').addEventListener('click', () => {
+      seriesDrops.push(1);
+      renderSeriesDrops();
+      renderSeriesResult();
+    });
+
+    let parallelVolts = [8.86, 8.86];
+    function renderParallelVolts() {
+      const container = document.getElementById('parallelVoltRows');
+      container.innerHTML = '';
+      parallelVolts.forEach((val, i) => {
+        const row = document.createElement('div');
+        row.className = 'value-row';
+        const label = document.createElement('span');
+        label.textContent = `Branch ${i + 1} (V)`;
+        label.style.fontFamily = 'var(--sans)';
+        label.style.fontSize = '13px';
+        label.style.color = 'var(--ink-soft)';
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = val;
+        input.addEventListener('input', () => {
+          parallelVolts[i] = parseFloat(input.value) || 0;
+          renderParallelResult();
+        });
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'small-btn';
+        removeBtn.textContent = '\u2212';
+        removeBtn.addEventListener('click', () => {
+          if (parallelVolts.length > 1) {
+            parallelVolts.splice(i, 1);
+            renderParallelVolts();
+            renderParallelResult();
+          }
+        });
+        row.appendChild(label);
+        row.appendChild(input);
+        row.appendChild(removeBtn);
+        container.appendChild(row);
+      });
+    }
+    function renderParallelResult() {
+      const allEqual = parallelVolts.every(v => Math.abs(v - parallelVolts[0]) < 0.01);
+      document.getElementById('parallelVoltResult').innerHTML =
+        `Branches: ${parallelVolts.join('V, ')}V &nbsp;` +
+        (allEqual ? '<span class="match-yes">&#10003; all equal \u2014 correct for parallel</span>' : '<span class="match-no">not all equal \u2014 true parallel branches must match</span>');
+    }
+    document.getElementById('addParallelBtn').addEventListener('click', () => {
+      parallelVolts.push(parallelVolts[0] || 1);
+      renderParallelVolts();
+      renderParallelResult();
+    });
+
+    renderSeriesDrops();
+    renderSeriesResult();
+    renderParallelVolts();
+    renderParallelResult();
+  </script>
+</body>
+</html>

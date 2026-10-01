@@ -67,6 +67,7 @@
     <div class="tab-row">
       <button class="op-btn" data-tab="ohms" data-active="true">Ohm's Law</button>
       <button class="op-btn" data-tab="network">Series / Parallel Resistance</button>
+      <button class="op-btn" data-tab="missing">Find a Missing Resistor</button>
       <button class="op-btn" data-tab="led">LED Resistor Sizing</button>
     </div>
 
@@ -102,6 +103,26 @@
       <div class="decimal-readout" id="networkResult"></div>
     </div>
 
+    <!-- FIND A MISSING RESISTOR -->
+    <div id="panelMissing" class="demo" style="display:none;">
+      <h3 style="text-align:center;">Solve for one unknown resistor</h3>
+      <p style="text-align:center; color:var(--ink-soft); font-size:13.5px;">Given the supply voltage, the total current you want, and the other resistor(s), find the missing one &mdash; matches the Lab 7L / 7o style of problem.</p>
+      <div class="solve-toggle">
+        <button class="op-btn" data-missingmode="series" data-active="true">Series</button>
+        <button class="op-btn" data-missingmode="parallel">Parallel</button>
+      </div>
+      <div class="field-row">
+        <label>Supply voltage V: <input type="text" id="missingV" value="9"></label>
+        <label>Target total current (mA): <input type="text" id="missingI" value="295"></label>
+      </div>
+      <div class="resistor-rows" id="knownResistorRows"></div>
+      <div style="text-align:center;">
+        <button class="small-btn add" id="addKnownResistorBtn">+ Add known resistor</button>
+      </div>
+      <div class="decimal-readout" id="missingResult"></div>
+      <div class="warning-text" id="missingWarning"></div>
+    </div>
+
     <!-- LED RESISTOR SIZING -->
     <div id="panelLed" class="demo" style="display:none;">
       <h3 style="text-align:center;">R = (V<sub>s</sub> &minus; V<sub>L</sub>) / I</h3>
@@ -116,7 +137,7 @@
     </div>
 
     <div class="callout">
-      <strong>Try this:</strong> In Ohm's Law, set V = 9 and R = 45, solve for I &mdash; then compare to Lab 7d's schematic (9V, 45&Omega;). In LED Sizing, try Vs = 3, VL = 2, I = 20mA and check it matches the 50&Omega; worked example from the LED slide.
+      <strong>Try this:</strong> In Ohm's Law, set V = 9 and R = 45, solve for I &mdash; then compare to Lab 7d's schematic (9V, 45&Omega;). In Find a Missing Resistor, use the defaults (9V, 295mA, parallel) with known resistors 50&Omega; and 100&Omega; and check you get 360&Omega; &mdash; that's Lab 7L. In LED Sizing, try Vs = 3, VL = 2, I = 20mA and check it matches the 50&Omega; worked example from the LED slide.
     </div>
   </div>
 
@@ -239,6 +260,96 @@
       });
     });
 
+    // ---------------- FIND A MISSING RESISTOR ----------------
+    let missingMode = 'series';
+    let knownResistors = [50, 100];
+
+    function renderKnownResistorRows() {
+      const container = document.getElementById('knownResistorRows');
+      container.innerHTML = '';
+      knownResistors.forEach((val, i) => {
+        const row = document.createElement('div');
+        row.className = 'resistor-row';
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = val;
+        input.addEventListener('input', () => {
+          knownResistors[i] = parseFloat(input.value) || 0;
+          renderMissingResult();
+        });
+        const label = document.createElement('span');
+        label.textContent = `Known R${i + 1} (\u03a9)`;
+        label.style.fontFamily = 'var(--sans)';
+        label.style.fontSize = '13px';
+        label.style.color = 'var(--ink-soft)';
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'small-btn';
+        removeBtn.textContent = '\u2212';
+        removeBtn.addEventListener('click', () => {
+          if (knownResistors.length > 1) {
+            knownResistors.splice(i, 1);
+            renderKnownResistorRows();
+            renderMissingResult();
+          }
+        });
+        row.appendChild(label);
+        row.appendChild(input);
+        row.appendChild(removeBtn);
+        container.appendChild(row);
+      });
+    }
+
+    function renderMissingResult() {
+      const result = document.getElementById('missingResult');
+      const warning = document.getElementById('missingWarning');
+      warning.textContent = '';
+
+      const V = parseNum('missingV');
+      const Imilli = parseNum('missingI');
+      if (V === null || Imilli === null || Imilli === 0) {
+        result.textContent = 'Fill in supply voltage and target current.';
+        return;
+      }
+      const I = Imilli / 1000;
+      const knowns = knownResistors.filter(v => v > 0);
+      const rTotalNeeded = V / I;
+
+      if (missingMode === 'series') {
+        const sumKnown = knowns.reduce((a, b) => a + b, 0);
+        const missing = rTotalNeeded - sumKnown;
+        result.innerHTML = `Total R needed = V/I = ${V}V / ${I}A = ${rTotalNeeded.toFixed(3)}\u03a9 &nbsp;&middot;&nbsp; missing R = ${rTotalNeeded.toFixed(3)}\u03a9 &minus; ${sumKnown}\u03a9 = <strong>${missing.toFixed(3)} \u03a9</strong>`;
+        if (missing <= 0) {
+          warning.textContent = 'No valid solution \u2014 the known resistors alone already need less current than the target allows.';
+        }
+      } else {
+        const sumReciprocal = knowns.reduce((a, b) => a + 1 / b, 0);
+        const neededReciprocal = 1 / rTotalNeeded;
+        const missingReciprocal = neededReciprocal - sumReciprocal;
+        if (missingReciprocal <= 0) {
+          result.innerHTML = `Total R needed = V/I = ${V}V / ${I}A = ${rTotalNeeded.toFixed(3)}\u03a9`;
+          warning.textContent = 'No valid solution \u2014 the known resistors in parallel already draw at least this much current on their own.';
+        } else {
+          const missing = 1 / missingReciprocal;
+          result.innerHTML = `Total R needed = V/I = ${V}V / ${I}A = ${rTotalNeeded.toFixed(3)}\u03a9 &nbsp;&middot;&nbsp; missing R = <strong>${missing.toFixed(3)} \u03a9</strong>`;
+        }
+      }
+    }
+
+    document.getElementById('addKnownResistorBtn').addEventListener('click', () => {
+      knownResistors.push(100);
+      renderKnownResistorRows();
+      renderMissingResult();
+    });
+    document.querySelectorAll('#panelMissing .solve-toggle .op-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#panelMissing .solve-toggle .op-btn').forEach(b => b.dataset.active = 'false');
+        btn.dataset.active = 'true';
+        missingMode = btn.dataset.missingmode;
+        renderMissingResult();
+      });
+    });
+    ['missingV', 'missingI'].forEach(id => document.getElementById(id).addEventListener('input', renderMissingResult));
+
     // ---------------- LED RESISTOR SIZING ----------------
     function renderLed() {
       const Vs = parseNum('ledVs');
@@ -271,6 +382,7 @@
         btn.dataset.active = 'true';
         document.getElementById('panelOhms').style.display = btn.dataset.tab === 'ohms' ? '' : 'none';
         document.getElementById('panelNetwork').style.display = btn.dataset.tab === 'network' ? '' : 'none';
+        document.getElementById('panelMissing').style.display = btn.dataset.tab === 'missing' ? '' : 'none';
         document.getElementById('panelLed').style.display = btn.dataset.tab === 'led' ? '' : 'none';
       });
     });
@@ -278,6 +390,8 @@
     renderOhms();
     renderResistorRows();
     renderNetworkResult();
+    renderKnownResistorRows();
+    renderMissingResult();
     renderLed();
   </script>
 </body>

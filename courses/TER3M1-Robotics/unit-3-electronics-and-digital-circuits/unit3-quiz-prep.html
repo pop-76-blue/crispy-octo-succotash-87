@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Unit 3 Quiz Prep — Practice Set</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#8a6d1a; --accent-dark:#6b5313; --accent-tint:#f6f0dc; }
+  .q-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    margin: 16px 0;
+  }
+  .q-num {
+    font-family: var(--sans);
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .q-prompt {
+    font-family: var(--sans);
+    font-size: 16px;
+    margin: 6px 0 14px;
+  }
+  .q-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .q-option {
+    font-family: var(--sans);
+    font-size: 14.5px;
+    text-align: left;
+    padding: 9px 14px;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    background: var(--surface);
+    cursor: pointer;
+  }
+  .q-option[data-state="correct"] { background: #e3f3e3; border-color: #2e7d32; }
+  .q-option[data-state="incorrect"] { background: #fbe6e6; border-color: #b3261e; }
+  .q-input-row { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
+  .q-input-row input {
+    font-family: var(--mono);
+    font-size: 15px;
+    padding: 6px 10px;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    width: 160px;
+  }
+  .check-btn {
+    font-family: var(--sans);
+    font-size: 13.5px;
+    padding: 6px 14px;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .explanation {
+    display: none;
+    font-family: var(--sans);
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    background: var(--accent-tint);
+    border-radius: 5px;
+    padding: 10px 14px;
+    margin-top: 8px;
+  }
+  .explanation.show { display: block; }
+  .score-bar {
+    position: sticky;
+    top: 0;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    padding: 10px 20px;
+    font-family: var(--sans);
+    font-size: 14px;
+    text-align: center;
+    z-index: 5;
+  }
+  .reset-link {
+    font-family: var(--sans);
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    text-align: center;
+    margin-top: 30px;
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../index.html">&larr; TER3M1</a>
+    <span class="crumb-current">Unit 3 Quiz Prep</span>
+  </div>
+
+  <div class="score-bar">Answered: <strong id="answeredCount">0</strong>/<span id="totalCount">0</span> &nbsp;&middot;&nbsp; Correct: <strong id="correctCount">0</strong></div>
+
+  <div class="wrap">
+    <h1>Unit 3 Quiz Prep — Practice Set</h1>
+    <p class="subtitle">All material since the last quiz: breadboards through Lab 7 (measuring voltage &amp; KVL)</p>
+
+    <div class="callout" style="margin-bottom:20px;">
+      <strong>Heads up:</strong> your actual quiz includes <strong>circuit building</strong> as its own component &mdash; that's a hands-on skill this page can't replace. Use the <a href="tinkercad-setup-guide.html">TinkerCAD Setup Guide</a> and re-build a few labs from scratch for that part. What's below covers the True/False, multiple choice, and calculation/measurement-style questions.
+    </div>
+
+    <div id="questionList"></div>
+
+    <p class="reset-link"><a href="#" id="resetLink">Reset my saved answers on this page</a></p>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'ter3m1-unit3-quiz-prep';
+
+    const questions = [
+      {
+        type: 'tf',
+        prompt: '1. True or False: every hole in the same column (rows a\u2013e) on one half of a breadboard\u2019s main terminal area is electrically connected to every other hole in that column.',
+        options: ['True', 'False'],
+        correct: 0,
+        explanation: 'True. The five holes in a column (a\u2013e, or f\u2013j on the other half) are joined by a metal clip underneath. Nothing connects across the center gap, though.'
+      },
+      {
+        type: 'mc',
+        prompt: '2. What breaks the electrical connection between the top half (rows a\u2013e) and bottom half (rows f\u2013j) of a breadboard\u2019s main terminal area?',
+        options: ['The power rails', 'The center gap', 'The column number', 'Nothing \u2014 they\u2019re connected'],
+        correct: 1,
+        explanation: 'The center gap physically separates the board into two halves with no connection between them \u2014 that\u2019s what makes it possible to straddle a chip across it without shorting its pins together.'
+      },
+      {
+        type: 'mc',
+        prompt: '3. Conventional current flow describes current moving from the battery\u2019s:',
+        options: ['Negative terminal to positive', 'Positive terminal to negative', 'Both terminals simultaneously', 'Neither terminal \u2014 current stays inside the battery'],
+        correct: 1,
+        explanation: 'By convention, current is treated as flowing from positive (+) through the external circuit to negative (\u2212), even though the actual electrons move the opposite way.'
+      },
+      {
+        type: 'tf',
+        prompt: '4. True or False: in Lab 1\u2019s parallel wiring (each bulb with its own switch), turning off one switch also turns off every other bulb.',
+        options: ['True', 'False'],
+        correct: 1,
+        explanation: 'False. Because each bulb has its own independent branch, turning off one switch only breaks that branch \u2014 the rest keep working. That\u2019s the whole point of Lab 2\u2019s series comparison: there, one switch off *would* break everything.'
+      },
+      {
+        type: 'mc',
+        prompt: '5. Two 1.5V batteries connected in series supply how much voltage to the rest of the circuit?',
+        options: ['1.5V', '3.0V', '0.75V', 'Depends on the bulbs'],
+        correct: 1,
+        explanation: 'Batteries in series add their voltages: 1.5V + 1.5V = 3.0V.'
+      },
+      {
+        type: 'calc',
+        prompt: '6. A 4-bulb series circuit reads 15.5 mA between bulbs 1 and 2. What should a multimeter read returning to the battery?',
+        answer: '15.5',
+        explanation: 'In a series circuit there\u2019s only one path, so current is identical at every point in the loop \u2014 still 15.5 mA.'
+      },
+      {
+        type: 'calc',
+        prompt: '7. Two identical bulbs are wired in parallel, each drawing 60.0 mA. What total current leaves the battery?',
+        answer: '120',
+        explanation: 'In parallel, branch currents sum: 60.0 mA + 60.0 mA = 120 mA leaving and returning to the battery.'
+      },
+      {
+        type: 'tf',
+        prompt: '8. True or False: in a series circuit current is the same everywhere, while in a parallel circuit voltage is the same across every branch.',
+        options: ['True', 'False'],
+        correct: 0,
+        explanation: 'True \u2014 these are mirror-image rules. Series keeps current constant and splits voltage; parallel keeps voltage constant and splits current.'
+      },
+      {
+        type: 'mc',
+        prompt: '9. Two switches wired in series, both needing to be ON for the bulb to light, behave like which logic gate?',
+        options: ['OR', 'AND', 'NOT', 'XOR'],
+        correct: 1,
+        explanation: 'Series wiring forces current through both switches to reach the bulb \u2014 exactly AND\u2019s rule (Lab 5b).'
+      },
+      {
+        type: 'mc',
+        prompt: '10. Two switches wired in parallel, with the bulb\u2019s behavior inverted (off only when at least one switch is on), behave like which gate?',
+        options: ['NAND', 'NOR', 'OR', 'AND'],
+        correct: 1,
+        explanation: 'Parallel switches alone give OR (on if either is on). Inverting that output gives NOR \u2014 on only when both switches are off (Lab 5f).'
+      },
+      {
+        type: 'tf',
+        prompt: '11. True or False: to measure resistance, the circuit\u2019s battery must be disconnected first.',
+        options: ['True', 'False'],
+        correct: 0,
+        explanation: 'True. The multimeter supplies its own small test current in resistance mode \u2014 any external power flowing at the same time gives a meaningless or error reading.'
+      },
+      {
+        type: 'mc',
+        prompt: '12. You measure the resistance of a bulb while it\u2019s still wired into the rest of a larger circuit, without isolating it. What do you get?',
+        options: ['The bulb\u2019s resistance exactly, as long as the battery is off', 'A misleading reading \u2014 a mix with the rest of the circuit', 'An error message, always', 'The circuit\u2019s total current instead'],
+        correct: 1,
+        explanation: 'Resistance mode requires the component to be isolated from everything else, not just unpowered \u2014 otherwise the multimeter reads some combination with whatever else is still connected.'
+      },
+      {
+        type: 'calc',
+        prompt: '13. Four identical 48\u03a9 bulbs are wired in series. What\u2019s the total resistance?',
+        answer: '192',
+        explanation: 'Series resistances add: 48 + 48 + 48 + 48 = 192\u03a9, matching Lab 6b\u2019s measured reading.'
+      },
+      {
+        type: 'calc',
+        prompt: '14. A 120\u03a9 resistor draws 0.05A. What supply voltage is this (V = IR)?',
+        answer: '6',
+        explanation: 'V = I \u00d7 R = 0.05A \u00d7 120\u03a9 = 6V (Lab 7e).'
+      },
+      {
+        type: 'calc',
+        prompt: '15. A 12V battery drives 0.02A through a single resistor. What\u2019s its resistance (R = V/I)?',
+        answer: '600',
+        explanation: 'R = V / I = 12V / 0.02A = 600\u03a9 (Lab 7f).'
+      },
+      {
+        type: 'calc',
+        prompt: '16. A 50\u03a9 and a 100\u03a9 resistor are in parallel with a third unknown resistor. Supply is 9V, target total current is 295 mA. What\u2019s the unknown resistor, to the nearest ohm?',
+        answer: '360',
+        explanation: 'Total R needed = V/I = 9V / 0.295A \u2248 30.5\u03a9. 1/R3 = 1/30.5 \u2212 1/50 \u2212 1/100, giving R3 = 360\u03a9 (Lab 7L).'
+      },
+      {
+        type: 'calc',
+        prompt: '17. Using the same Lab 7L circuit (9V, 50\u03a9 and 100\u03a9 branches), what current flows through the 50\u03a9 resistor alone?',
+        answer: '180',
+        explanation: 'Each parallel branch sees the full 9V. I = V/R = 9V / 50\u03a9 = 0.18A = 180 mA.'
+      },
+      {
+        type: 'calc',
+        prompt: '18. And through the 100\u03a9 resistor?',
+        answer: '90',
+        explanation: 'I = V/R = 9V / 100\u03a9 = 0.09A = 90 mA. (Check: 180 + 90 + 25 from the 360\u03a9 branch = 295 mA total \u2014 Lab 7m.)'
+      },
+      {
+        type: 'mc',
+        prompt: '19. To measure a voltage drop, the multimeter must be:',
+        options: ['In series with the component, circuit powered off', 'In parallel with the component, circuit powered on', 'In series with the component, circuit powered on', 'Connected directly across the component, circuit powered off'],
+        correct: 1,
+        explanation: 'Voltage mode needs parallel wiring with the circuit still powered \u2014 the opposite wiring from current mode, but like current mode (unlike resistance mode), the power stays on.'
+      },
+      {
+        type: 'calc',
+        prompt: '20. In Lab 7c, Bulb 1 drops 3.32V and Resistor 1 (in series with it) drops 5.54V. What\u2019s sub-circuit A\u2019s total voltage?',
+        answer: '8.86',
+        explanation: '3.32V + 5.54V = 8.86V \u2014 Kirchhoff\u2019s Voltage Law: series drops sum to the total.'
+      },
+      {
+        type: 'tf',
+        prompt: '21. True or False: Kirchhoff\u2019s Voltage Law says individual voltage drops in a series loop must always sum to the supply voltage.',
+        options: ['True', 'False'],
+        correct: 0,
+        explanation: 'True \u2014 that\u2019s the whole statement of the law: V_A = V1 + V2 + V3 + ... + Vn.'
+      },
+      {
+        type: 'calc',
+        prompt: '22. In Lab 7c, sub-circuits A and B are wired in parallel with each other, and sub-circuit A reads 8.86V total. What should sub-circuit B read?',
+        answer: '8.86',
+        explanation: 'Parallel branches always share the same voltage drop, regardless of their different resistances or currents \u2014 both read 8.86V.'
+      },
+      {
+        type: 'written',
+        prompt: '23. Written answer: explain why current is identical everywhere in a series circuit, but splits across branches in a parallel circuit.',
+        sample: 'In series there\u2019s only one path for charge to flow, so the same amount must pass every point \u2014 none of it has anywhere else to go. In parallel there are multiple paths, so charge divides among them based on each branch\u2019s resistance, though the total leaving and returning to the battery still equals the sum of every branch.'
+      },
+      {
+        type: 'written',
+        prompt: '24. Written answer: a classmate says "resistance mode on a multimeter works just like current and voltage mode \u2014 just wire it in and read the number." What\u2019s wrong with that statement?',
+        sample: 'Current and voltage mode both require the circuit to stay powered on, just with different wiring (series for current, parallel for voltage). Resistance mode is different: the multimeter supplies its own small test current, so the circuit\u2019s own power must be disconnected first, and the component must be isolated from everything else \u2014 otherwise the reading is meaningless or wrong.'
+      }
+    ];
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : {};
+      } catch (e) { return {}; }
+    }
+
+    function saveState(state) {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) { /* ignore */ }
+    }
+
+    let state = loadState();
+
+    function updateScoreBar() {
+      const answered = Object.keys(state).filter(k => state[k] && state[k].answered).length;
+      const correct = Object.keys(state).filter(k => state[k] && state[k].correct).length;
+      document.getElementById('answeredCount').textContent = answered;
+      document.getElementById('correctCount').textContent = correct;
+      document.getElementById('totalCount').textContent = questions.length;
+    }
+
+    function render() {
+      const list = document.getElementById('questionList');
+      list.innerHTML = '';
+
+      questions.forEach((q, idx) => {
+        const card = document.createElement('div');
+        card.className = 'q-card';
+
+        const label = document.createElement('div');
+        label.className = 'q-num';
+        const typeLabels = { mc: 'Multiple choice', tf: 'True / False', calc: 'Calculation', written: 'Written answer' };
+        label.textContent = typeLabels[q.type] || 'Question';
+        card.appendChild(label);
+
+        const prompt = document.createElement('div');
+        prompt.className = 'q-prompt';
+        prompt.textContent = q.prompt;
+        card.appendChild(prompt);
+
+        const saved = state[idx] || {};
+
+        if (q.type === 'mc' || q.type === 'tf') {
+          const optsDiv = document.createElement('div');
+          optsDiv.className = 'q-options';
+          q.options.forEach((opt, oi) => {
+            const btn = document.createElement('button');
+            btn.className = 'q-option';
+            btn.textContent = opt;
+            if (saved.answered) {
+              if (oi === q.correct) btn.dataset.state = 'correct';
+              else if (oi === saved.picked) btn.dataset.state = 'incorrect';
+            }
+            btn.addEventListener('click', () => {
+              state[idx] = { answered: true, picked: oi, correct: oi === q.correct };
+              saveState(state);
+              render();
+              updateScoreBar();
+            });
+            optsDiv.appendChild(btn);
+          });
+          card.appendChild(optsDiv);
+
+          const exp = document.createElement('div');
+          exp.className = 'explanation' + (saved.answered ? ' show' : '');
+          exp.textContent = q.explanation;
+          card.appendChild(exp);
+
+        } else if (q.type === 'calc') {
+          const row = document.createElement('div');
+          row.className = 'q-input-row';
+          const inp = document.createElement('input');
+          inp.type = 'text';
+          inp.value = saved.typed || '';
+          const btn = document.createElement('button');
+          btn.className = 'check-btn';
+          btn.textContent = 'Check answer';
+          btn.addEventListener('click', () => {
+            const typed = inp.value.trim();
+            const correct = typed.toLowerCase().replace(/\s+/g, ' ') === q.answer.toLowerCase().replace(/\s+/g, ' ');
+            state[idx] = { answered: true, typed, correct };
+            saveState(state);
+            render();
+            updateScoreBar();
+          });
+          row.appendChild(inp);
+          row.appendChild(btn);
+          card.appendChild(row);
+
+          const exp = document.createElement('div');
+          exp.className = 'explanation' + (saved.answered ? ' show' : '');
+          exp.innerHTML = saved.answered
+            ? (saved.correct ? '<strong>Correct.</strong> ' : `<strong>Not quite \u2014 correct answer: ${q.answer}.</strong> `) + q.explanation
+            : '';
+          card.appendChild(exp);
+
+        } else if (q.type === 'written') {
+          const btn = document.createElement('button');
+          btn.className = 'check-btn';
+          btn.textContent = saved.answered ? 'Hide sample answer' : 'Show sample answer';
+          btn.style.marginBottom = '8px';
+          btn.addEventListener('click', () => {
+            state[idx] = { answered: !saved.answered };
+            saveState(state);
+            render();
+            updateScoreBar();
+          });
+          card.appendChild(btn);
+
+          const exp = document.createElement('div');
+          exp.className = 'explanation' + (saved.answered ? ' show' : '');
+          exp.innerHTML = `<strong>Sample answer:</strong> ${q.sample}`;
+          card.appendChild(exp);
+        }
+
+        list.appendChild(card);
+      });
+
+      updateScoreBar();
+    }
+
+    document.getElementById('resetLink').addEventListener('click', (e) => {
+      e.preventDefault();
+      state = {};
+      saveState(state);
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>
