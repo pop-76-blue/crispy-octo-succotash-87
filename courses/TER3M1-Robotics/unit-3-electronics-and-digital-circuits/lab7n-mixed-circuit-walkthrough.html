@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lab 7n Walkthrough — Mixed Series-Parallel Circuit</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#8a6d1a; --accent-dark:#6b5313; --accent-tint:#f6f0dc; }
+
+  #schematicSvg { display:block; margin: 16px auto; max-width: 100%; }
+
+  .step-list { counter-reset: step; list-style: none; padding: 0; margin: 0; }
+  .step-item {
+    counter-increment: step;
+    position: relative;
+    padding: 4px 0 4px 46px;
+    margin-bottom: 20px;
+  }
+  .step-item::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .step-title { font-weight: 700; margin-bottom: 4px; font-family: var(--sans); }
+  .step-formula {
+    font-family: var(--mono);
+    font-size: 15px;
+    background: var(--accent-tint);
+    border-radius: 5px;
+    padding: 8px 12px;
+    margin: 6px 0;
+    display: inline-block;
+  }
+  .step-desc { color: var(--ink-soft); font-size: 14px; font-family: var(--sans); }
+
+  .field-row { display:flex; justify-content:center; align-items:center; gap:14px; margin: 14px 0; flex-wrap: wrap; }
+  .field-row label { font-family: var(--sans); font-size: 14px; display:flex; align-items:center; gap:6px; }
+  .field-row input {
+    font-family: var(--mono);
+    font-size: 16px;
+    padding: 6px 10px;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    width: 90px;
+    text-align: center;
+  }
+
+  table.live-results {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--mono);
+    font-size: 14px;
+    margin: 16px 0;
+  }
+  table.live-results th, table.live-results td {
+    border: 1px solid var(--line);
+    padding: 8px 12px;
+    text-align: center;
+  }
+  table.live-results th { background: var(--accent-tint); font-family: var(--sans); }
+  .check-note { text-align: center; font-family: var(--sans); font-size: 13.5px; color: var(--ink-soft); margin-top: 6px; }
+  .check-note.ok { color: #2e7d32; font-weight: 700; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../index.html">&larr; TER3M1</a>
+    <span class="crumb-current">Lab 7n Walkthrough</span>
+  </div>
+
+  <div class="wrap">
+    <h1>Lab 7n — Solving a Mixed Series-Parallel Circuit</h1>
+    <p class="subtitle">Unit 3 &nbsp;&middot;&nbsp; Every tool from Labs 3&ndash;7, combined into one circuit</p>
+
+    <div class="panel">
+      <p>Lab 7n gives you a circuit and asks you to find <strong>every</strong> unknown voltage, current, and the total resistance. There's no single formula for that &mdash; it's a combination of everything so far: the series/parallel resistance formulas (Lab 6), Ohm's Law (Lab 7), and Kirchhoff's Voltage Law (Lab 7a). This page walks through the full solution, step by step, then lets you change the numbers and try your own version.</p>
+    </div>
+
+    <div class="demo">
+      <h3 style="text-align:center;">The circuit</h3>
+      <svg id="schematicSvg" width="420" height="220" viewBox="0 0 420 220" xmlns="http://www.w3.org/2000/svg">
+        <!-- battery -->
+        <line x1="30" y1="40" x2="30" y2="180" stroke="#1e2430" stroke-width="2"/>
+        <text x="8" y="115" font-family="sans-serif" font-size="13" fill="#1e2430">V</text>
+        <text x="8" y="130" font-family="sans-serif" font-size="11" fill="#565d6b">12.0V</text>
+        <!-- top wire with R1 -->
+        <line x1="30" y1="40" x2="150" y2="40" stroke="#1e2430" stroke-width="2"/>
+        <rect x="150" y="30" width="60" height="20" fill="none" stroke="#8a6d1a" stroke-width="2"/>
+        <text x="155" y="24" font-family="monospace" font-size="12" fill="#6b5313">R1 = 1.00&#8486;</text>
+        <line x1="210" y1="40" x2="260" y2="40" stroke="#1e2430" stroke-width="2"/>
+        <!-- split into two parallel branches -->
+        <line x1="260" y1="40" x2="260" y2="70" stroke="#1e2430" stroke-width="2"/>
+        <line x1="260" y1="40" x2="260" y2="130" stroke="#1e2430" stroke-width="2"/>
+        <line x1="260" y1="70" x2="340" y2="70" stroke="#1e2430" stroke-width="2"/>
+        <line x1="260" y1="130" x2="340" y2="130" stroke="#1e2430" stroke-width="2"/>
+        <rect x="280" y="60" width="50" height="20" fill="none" stroke="#8a6d1a" stroke-width="2"/>
+        <text x="282" y="54" font-family="monospace" font-size="12" fill="#6b5313">R2 = 6&#8486;</text>
+        <rect x="280" y="120" width="50" height="20" fill="none" stroke="#8a6d1a" stroke-width="2"/>
+        <text x="280" y="114" font-family="monospace" font-size="12" fill="#6b5313">R3 = 13&#8486;</text>
+        <line x1="340" y1="70" x2="370" y2="70" stroke="#1e2430" stroke-width="2"/>
+        <line x1="340" y1="130" x2="370" y2="130" stroke="#1e2430" stroke-width="2"/>
+        <line x1="370" y1="70" x2="370" y2="130" stroke="#1e2430" stroke-width="2"/>
+        <!-- return wire -->
+        <line x1="370" y1="100" x2="400" y2="100" stroke="#1e2430" stroke-width="2"/>
+        <line x1="400" y1="100" x2="400" y2="180" stroke="#1e2430" stroke-width="2"/>
+        <line x1="400" y1="180" x2="30" y2="180" stroke="#1e2430" stroke-width="2"/>
+        <!-- labels for unknowns -->
+        <text x="110" y="34" font-family="monospace" font-size="11" fill="#565d6b">I1=? V1=?</text>
+        <text x="330" y="64" font-family="monospace" font-size="11" fill="#565d6b">I2=?</text>
+        <text x="330" y="150" font-family="monospace" font-size="11" fill="#565d6b">I3=?</text>
+        <text x="200" y="100" font-family="monospace" font-size="11" fill="#565d6b">V2=V3=?</text>
+      </svg>
+      <p style="text-align:center; color:var(--ink-soft); font-size:13.5px;">R1 is in series with the parallel combination of R2 and R3. Battery supplies 12.0V.</p>
+    </div>
+
+    <div class="panel">
+      <h2 style="border:none;padding:0;margin:0 0 14px;">Step-by-step solution</h2>
+      <ol class="step-list">
+        <li class="step-item">
+          <div class="step-title">Combine the parallel section first</div>
+          <div class="step-desc">R2 and R3 are in parallel with each other, so replace them with one equivalent resistance before doing anything else.</div>
+          <div class="step-formula">R<sub>parallel</sub> = (R2 &times; R3) / (R2 + R3) = (6 &times; 13) / 19 &asymp; 4.105&Omega;</div>
+        </li>
+        <li class="step-item">
+          <div class="step-title">Find the total resistance</div>
+          <div class="step-desc">Now the circuit is just R1 in series with that one equivalent resistor.</div>
+          <div class="step-formula">R<sub>T</sub> = R1 + R<sub>parallel</sub> = 1 + 4.105 &asymp; 5.105&Omega;</div>
+        </li>
+        <li class="step-item">
+          <div class="step-title">Find the total current (I1)</div>
+          <div class="step-desc">With R<sub>T</sub> known, Ohm's Law gives the current the battery pushes out &mdash; which is also I1, since R1 carries all of it before the split.</div>
+          <div class="step-formula">I1 = V / R<sub>T</sub> = 12 / 5.105 &asymp; 2.351A</div>
+        </li>
+        <li class="step-item">
+          <div class="step-title">Find the voltage drop across R1 (V1)</div>
+          <div class="step-desc">Ohm's Law again, now applied just to R1.</div>
+          <div class="step-formula">V1 = I1 &times; R1 = 2.351 &times; 1 &asymp; 2.351V</div>
+        </li>
+        <li class="step-item">
+          <div class="step-title">Find the voltage across the parallel section (V2 = V3)</div>
+          <div class="step-desc">Kirchhoff's Voltage Law: the supply voltage is the sum of every drop in the loop. Whatever V1 didn't use, the parallel section gets &mdash; and since R2 and R3 are in parallel with each other, they share that exact same voltage.</div>
+          <div class="step-formula">V2 = V3 = V &minus; V1 = 12 &minus; 2.351 &asymp; 9.649V</div>
+        </li>
+        <li class="step-item">
+          <div class="step-title">Find I2 and I3</div>
+          <div class="step-desc">Ohm's Law one more time, separately for each parallel branch, since they share voltage but not current.</div>
+          <div class="step-formula">I2 = V2 / R2 = 9.649 / 6 &asymp; 1.608A &nbsp;&middot;&nbsp; I3 = V3 / R3 = 9.649 / 13 &asymp; 0.742A</div>
+        </li>
+        <li class="step-item">
+          <div class="step-title">Check your work</div>
+          <div class="step-desc">The two branch currents should add back up to the total current that went through R1 &mdash; this is current conservation, the same rule from Lab 4.</div>
+          <div class="step-formula">I2 + I3 = 1.608 + 0.742 &asymp; 2.351A = I1 &#10003;</div>
+        </li>
+      </ol>
+    </div>
+
+    <div class="demo">
+      <h3 style="text-align:center;">Try your own version</h3>
+      <p style="text-align:center; color:var(--ink-soft); font-size:13.5px;">Change any value and every result recalculates &mdash; useful for checking your own Lab 7n variation, or just the actual lab's numbers (the defaults below).</p>
+      <div class="field-row">
+        <label>V (volts): <input type="text" id="inputV" value="12"></label>
+        <label>R1 (&Omega;): <input type="text" id="inputR1" value="1"></label>
+        <label>R2 (&Omega;): <input type="text" id="inputR2" value="6"></label>
+        <label>R3 (&Omega;): <input type="text" id="inputR3" value="13"></label>
+      </div>
+      <table class="live-results" id="resultsTable"></table>
+      <div class="check-note" id="checkNote"></div>
+    </div>
+
+    <div class="callout">
+      <strong>Try this:</strong> Before touching the calculator, work through all seven steps yourself with R1=1&Omega;, R2=6&Omega;, R3=13&Omega;, V=12V on paper. Then check every value above. Once you're confident, change R3 to 6&Omega; (making it identical to R2) and predict what that does to I2 and I3 before checking &mdash; it should split evenly.
+    </div>
+  </div>
+
+  <script>
+    function parseNum(id) {
+      const v = parseFloat(document.getElementById(id).value);
+      return isNaN(v) ? null : v;
+    }
+
+    function render() {
+      const V = parseNum('inputV');
+      const R1 = parseNum('inputR1');
+      const R2 = parseNum('inputR2');
+      const R3 = parseNum('inputR3');
+      const table = document.getElementById('resultsTable');
+      const note = document.getElementById('checkNote');
+
+      if (V === null || R1 === null || R2 === null || R3 === null || R2 <= 0 || R3 <= 0) {
+        table.innerHTML = '<tr><td>Fill in all four positive values.</td></tr>';
+        note.textContent = '';
+        return;
+      }
+
+      const rParallel = (R2 * R3) / (R2 + R3);
+      const rTotal = R1 + rParallel;
+      const I1 = V / rTotal;
+      const V1 = I1 * R1;
+      const V23 = V - V1;
+      const I2 = V23 / R2;
+      const I3 = V23 / R3;
+
+      table.innerHTML = `
+        <tr><th>Quantity</th><th>Value</th></tr>
+        <tr><td>R<sub>parallel</sub> (R2 &#8741; R3)</td><td>${rParallel.toFixed(3)} \u03a9</td></tr>
+        <tr><td>R<sub>T</sub> (total)</td><td>${rTotal.toFixed(3)} \u03a9</td></tr>
+        <tr><td>I1</td><td>${I1.toFixed(4)} A (${(I1*1000).toFixed(1)} mA)</td></tr>
+        <tr><td>V1</td><td>${V1.toFixed(3)} V</td></tr>
+        <tr><td>V2 = V3</td><td>${V23.toFixed(3)} V</td></tr>
+        <tr><td>I2</td><td>${I2.toFixed(4)} A (${(I2*1000).toFixed(1)} mA)</td></tr>
+        <tr><td>I3</td><td>${I3.toFixed(4)} A (${(I3*1000).toFixed(1)} mA)</td></tr>
+      `;
+
+      const sumCheck = Math.abs((I2 + I3) - I1) < 0.0001;
+      note.className = 'check-note' + (sumCheck ? ' ok' : '');
+      note.textContent = sumCheck
+        ? `\u2713 I2 + I3 = ${(I2+I3).toFixed(4)} A matches I1 = ${I1.toFixed(4)} A`
+        : 'Check: I2 + I3 should equal I1.';
+    }
+
+    ['inputV', 'inputR1', 'inputR2', 'inputR3'].forEach(id =>
+      document.getElementById(id).addEventListener('input', render)
+    );
+
+    render();
+  </script>
+</body>
+</html>
