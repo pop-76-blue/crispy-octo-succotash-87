@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Solving Linear-Quadratic Systems — MCR3U1 Unit 1</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#3b4f94; --accent-dark:#2b3a70; --accent-tint:#e8ebf6; }
+
+  .procedure-list { background:#fff; border:1px solid #ddd; border-radius:8px; padding:1rem 1.3rem 1rem 2.3rem; margin:0.75rem 0; }
+  .procedure-list li { margin-bottom:0.4rem; }
+
+  .choice-row { display:flex; gap:0.6rem; flex-wrap:wrap; margin:0.75rem 0 1rem; }
+  .choice-btn {
+    border:2px solid var(--accent); background:#fff; color:var(--accent-dark);
+    border-radius:8px; padding:0.5rem 1rem; font-size:0.95rem; font-weight:600; cursor:pointer;
+  }
+  .choice-btn:hover { background:var(--accent-tint); }
+  .choice-btn.active { background:var(--accent); color:#fff; }
+  .choice-btn:disabled { opacity:0.4; cursor:not-allowed; }
+
+  .step {
+    background:#fff; border:1px solid #ddd; border-radius:8px; padding:0.8rem 1.1rem;
+    margin-bottom:0.55rem; opacity:0.3; transition:opacity 0.2s;
+  }
+  .step.shown { opacity:1; }
+  .step .tag { font-size:0.78rem; text-transform:uppercase; letter-spacing:0.03em; color:var(--accent-dark); font-weight:700; }
+  .problem-box { background:var(--accent-tint); border-radius:8px; padding:0.8rem 1.1rem; margin-bottom:0.8rem; font-weight:600; }
+  .final { font-weight:700; color:var(--accent-dark); }
+
+  .cases { display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:0.9rem; margin:1rem 0; }
+  .case { background:#fff; border:1px solid #ddd; border-top:4px solid var(--accent); border-radius:8px; padding:0.8rem 1rem; }
+  .case .name { font-weight:700; color:var(--accent-dark); }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../../../index.html">&larr; All courses</a>
+    <a href="../index.html">MCR3U1 — Functions</a>
+    <span class="crumb-current">Linear-Quadratic Systems</span>
+  </div>
+  <div class="wrap">
+    <h1>Solving Linear-Quadratic Systems</h1>
+    <p class="subtitle">MCR3U1 &middot; Unit 1 &middot; Section 1.7</p>
+
+    <div class="callout">
+      A linear-quadratic system is one line and one parabola. Solving it means finding where they
+      meet, so you are looking for <strong>points of intersection</strong>.
+    </div>
+
+    <div class="panel">
+      <h2>The procedure</h2>
+      <ol class="procedure-list">
+        <li><strong>Make y the subject</strong> in both equations.</li>
+        <li><strong>Set the two expressions for y equal</strong> (substitute one into the other) and move everything to one side.</li>
+        <li><strong>Solve for x</strong> (factor, or use the quadratic formula).</li>
+        <li><strong>Sub each x back</strong> into the linear equation to find y. Write each answer as a point (x, y).</li>
+      </ol>
+
+      <h3>How many solutions? Check the discriminant in step 3</h3>
+      <div class="cases">
+        <div class="case"><div class="name">b² − 4ac &lt; 0</div>No real solutions. The line misses the parabola.</div>
+        <div class="case"><div class="name">b² − 4ac = 0</div>One solution. The line is a <strong>tangent</strong>, touching at one point.</div>
+        <div class="case"><div class="name">b² − 4ac &gt; 0</div>Two solutions. The line is a <strong>secant</strong>, cutting through at two points.</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Worked examples</h2>
+      <p>Pick an example, then step through it.</p>
+      <div class="choice-row" id="exChoices"></div>
+      <div id="problemBox" class="problem-box">Pick an example above.</div>
+      <div id="stepsArea"></div>
+      <button class="choice-btn" id="nextBtn" disabled>Show next step</button>
+    </div>
+
+    <div class="callout">
+      <strong>Try this:</strong> For the line y = x − 3 and the parabola y = x² − 3x + 1, decide from the
+      discriminant alone how many intersection points there are before you solve for x. Then try
+      y = x − 7 with y = x² − 4 and see if your discriminant prediction matches what the algebra does.
+      You can check with the interactive on the next page.
+    </div>
+
+    <div class="panel">
+      <h2>More practice elsewhere</h2>
+      <ul>
+        <li><a href="https://www.jensenmath.ca/new-home-page-1-1-2" target="_blank" rel="noopener">Jensen Math — Grade 11 (MCR3U)</a></li>
+        <li><a href="https://courseware.cemc.uwaterloo.ca/43" target="_blank" rel="noopener">CEMC Courseware — Quadratic Relations</a></li>
+      </ul>
+    </div>
+  </div>
+
+<script>
+const examples = [
+  {
+    name: "Example 1: two points",
+    problem: "Find any points of intersection of f(x) = x + 3 and g(x) = x² − 7x + 10.",
+    steps: [
+      ["1. y is already the subject", "y = x + 3 and y = x² − 7x + 10"],
+      ["2. Set equal, move to one side", "x + 3 = x² − 7x + 10 → 0 = x² − 8x + 7"],
+      ["3. Solve for x", "0 = (x − 1)(x − 7), so x = 1 or x = 7"],
+      ["Check the discriminant", "(−8)² − 4(1)(7) = 36 > 0, so two intersection points, as expected"],
+      ["4. Sub into the linear equation", "x = 1: y = 1 + 3 = 4.  x = 7: y = 7 + 3 = 10"],
+      ["Answer", "(1, 4) and (7, 10). The line is a secant.", true],
+      ["Quick check in g(x)", "g(1) = 1 − 7 + 10 = 4 ✓ and g(7) = 49 − 49 + 10 = 10 ✓"]
+    ]
+  },
+  {
+    name: "Example 2: tangent",
+    problem: "Find any points of intersection of f(x) = x − 3 and g(x) = x² − 3x + 1.",
+    steps: [
+      ["1. y is already the subject", "y = x − 3 and y = x² − 3x + 1"],
+      ["2. Set equal, move to one side", "x − 3 = x² − 3x + 1 → 0 = x² − 4x + 4"],
+      ["Check the discriminant", "(−4)² − 4(1)(4) = 0, so exactly one solution: a tangent"],
+      ["3. Solve for x", "0 = (x − 2)², so x = 2 (a double root)"],
+      ["4. Sub into the linear equation", "y = 2 − 3 = −1"],
+      ["Answer", "One point of intersection, (2, −1). The line is a tangent to the parabola.", true]
+    ]
+  },
+  {
+    name: "Example 3: no intersection",
+    problem: "Find any points of intersection of f(x) = x − 7 and g(x) = x² − 4.",
+    steps: [
+      ["1. y is already the subject", "y = x − 7 and y = x² − 4"],
+      ["2. Set equal, move to one side", "x − 7 = x² − 4 → 0 = x² − x + 3"],
+      ["3. Try to solve: check the discriminant first", "(−1)² − 4(1)(3) = 1 − 12 = −11"],
+      ["Interpret", "A negative discriminant means no real solutions for x, so there is nothing to sub back."],
+      ["Answer", "No points of intersection. The line never meets the parabola.", true]
+    ]
+  },
+  {
+    name: "Example 4: tangent with a given slope",
+    problem: "Find the point of tangency to f(x) = −2(x + 3)² + 5 if the tangent line has slope −4.",
+    steps: [
+      ["Idea", "The tangent has slope −4, so it is y = −4x + b for some unknown b. It touches the parabola at exactly one point, so the discriminant must be 0."],
+      ["Set equal", "−2(x + 3)² + 5 = −4x + b"],
+      ["Expand the parabola", "−2(x² + 6x + 9) + 5 = −2x² − 12x − 13, so −2x² − 12x − 13 = −4x + b"],
+      ["Move to one side", "0 = 2x² + 8x + (13 + b)"],
+      ["Discriminant = 0", "8² − 4(2)(13 + b) = 0 → 64 − 8(13 + b) = 0 → 13 + b = 8 → b = −5"],
+      ["Solve for x", "2x² + 8x + 8 = 0 → x² + 4x + 4 = 0 → (x + 2)² = 0 → x = −2"],
+      ["Sub into the tangent line", "y = −4(−2) − 5 = 3"],
+      ["Answer", "Point of tangency (−2, 3). The tangent line is y = −4x − 5.", true],
+      ["Check in the parabola", "f(−2) = −2(1)² + 5 = 3 ✓"]
+    ]
+  }
+];
+
+let current = null, idx = 0;
+const choices = document.getElementById('exChoices');
+const stepsArea = document.getElementById('stepsArea');
+const nextBtn = document.getElementById('nextBtn');
+const problemBox = document.getElementById('problemBox');
+
+examples.forEach((ex, i) => {
+  const b = document.createElement('button');
+  b.className = 'choice-btn';
+  b.textContent = ex.name;
+  b.addEventListener('click', () => {
+    document.querySelectorAll('#exChoices .choice-btn').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    load(i);
+  });
+  choices.appendChild(b);
+});
+
+function load(i) {
+  current = examples[i];
+  idx = 0;
+  problemBox.textContent = current.problem;
+  stepsArea.innerHTML = current.steps.map((s, n) =>
+    `<div class="step" id="st${n}"><span class="tag">${s[0]}</span><br><span class="${s[2] ? 'final' : ''}">${s[1]}</span></div>`
+  ).join('');
+  nextBtn.disabled = false;
+  nextBtn.textContent = "Show next step";
+}
+
+nextBtn.addEventListener('click', () => {
+  if (!current) return;
+  if (idx < current.steps.length) {
+    document.getElementById('st' + idx).classList.add('shown');
+    idx++;
+  }
+  if (idx >= current.steps.length) {
+    nextBtn.disabled = true;
+    nextBtn.textContent = "All steps shown";
+  }
+});
+</script>
+</body>
+</html>

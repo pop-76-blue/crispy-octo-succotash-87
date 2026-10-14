@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Practice: Roots and Linear-Quadratic Systems — MCR3U1 Unit 1</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#3b4f94; --accent-dark:#2b3a70; --accent-tint:#e8ebf6; }
+
+  .progress-bar-wrap { background:#eee; border-radius:8px; height:10px; overflow:hidden; margin:0.5rem 0 1.25rem; }
+  .progress-bar-fill { background:var(--accent); height:100%; width:0%; transition:width 0.2s; }
+  .progress-label { font-weight:600; color:var(--accent-dark); }
+  .section-title { margin-top:2rem; }
+
+  .q-card { background:#fff; border:1px solid #ddd; border-left:4px solid #ddd; border-radius:10px; padding:1rem 1.2rem; margin-bottom:0.9rem; }
+  .q-card.marked-good { border-left-color:#1a7a3c; }
+  .q-card.marked-retry { border-left-color:#b3311d; }
+  .q-prompt { font-size:1.08rem; margin-bottom:0.5rem; }
+  .q-controls { display:flex; gap:0.6rem; flex-wrap:wrap; align-items:center; }
+  button.reveal-btn {
+    border:2px solid var(--accent); background:#fff; color:var(--accent-dark);
+    border-radius:6px; padding:0.35rem 0.8rem; cursor:pointer; font-weight:600; font-size:0.9rem;
+  }
+  button.reveal-btn:hover { background:var(--accent-tint); }
+  button.mark-btn { border:1px solid #bbb; background:#fff; border-radius:6px; padding:0.35rem 0.7rem; cursor:pointer; font-size:0.9rem; }
+  button.mark-btn.good:hover, button.mark-btn.good.active { background:#e4f3e9; border-color:#1a7a3c; color:#1a7a3c; }
+  button.mark-btn.retry:hover, button.mark-btn.retry.active { background:#fbe9e6; border-color:#b3311d; color:#b3311d; }
+  .answer-box { display:none; background:var(--accent-tint); border-radius:6px; padding:0.7rem 0.9rem; margin-top:0.6rem; line-height:1.7; }
+  .answer-box.shown { display:block; }
+  .reset-row { margin-top:2rem; }
+  button.reset-btn { background:none; border:none; color:#999; text-decoration:underline; cursor:pointer; font-size:0.85rem; padding:0; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../../../index.html">&larr; All courses</a>
+    <a href="../index.html">MCR3U1 — Functions</a>
+    <span class="crumb-current">Practice: 1.6 and 1.7</span>
+  </div>
+  <div class="wrap">
+    <h1>Practice: Roots and Linear-Quadratic Systems</h1>
+    <p class="subtitle">MCR3U1 &middot; Unit 1 &middot; Sections 1.6 and 1.7</p>
+
+    <div class="callout">
+      Do each question on paper first, then reveal the worked answer. Mark it "got it" or "retry". Your marks
+      are saved in this browser.
+    </div>
+
+    <span class="progress-label" id="progressLabel"></span>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressFill"></div></div>
+
+    <div id="questionArea"></div>
+
+    <div class="callout">
+      <strong>Try this:</strong> Pick one 1.6 question and one 1.7 question you marked "retry". Redo them
+      cold, then check the answer against the matching interactive page.
+    </div>
+
+    <div class="panel">
+      <h2>More practice elsewhere</h2>
+      <ul>
+        <li><a href="https://www.jensenmath.ca/new-home-page-1-1-2" target="_blank" rel="noopener">Jensen Math — Grade 11 (MCR3U)</a></li>
+        <li><a href="https://courseware.cemc.uwaterloo.ca/43" target="_blank" rel="noopener">CEMC Courseware — Quadratic Relations</a></li>
+      </ul>
+    </div>
+
+    <div class="reset-row"><button class="reset-btn" id="resetBtn">Clear my saved progress on this page</button></div>
+  </div>
+
+<script>
+const questions = [
+  { id: "r1", section: "1.6 Equation from roots", prompt: "Roots 2 and −4, containing (0, −16). Give factored and standard form.",
+    answer: "f(x) = a(x − 2)(x + 4). Sub (0, −16): −16 = a(−2)(4) = −8a, so a = 2.<br>Factored: f(x) = 2(x − 2)(x + 4). Standard: (x − 2)(x + 4) = x² + 2x − 8, so f(x) = 2x² + 4x − 16." },
+  { id: "r2", section: "1.6 Equation from roots", prompt: "Roots −5 and 5, containing (3, 32). Give factored and standard form.",
+    answer: "f(x) = a(x + 5)(x − 5). Sub (3, 32): 32 = a(8)(−2) = −16a, so a = −2.<br>Factored: f(x) = −2(x + 5)(x − 5). Standard: f(x) = −2(x² − 25) = −2x² + 50." },
+  { id: "r3", section: "1.6 Equation from roots", prompt: "Roots 1 ± √5, containing (2, −8). Give standard form.",
+    answer: "Factors multiply to (x − 1)² − 5 = x² − 2x − 4, so f(x) = a(x² − 2x − 4).<br>Sub (2, −8): −8 = a(4 − 4 − 4) = −4a, so a = 2. Standard: f(x) = 2x² − 4x − 8." },
+  { id: "r4", section: "1.6 Equation from roots", prompt: "Roots −3 ± √2, containing (0, 14). Give standard form.",
+    answer: "Factors multiply to (x + 3)² − 2 = x² + 6x + 7, so f(x) = a(x² + 6x + 7).<br>Sub (0, 14): 14 = 7a, so a = 2. Standard: f(x) = 2x² + 12x + 14." },
+  { id: "r5", section: "1.6 Equation from roots", prompt: "A parabola touches the x-axis only at x = 4 (a double root) and passes through (0, 8). Find its equation in standard form.",
+    answer: "Double root: f(x) = a(x − 4)². Sub (0, 8): 8 = a(16), so a = 1/2.<br>Factored: f(x) = (1/2)(x − 4)². Standard: f(x) = (1/2)x² − 4x + 8." },
+  { id: "r6", section: "1.6 Equation from roots", prompt: "A parabola has x-intercepts −2 and 6 and its vertex is (2, −16). Find its equation in standard form.",
+    answer: "f(x) = a(x + 2)(x − 6). Sub the vertex (2, −16): −16 = a(4)(−4) = −16a, so a = 1.<br>Standard: f(x) = (x + 2)(x − 6) = x² − 4x − 12." },
+
+  { id: "s1", section: "1.7 Linear-quadratic systems", prompt: "Find any points of intersection of y = 2x − 3 and y = x² − 4x + 5.",
+    answer: "2x − 3 = x² − 4x + 5 → 0 = x² − 6x + 8 = (x − 2)(x − 4), so x = 2 or 4.<br>y = 2x − 3: x = 2 gives y = 1; x = 4 gives y = 5. Points: (2, 1) and (4, 5)." },
+  { id: "s2", section: "1.7 Linear-quadratic systems", prompt: "Find any points of intersection of y = x − 1 and y = x² − 5x + 8. What do we call the line, relative to the parabola?",
+    answer: "x − 1 = x² − 5x + 8 → 0 = x² − 6x + 9 = (x − 3)². One solution, x = 3, y = 3 − 1 = 2.<br>Point: (3, 2). Discriminant is 0, so the line is a tangent." },
+  { id: "s3", section: "1.7 Linear-quadratic systems", prompt: "Find any points of intersection of y = x + 5 and y = x² − x + 7.",
+    answer: "x + 5 = x² − x + 7 → 0 = x² − 2x + 2. Discriminant: (−2)² − 4(1)(2) = −4 &lt; 0.<br>No real solutions: the line and parabola do not intersect." },
+  { id: "s4", section: "1.7 Linear-quadratic systems", prompt: "Find any points of intersection of x + y = 5 and y = x² − 1. (Make y the subject first.)",
+    answer: "Line: y = 5 − x. Set equal: 5 − x = x² − 1 → 0 = x² + x − 6 = (x + 3)(x − 2), so x = −3 or 2.<br>y = 5 − x: x = −3 gives y = 8; x = 2 gives y = 3. Points: (−3, 8) and (2, 3)." },
+  { id: "s5", section: "1.7 Linear-quadratic systems", prompt: "For what value of b is the line y = 2x + b tangent to y = x² − 4x?",
+    answer: "2x + b = x² − 4x → 0 = x² − 6x − b. Tangent means discriminant = 0: (−6)² − 4(1)(−b) = 36 + 4b = 0, so b = −9.<br>(Check: tangent at x = 3, y = −3.)" },
+  { id: "s6", section: "1.7 Linear-quadratic systems", prompt: "Find the point of tangency to y = (x − 1)² + 2 if the tangent line has slope 4.",
+    answer: "Tangent: y = 4x + b. Set equal: x² − 2x + 3 = 4x + b → x² − 6x + (3 − b) = 0.<br>Discriminant = 0: 36 − 4(3 − b) = 0 → 24 + 4b = 0 → b = −6. Then x² − 6x + 9 = 0 → x = 3, y = (2)² + 2 = 6.<br>Point of tangency: (3, 6). Tangent line: y = 4x − 6." }
+];
+
+const STORAGE_KEY = "mcr3u1_unit1_1_6_1_7_marks";
+function loadMarks() { try { const r = localStorage.getItem(STORAGE_KEY); return r ? JSON.parse(r) : {}; } catch (e) { return {}; } }
+function saveMarks(m) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(m)); } catch (e) {} }
+let marks = loadMarks();
+
+function updateProgress() {
+  const good = questions.filter(q => marks[q.id] === 'good').length;
+  document.getElementById('progressLabel').textContent = `${good} / ${questions.length} marked "got it"`;
+  document.getElementById('progressFill').style.width = `${(good / questions.length) * 100}%`;
+}
+
+const area = document.getElementById('questionArea');
+let section = null;
+questions.forEach(q => {
+  if (q.section !== section) {
+    section = q.section;
+    const h = document.createElement('h2'); h.className = 'section-title'; h.textContent = section; area.appendChild(h);
+  }
+  const card = document.createElement('div');
+  card.className = 'q-card'; card.id = `card-${q.id}`;
+  card.innerHTML = `
+    <div class="q-prompt">${q.prompt}</div>
+    <div class="q-controls">
+      <button class="reveal-btn" data-id="${q.id}">Show answer</button>
+      <button class="mark-btn good" data-id="${q.id}" data-mark="good">Got it</button>
+      <button class="mark-btn retry" data-id="${q.id}" data-mark="retry">Need to retry</button>
+    </div>
+    <div class="answer-box" id="ans-${q.id}">${q.answer}</div>`;
+  area.appendChild(card);
+  applyMark(q.id);
+});
+
+function applyMark(id) {
+  const card = document.getElementById(`card-${id}`);
+  card.classList.remove('marked-good', 'marked-retry');
+  document.querySelectorAll(`button.mark-btn[data-id="${id}"]`).forEach(b => b.classList.remove('active'));
+  if (marks[id] === 'good') { card.classList.add('marked-good'); document.querySelector(`button.mark-btn.good[data-id="${id}"]`).classList.add('active'); }
+  else if (marks[id] === 'retry') { card.classList.add('marked-retry'); document.querySelector(`button.mark-btn.retry[data-id="${id}"]`).classList.add('active'); }
+}
+
+area.addEventListener('click', e => {
+  const id = e.target.dataset.id;
+  if (!id) return;
+  if (e.target.classList.contains('reveal-btn')) document.getElementById(`ans-${id}`).classList.toggle('shown');
+  if (e.target.classList.contains('mark-btn')) {
+    const mark = e.target.dataset.mark;
+    if (marks[id] === mark) delete marks[id]; else marks[id] = mark;
+    saveMarks(marks); applyMark(id); updateProgress();
+  }
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  if (confirm("Clear all saved marks for this practice set?")) {
+    marks = {}; saveMarks(marks);
+    questions.forEach(q => applyMark(q.id)); updateProgress();
+  }
+});
+updateProgress();
+</script>
+</body>
+</html>

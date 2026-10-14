@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Equation from Roots — MCR3U1 Unit 1</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#3b4f94; --accent-dark:#2b3a70; --accent-tint:#e8ebf6; }
+
+  .procedure-list { background:#fff; border:1px solid #ddd; border-radius:8px; padding:1rem 1.3rem 1rem 2.3rem; margin:0.75rem 0; }
+  .procedure-list li { margin-bottom:0.4rem; }
+
+  .choice-row { display:flex; gap:0.6rem; flex-wrap:wrap; margin:0.75rem 0 1rem; }
+  .choice-btn {
+    border:2px solid var(--accent); background:#fff; color:var(--accent-dark);
+    border-radius:8px; padding:0.5rem 1rem; font-size:0.95rem; font-weight:600; cursor:pointer;
+  }
+  .choice-btn:hover { background:var(--accent-tint); }
+  .choice-btn.active { background:var(--accent); color:#fff; }
+  .choice-btn:disabled { opacity:0.4; cursor:not-allowed; }
+
+  .step {
+    background:#fff; border:1px solid #ddd; border-radius:8px; padding:0.8rem 1.1rem;
+    margin-bottom:0.55rem; opacity:0.3; transition:opacity 0.2s;
+  }
+  .step.shown { opacity:1; }
+  .step .tag { font-size:0.78rem; text-transform:uppercase; letter-spacing:0.03em; color:var(--accent-dark); font-weight:700; }
+  .problem-box { background:var(--accent-tint); border-radius:8px; padding:0.8rem 1.1rem; margin-bottom:0.8rem; font-weight:600; }
+  .final { font-weight:700; color:var(--accent-dark); }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../../../index.html">&larr; All courses</a>
+    <a href="../index.html">MCR3U1 — Functions</a>
+    <span class="crumb-current">Equation from Roots</span>
+  </div>
+  <div class="wrap">
+    <h1>Finding a Quadratic Equation from Its Roots</h1>
+    <p class="subtitle">MCR3U1 &middot; Unit 1 &middot; Section 1.6</p>
+
+    <div class="callout">
+      The x-intercepts (roots) tell you the <em>shape</em> of the family; one extra point tells you
+      <em>which</em> parabola in the family. Every parabola with roots r and s is
+      <strong>f(x) = a(x − r)(x − s)</strong> for some a.
+    </div>
+
+    <div class="panel">
+      <h2>The procedure</h2>
+      <ol class="procedure-list">
+        <li>Write the factored form with the roots plugged in: f(x) = a(x − r)(x − s).</li>
+        <li>Substitute the given point (x, y) for x and f(x) and solve for <strong>a</strong>.</li>
+        <li>Write the equation in factored form with the value of a.</li>
+        <li>Expand to get standard form: f(x) = ax² + bx + c.</li>
+      </ol>
+      <p><strong>Irrational roots like p ± √q:</strong> the two factors multiply to a square
+      minus a square: (x − p − √q)(x − p + √q) = (x − p)² − q. Expand that and the radicals vanish.</p>
+    </div>
+
+    <div class="panel">
+      <h2>Worked examples</h2>
+      <p>Pick an example, then step through it one line at a time.</p>
+      <div class="choice-row" id="exChoices"></div>
+      <div id="problemBox" class="problem-box">Pick an example above.</div>
+      <div id="stepsArea"></div>
+      <button class="choice-btn" id="nextBtn" disabled>Show next step</button>
+    </div>
+
+    <div class="callout">
+      <strong>Try this:</strong> Before stepping through "Roots 2 ± √6", predict on paper what
+      (x − 2 − √6)(x − 2 + √6) simplifies to. Then find the equation of the parabola with roots
+      1 ± √5 through (2, −8) and compare with the practice set.
+    </div>
+
+    <div class="panel">
+      <h2>More practice elsewhere</h2>
+      <ul>
+        <li><a href="https://courseware.cemc.uwaterloo.ca/43" target="_blank" rel="noopener">CEMC Courseware — Quadratic Relations</a></li>
+        <li><a href="https://www.jensenmath.ca/new-home-page-1-1-2" target="_blank" rel="noopener">Jensen Math — Grade 11 (MCR3U)</a></li>
+      </ul>
+    </div>
+  </div>
+
+<script>
+const examples = [
+  {
+    name: "Roots ±3, point (2, 10)",
+    problem: "Roots −3 and 3, containing (2, 10). Give factored and standard form.",
+    steps: [
+      ["Factored form with roots", "f(x) = a(x − 3)(x + 3)"],
+      ["Substitute (2, 10)", "10 = a(2 − 3)(2 + 3) = a(−1)(5) = −5a"],
+      ["Solve for a", "a = 10 ÷ (−5) = −2"],
+      ["Factored form", "f(x) = −2(x − 3)(x + 3)", true],
+      ["Expand (difference of squares)", "(x − 3)(x + 3) = x² − 9, so f(x) = −2(x² − 9)"],
+      ["Standard form", "f(x) = −2x² + 18", true]
+    ]
+  },
+  {
+    name: "Roots −15 and 3, point (0, 9)",
+    problem: "Roots −15 and 3, containing (0, 9). Give factored and standard form.",
+    steps: [
+      ["Factored form with roots", "f(x) = a(x + 15)(x − 3)"],
+      ["Substitute (0, 9)", "9 = a(0 + 15)(0 − 3) = a(15)(−3) = −45a"],
+      ["Solve for a", "a = 9 ÷ (−45) = −1/5"],
+      ["Factored form", "f(x) = −(1/5)(x + 15)(x − 3)", true],
+      ["Expand the brackets", "(x + 15)(x − 3) = x² + 12x − 45"],
+      ["Distribute −1/5", "f(x) = −(1/5)x² − (12/5)x + 9", true]
+    ]
+  },
+  {
+    name: "Roots 2 ± √6, point (3, −20)",
+    problem: "Roots 2 + √6 and 2 − √6, containing (3, −20). Give standard form.",
+    steps: [
+      ["Factored form with roots", "f(x) = a[x − (2 + √6)][x − (2 − √6)]"],
+      ["Group so the radicals cancel", "= a[(x − 2) − √6][(x − 2) + √6] = a[(x − 2)² − 6]"],
+      ["Expand inside", "(x − 2)² − 6 = x² − 4x + 4 − 6 = x² − 4x − 2, so f(x) = a(x² − 4x − 2)"],
+      ["Substitute (3, −20)", "−20 = a(9 − 12 − 2) = −5a"],
+      ["Solve for a", "a = 4"],
+      ["Standard form", "f(x) = 4x² − 16x − 8", true]
+    ]
+  },
+  {
+    name: "Roots −2 ± √3, point (3, 8)",
+    problem: "Roots −2 + √3 and −2 − √3, containing (3, 8). Give standard form.",
+    steps: [
+      ["Factored form with roots", "f(x) = a[x + 2 − √3][x + 2 + √3]"],
+      ["Square minus a square", "= a[(x + 2)² − 3]"],
+      ["Expand inside", "(x + 2)² − 3 = x² + 4x + 4 − 3 = x² + 4x + 1, so f(x) = a(x² + 4x + 1)"],
+      ["Substitute (3, 8)", "8 = a(9 + 12 + 1) = 22a"],
+      ["Solve for a", "a = 8/22 = 4/11"],
+      ["Standard form", "f(x) = (4/11)x² + (16/11)x + 4/11", true]
+    ]
+  },
+  {
+    name: "From a graph",
+    problem: "A downward parabola crosses the x-axis at −3 and 1, with its vertex at (−1, 12). Find the standard form.",
+    steps: [
+      ["Read the roots off the graph", "x-intercepts at −3 and 1, so f(x) = a(x + 3)(x − 1)"],
+      ["Pick a second point you can read clearly", "The vertex (−1, 12) works well."],
+      ["Substitute (−1, 12)", "12 = a(−1 + 3)(−1 − 1) = a(2)(−2) = −4a"],
+      ["Solve for a", "a = −3 (negative, matching a parabola that opens down)"],
+      ["Factored form", "f(x) = −3(x + 3)(x − 1)", true],
+      ["Expand", "(x + 3)(x − 1) = x² + 2x − 3, so f(x) = −3x² − 6x + 9", true],
+      ["Check", "f(0) = 9, which matches where the graph crosses the y-axis."]
+    ]
+  }
+];
+
+let current = null, idx = 0;
+const choices = document.getElementById('exChoices');
+const stepsArea = document.getElementById('stepsArea');
+const nextBtn = document.getElementById('nextBtn');
+const problemBox = document.getElementById('problemBox');
+
+examples.forEach((ex, i) => {
+  const b = document.createElement('button');
+  b.className = 'choice-btn';
+  b.textContent = ex.name;
+  b.addEventListener('click', () => {
+    document.querySelectorAll('#exChoices .choice-btn').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    load(i);
+  });
+  choices.appendChild(b);
+});
+
+function load(i) {
+  current = examples[i];
+  idx = 0;
+  problemBox.textContent = current.problem;
+  stepsArea.innerHTML = current.steps.map((s, n) =>
+    `<div class="step" id="st${n}"><span class="tag">${s[0]}</span><br><span class="${s[2] ? 'final' : ''}">${s[1]}</span></div>`
+  ).join('');
+  nextBtn.disabled = false;
+  nextBtn.textContent = "Show next step";
+}
+
+nextBtn.addEventListener('click', () => {
+  if (!current) return;
+  if (idx < current.steps.length) {
+    document.getElementById('st' + idx).classList.add('shown');
+    idx++;
+  }
+  if (idx >= current.steps.length) {
+    nextBtn.disabled = true;
+    nextBtn.textContent = "All steps shown";
+  }
+});
+</script>
+</body>
+</html>

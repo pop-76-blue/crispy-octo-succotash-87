@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Three Forms of a Quadratic — MCR3U1 Unit 1</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#3b4f94; --accent-dark:#2b3a70; --accent-tint:#e8ebf6; }
+
+  .demo-grid { display:flex; flex-wrap:wrap; gap:1.5rem; }
+  .controls-col { flex:1; min-width:270px; }
+  .canvas-col { flex:2; min-width:320px; text-align:center; }
+
+  .slider-row { margin-bottom:1.1rem; }
+  .slider-row label { display:flex; justify-content:space-between; font-weight:600; margin-bottom:0.25rem; }
+  .slider-row output { color:var(--accent-dark); font-variant-numeric:tabular-nums; }
+  .slider-row input[type=range] { width:100%; accent-color:var(--accent); }
+
+  .readout { background:#fff; border:1px solid #ddd; border-radius:8px; padding:0.9rem 1.1rem; margin-top:1rem; }
+  .readout div { padding:0.3rem 0; }
+  .readout .k { color:var(--accent-dark); font-weight:700; display:block; font-size:0.8rem; text-transform:uppercase; letter-spacing:0.03em; }
+  .readout .v { font-size:1.05rem; }
+
+  #graphCanvas { background:#fff; border:1px solid #ddd; border-radius:8px; max-width:100%; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../../../index.html">&larr; All courses</a>
+    <a href="../index.html">MCR3U1 — Functions</a>
+    <span class="crumb-current">Three Forms of a Quadratic</span>
+  </div>
+  <div class="wrap">
+    <h1>Three Forms of a Quadratic</h1>
+    <p class="subtitle">MCR3U1 &middot; Unit 1 &middot; Section 1.6</p>
+
+    <div class="callout">
+      <strong>Factored:</strong> a(x − r)(x − s) &nbsp;&middot;&nbsp;
+      <strong>Standard:</strong> ax² + bx + c &nbsp;&middot;&nbsp;
+      <strong>Vertex:</strong> a(x − h)² + k.<br>
+      Set the roots r and s and the stretch a below. All three forms update together.
+    </div>
+
+    <div class="panel">
+      <div class="demo demo-grid">
+        <div class="controls-col">
+          <div class="slider-row">
+            <label>a <output id="aVal"></output></label>
+            <input type="range" id="aS" min="-4" max="4" step="0.5" value="1">
+          </div>
+          <div class="slider-row">
+            <label>root r <output id="rVal"></output></label>
+            <input type="range" id="rS" min="-8" max="8" step="1" value="-3">
+          </div>
+          <div class="slider-row">
+            <label>root s <output id="sVal"></output></label>
+            <input type="range" id="sS" min="-8" max="8" step="1" value="1">
+          </div>
+          <div class="readout" id="readout"></div>
+        </div>
+        <div class="canvas-col">
+          <canvas id="graphCanvas" width="440" height="440"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>What to notice</h2>
+      <ul>
+        <li>In standard form, <strong>b = −a(r + s)</strong> and <strong>c = a·rs</strong>.</li>
+        <li>The vertex always sits halfway between the roots: h = (r + s) ÷ 2.</li>
+        <li>Changing a never moves the roots. It only stretches the parabola (or flips it when negative).</li>
+        <li>Set r = s and the parabola just touches the x-axis: a double root.</li>
+      </ul>
+      <p>Not every quadratic can be written in factored form with real numbers. When the vertex is above
+      the x-axis and the parabola opens up, there are no x-intercepts, so only standard and vertex
+      form exist.</p>
+    </div>
+
+    <div class="callout">
+      <strong>Try this:</strong> Without moving anything, predict the standard form of a = 2, r = −1, s = 3
+      (work out b = −a(r + s) and c = a·rs). Then set the sliders and check. Next, set r = s = 2 and
+      explain what happens to the vertex.
+    </div>
+  </div>
+
+<script>
+const canvas = document.getElementById('graphCanvas');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height, scale = 18, ox = W/2, oy = H/2;
+const aS = document.getElementById('aS'), rS = document.getElementById('rS'), sS = document.getElementById('sS');
+const out = { a: document.getElementById('aVal'), r: document.getElementById('rVal'), s: document.getElementById('sVal') };
+const readout = document.getElementById('readout');
+
+const toPx = (x, y) => [ox + x*scale, oy - y*scale];
+const fmt = n => String(parseFloat(n.toFixed(2)));
+
+function sign(n, body) { // " + 3x" or " − 3x"
+  if (n === 0) return "";
+  return (n > 0 ? " + " : " − ") + (Math.abs(n) === 1 && body ? "" : fmt(Math.abs(n))) + body;
+}
+function lead(n, body) {
+  if (n === 0) return "";
+  return (n < 0 ? "−" : "") + (Math.abs(n) === 1 && body ? "" : fmt(Math.abs(n))) + body;
+}
+function factor(r) { return r === 0 ? "x" : (r > 0 ? `(x − ${fmt(r)})` : `(x + ${fmt(-r)})`); }
+
+function standard(a, b, c) {
+  let s = lead(a, "x²") + sign(b, "x") + sign(c, "");
+  return s.trim() || "0";
+}
+function vertexForm(a, h, k) {
+  const sq = h === 0 ? "x²" : (h > 0 ? `(x − ${fmt(h)})²` : `(x + ${fmt(-h)})²`);
+  const aa = a === 1 ? "" : (a === -1 ? "−" : fmt(a));
+  return aa + sq + (k === 0 ? "" : (k > 0 ? ` + ${fmt(k)}` : ` − ${fmt(-k)}`));
+}
+
+function grid() {
+  ctx.clearRect(0, 0, W, H);
+  ctx.strokeStyle = '#eee'; ctx.lineWidth = 1;
+  for (let u = -12; u <= 12; u++) {
+    const [x1] = toPx(u, 0); ctx.beginPath(); ctx.moveTo(x1, 0); ctx.lineTo(x1, H); ctx.stroke();
+    const [, y1] = toPx(0, u); ctx.beginPath(); ctx.moveTo(0, y1); ctx.lineTo(W, y1); ctx.stroke();
+  }
+  ctx.strokeStyle = '#999'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(0, oy); ctx.lineTo(W, oy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(ox, 0); ctx.lineTo(ox, H); ctx.stroke();
+}
+
+function dot(x, y, color, r) {
+  const [px, py] = toPx(x, y);
+  ctx.fillStyle = color; ctx.beginPath(); ctx.arc(px, py, r, 0, 7); ctx.fill();
+}
+
+function draw() {
+  const a = parseFloat(aS.value), r = parseFloat(rS.value), s = parseFloat(sS.value);
+  out.a.textContent = fmt(a); out.r.textContent = fmt(r); out.s.textContent = fmt(s);
+
+  grid();
+  if (a !== 0) {
+    ctx.strokeStyle = '#3b4f94'; ctx.lineWidth = 2.5; ctx.beginPath();
+    let started = false;
+    for (let px = 0; px <= W; px++) {
+      const x = (px - ox) / scale;
+      const y = a * (x - r) * (x - s);
+      const py = oy - y * scale;
+      if (py < -50 || py > H + 50) { started = false; continue; }
+      if (!started) { ctx.moveTo(px, py); started = true; } else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+  }
+  const h = (r + s) / 2, k = a * (h - r) * (h - s);
+  dot(r, 0, '#1a7a3c', 5); dot(s, 0, '#1a7a3c', 5);
+  dot(h, k, '#2b3a70', 5);
+  dot(0, a * r * s, '#b3311d', 4);
+
+  if (a === 0) {
+    readout.innerHTML = "<div>a = 0 is not a quadratic (it's just the x-axis). Move a away from 0.</div>";
+    return;
+  }
+  const b = -a * (r + s), c = a * r * s;
+  const aStr = a === 1 ? "" : (a === -1 ? "−" : fmt(a));
+  readout.innerHTML = `
+    <div><span class="k">Factored form</span><span class="v">f(x) = ${aStr}${factor(r)}${factor(s)}</span></div>
+    <div><span class="k">Standard form</span><span class="v">f(x) = ${standard(a, b, c)}</span></div>
+    <div><span class="k">Vertex form</span><span class="v">f(x) = ${vertexForm(a, h, k)}</span></div>
+    <div><span class="k">Vertex &middot; y-intercept</span><span class="v">(${fmt(h)}, ${fmt(k)}) &middot; (0, ${fmt(c)})</span></div>
+    <div><span class="k">Opens</span><span class="v">${a > 0 ? "up" : "down"}${r === s ? " &middot; double root" : ""}</span></div>
+  `;
+}
+[aS, rS, sS].forEach(e => e.addEventListener('input', draw));
+draw();
+</script>
+</body>
+</html>
