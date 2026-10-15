@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Unit 1 Quiz Prep — Practice Set</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#8a6d1a; --accent-dark:#6b5313; --accent-tint:#f6f0dc; }
+  .q-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    margin: 16px 0;
+  }
+  .q-num {
+    font-family: var(--sans);
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .q-prompt {
+    font-family: var(--sans);
+    font-size: 16px;
+    margin: 6px 0 14px;
+  }
+  .q-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .q-option {
+    font-family: var(--sans);
+    font-size: 14.5px;
+    text-align: left;
+    padding: 9px 14px;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    background: var(--surface);
+    cursor: pointer;
+  }
+  .q-option[data-state="correct"] { background: #e3f3e3; border-color: #2e7d32; }
+  .q-option[data-state="incorrect"] { background: #fbe6e6; border-color: #b3261e; }
+  .q-input-row { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
+  .q-input-row input {
+    font-family: var(--mono);
+    font-size: 15px;
+    padding: 6px 10px;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    width: 160px;
+  }
+  .check-btn {
+    font-family: var(--sans);
+    font-size: 13.5px;
+    padding: 6px 14px;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .explanation {
+    display: none;
+    font-family: var(--sans);
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    background: var(--accent-tint);
+    border-radius: 5px;
+    padding: 10px 14px;
+    margin-top: 8px;
+  }
+  .explanation.show { display: block; }
+  .score-bar {
+    position: sticky;
+    top: 0;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    padding: 10px 20px;
+    font-family: var(--sans);
+    font-size: 14px;
+    text-align: center;
+    z-index: 5;
+  }
+  .reset-link {
+    font-family: var(--sans);
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    text-align: center;
+    margin-top: 30px;
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../index.html">&larr; TER3M1</a>
+    <span class="crumb-current">Unit 1 Quiz Prep</span>
+  </div>
+
+  <div class="score-bar">Answered: <strong id="answeredCount">0</strong>/<span id="totalCount">0</span> &nbsp;&middot;&nbsp; Correct: <strong id="correctCount">0</strong></div>
+
+  <div class="wrap">
+    <h1>Unit 1 Quiz Prep — Practice Set</h1>
+    <p class="subtitle">Covers 1.1 Decimal, 1.2 Binary through 1.2.8 Bitwise Operations, 1.3 Hexadecimal &amp; notations, 1.4 Octal, and the Babbage history segment</p>
+
+    <div class="callout" style="margin-bottom:20px;">
+      <strong>Heads up about the real quiz:</strong> the upcoming quiz is entirely <strong>multiple choice and true/false</strong> — no calculations to show work and no written answers. The calculation and written questions below are still worth doing (they test the same skills and catch mistakes a multiple-choice guess could hide), just don't expect that exact format on quiz day itself.
+    </div>
+
+    <div id="questionList"></div>
+
+    <p class="reset-link"><a href="#" id="resetLink">Reset my saved answers on this page</a></p>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'ter3mu-unit1-quiz-prep';
+
+    const questions = [
+      {
+        type: 'mc',
+        prompt: '1. Which best explains why Hindu-Arabic numerals made complex arithmetic possible, but Roman numerals did not?',
+        options: [
+          'Hindu-Arabic numerals are positional; a digit\u2019s value depends on where it sits',
+          'Hindu-Arabic numerals use fewer symbols overall',
+          'Roman numerals cannot represent numbers larger than 100',
+          'Hindu-Arabic numerals were invented more recently'
+        ],
+        correct: 0,
+        explanation: 'Positional notation means each digit\u2019s value is multiplied by a power of the base based on its position \u2014 that\u2019s what makes column-based arithmetic (carrying, borrowing) work cleanly.'
+      },
+      {
+        type: 'mc',
+        prompt: '2. In the decimal number 5,347, what value does the digit 3 represent?',
+        options: ['3', '30', '300', '3,000'],
+        correct: 2,
+        explanation: '3 sits in the hundreds position (10\u00b2), so 3 \u00d7 100 = 300.'
+      },
+      {
+        type: 'calc',
+        prompt: '3. Convert 1101\u2082 to decimal. Show your reasoning, then type just the final decimal number below.',
+        answer: '13',
+        explanation: '1101\u2082 = 1\u00d72\u00b3 + 1\u00d72\u00b2 + 0\u00d72\u00b9 + 1\u00d72\u2070 = 8 + 4 + 0 + 1 = 13.'
+      },
+      {
+        type: 'calc',
+        prompt: '4. Convert decimal 22 to binary using the Remainder\u2019s Method. Type the binary result (no spaces).',
+        answer: '10110',
+        explanation: '22\u00f72=11 r0, 11\u00f72=5 r1, 5\u00f72=2 r1, 2\u00f72=1 r0, 1\u00f72=0 r1. Reading remainders bottom to top: 10110.'
+      },
+      {
+        type: 'mc',
+        prompt: '5. Which decimal numbers, when converted to binary, always end up as a single 1 followed by zeroes?',
+        options: ['Multiples of 10', 'Odd numbers', 'Powers of 2 (2, 4, 8, 16, 32\u2026)', 'Prime numbers'],
+        correct: 2,
+        explanation: 'Each power of 2 is exactly 2\u207f, so its binary form is a 1 in position n and 0s everywhere else \u2014 e.g. 8 = 1000\u2082.'
+      },
+      {
+        type: 'written',
+        prompt: '6. Written answer: explain in one or two sentences why a decimal number that is one less than a power of 2 (like 15 or 31) always converts to a binary number made up entirely of 1s.',
+        sample: 'A power of 2 is a single 1 followed by zeroes. Subtracting 1 flips that 1 and every zero after it, leaving all 1s up to that position \u2014 e.g. 16 = 10000\u2082, so 15 = 01111\u2082.'
+      },
+      {
+        type: 'calc',
+        prompt: '7. Using programmer\u2019s format, express decimal 27 as a padded, grouped binary byte. Type it exactly as it should appear, e.g. "0001 0111".',
+        answer: '0001 1011',
+        explanation: '27 in raw binary is 11011 (5 bits). Padded to 8 bits: 00011011. Grouped into nibbles: 0001 1011.'
+      },
+      {
+        type: 'mc',
+        prompt: '8. What is the decimal ASCII value of the character \'A\'?',
+        options: ['41', '65', '97', '100'],
+        correct: 1,
+        explanation: 'A = 65 in the ASCII table. Lowercase letters are always 32 higher than their uppercase counterpart, so a = 97.'
+      },
+      {
+        type: 'calc',
+        prompt: '9. What character corresponds to binary ASCII 0100 0011?',
+        answer: 'C',
+        explanation: '0100 0011\u2082 = 67 in decimal, and 67 is the ASCII code for \'C\'.'
+      },
+      {
+        type: 'written',
+        prompt: '10. Written answer: a timing diagram for a byte shows 8 equal time intervals, each either high or low. Explain what determines whether an interval is drawn high or low.',
+        sample: 'Each interval represents one bit of the byte being transmitted, read left to right. A high interval means that bit is a 1 (current flowing); a low interval means that bit is a 0 (no current).'
+      },
+      {
+        type: 'mc',
+        prompt: '11. What is 56 AND 21 (both given in decimal, compared as 8-bit binary)?',
+        options: ['16', '21', '56', '77'],
+        correct: 0,
+        explanation: '56 = 00111000, 21 = 00010101. Comparing column by column, only the bit worth 16 is 1 in both numbers, so the result is 00010000 = 16.'
+      },
+      {
+        type: 'calc',
+        prompt: '12. What is SHL applied to binary 1001\u2082? Type the result in binary.',
+        answer: '10010',
+        explanation: 'SHL shifts every bit one place left and inserts a 0 on the right: 1001 \u2192 10010. In decimal, this doubled 9 into 18.'
+      },
+      {
+        type: 'mc',
+        prompt: '13. Which bitwise operation gives a result bit of 1 only when exactly one of the two input bits is 1 (not both)?',
+        options: ['AND', 'OR', 'XOR', 'SHR'],
+        correct: 2,
+        explanation: 'XOR (\u201ceXclusive OR\u201d) is 1 only when the two bits differ. If both are 1, or both are 0, the result is 0.'
+      },
+      {
+        type: 'mc',
+        prompt: '14. How many bits make up one byte, and how many distinct values can a byte represent?',
+        options: ['4 bits, 8 values', '8 bits, 256 values', '16 bits, 256 values', '8 bits, 128 values'],
+        correct: 1,
+        explanation: 'A byte is 8 bits, and 8 bits gives 2\u2078 = 256 distinct patterns \u2014 exactly enough for the full ASCII table.'
+      },
+      {
+        type: 'calc',
+        prompt: '15. SHR is applied to decimal 122 (in binary). What decimal value results?',
+        answer: '61',
+        explanation: 'SHR has the same effect as integer division by 2. 122 \u00f7 2 = 61 (no remainder needed since SHR just drops the rightmost bit).'
+      },
+      {
+        type: 'calc',
+        prompt: '16. Using an ASCII table, find the decimal value for the character \'$\'.',
+        answer: '36',
+        explanation: 'Looking up \'$\' in the ASCII table gives decimal 36 \u2014 this is why you look values up rather than compute them from a formula; ASCII assignments are just a fixed table.'
+      },
+      {
+        type: 'calc',
+        prompt: '17. Convert the decimal ASCII value from the previous question (36) into its 8-bit binary ASCII form. Type it with a space between the two nibbles, e.g. "0000 0000".',
+        answer: '0010 0100',
+        explanation: '36 in binary is 100100 (6 bits). Padded to a full byte: 00100100. Grouped into nibbles: 0010 0100.'
+      },
+      {
+        type: 'mc',
+        prompt: '18. What character corresponds to binary ASCII 0110 1011?',
+        options: ['g', 'k', 's', '+'],
+        correct: 1,
+        explanation: '0110 1011\u2082 = 107 in decimal, and 107 is the ASCII code for lowercase \'k\'.'
+      },
+      {
+        type: 'calc',
+        prompt: '19. A timing diagram reads, left to right across 8 equal intervals: low, high, high, low, high, low, high, high. What decimal value does this represent?',
+        answer: '107',
+        explanation: 'Reading low=0, high=1 left to right gives 01101011\u2082, which is 107 in decimal \u2014 the same byte as the previous question, just shown as a timing diagram instead of a binary string.'
+      },
+      {
+        type: 'written',
+        prompt: '20. Written answer: your timing diagram tool and your ASCII tool can both take the same 8-bit pattern as input. Explain why the timing diagram and the binary ASCII form always agree on decimal value, even though they look completely different.',
+        sample: 'Both are just different ways of displaying the same 8 bits. The timing diagram shows each bit as a high or low voltage level over a time interval; the binary ASCII form shows the same bit as a digit 0 or 1. Converting either representation to decimal uses the same place-value rule, so they always match.'
+      },
+      {
+        type: 'tf',
+        prompt: '21. True or False: The Analytical Engine could be reprogrammed to perform different calculations, while Difference Engine No. 2 could only ever compute using repeated addition.',
+        options: ['True', 'False'],
+        correct: 0,
+        explanation: 'True. The Analytical Engine accepted instructions and data on punched cards, making it general-purpose. Difference Engine No. 2 was a fixed-purpose calculator built entirely around the method of finite differences (addition only).'
+      },
+      {
+        type: 'tf',
+        prompt: '22. True or False: Charles Babbage built a complete, fully working Analytical Engine during his own lifetime.',
+        options: ['True', 'False'],
+        correct: 1,
+        explanation: 'False. Only a small portion (the mill and a printing mechanism) was ever assembled, completed after his death in 1910. Neither the Analytical Engine nor Difference Engine No. 2 was fully built while Babbage was alive.'
+      },
+      {
+        type: 'tf',
+        prompt: '23. True or False: Ada Lovelace is credited with writing the first algorithm intended to be carried out by a machine.',
+        options: ['True', 'False'],
+        correct: 0,
+        explanation: 'True. In her notes translating Luigi Menabrea\u2019s paper on the Analytical Engine, Lovelace included what is now recognized as the first published algorithm meant for a machine to execute.'
+      },
+      {
+        type: 'mc',
+        prompt: '24. Charles Babbage lived from approximately:',
+        options: ['1701 to 1781', '1791 to 1871', '1850 to 1930', '1900 to 1980'],
+        correct: 1,
+        explanation: 'Babbage was born in 1791 and died in 1871 \u2014 he was a 19th-century figure, working decades before any electronic computer existed.'
+      },
+      {
+        type: 'tf',
+        prompt: '25. True or False: One hexadecimal digit always represents exactly 4 bits (one nibble).',
+        options: ['True', 'False'],
+        correct: 0,
+        explanation: 'True. Since 2\u2074 = 16, a single hex digit (0\u2013F) can represent every possible 4-bit pattern with none left over \u2014 that\u2019s exactly why hex lines up so cleanly with binary.'
+      },
+      {
+        type: 'calc',
+        prompt: '26. Convert binary 1010 1111 to hexadecimal. Type it without spaces, e.g. "3F".',
+        answer: 'AF',
+        explanation: 'Split into nibbles: 1010 = A, 1111 = F. Reading them in order gives AF \u2014 no long division needed once you know the nibble-to-hex mapping.'
+      },
+      {
+        type: 'tf',
+        prompt: '27. True or False: A byte (8 bits) can always be written as exactly two hexadecimal digits.',
+        options: ['True', 'False'],
+        correct: 0,
+        explanation: 'True. A byte splits evenly into two 4-bit nibbles, and each nibble maps to exactly one hex digit \u2014 so every byte value from 0 to 255 is some 2-digit hex value from 00 to FF.'
+      },
+      {
+        type: 'mc',
+        prompt: '28. Which hex value represents decimal 256?',
+        options: ['64', '100', 'FF', '10'],
+        correct: 1,
+        explanation: '256 = 16\u00b2, so like any power of the base, it appears as a 1 followed by zeroes in that base \u2014 the same reason powers of 2 look like a 1 followed by zeroes in binary. 256 in hex is 100.'
+      },
+      {
+        type: 'calc',
+        prompt: '29. What is FF:FF in decimal?',
+        answer: '65535',
+        explanation: 'FF:FF is just the colon-grouped notation for hex FFFF. F=15 in every position: 15\u00d716\u00b3 + 15\u00d716\u00b2 + 15\u00d716\u00b9 + 15\u00d716\u2070 = 65535 \u2014 one less than 16\u2074 = 65536, the same "all digits maxed out" pattern you saw with all-1s binary numbers.'
+      },
+      {
+        type: 'calc',
+        prompt: '30. Convert binary 11101011000111 to hexadecimal. Type it without spaces.',
+        answer: '3AC7',
+        explanation: 'Group from the right into 4-bit chunks, padding the leftmost group with zeroes: 0011 1010 1100 0111 \u2192 3 A C 7 \u2192 3AC7.'
+      },
+      {
+        type: 'mc',
+        prompt: '31. Which notation would you most likely see written directly inside a Java or C++ program?',
+        options: ['27E\u2081\u2086', '02:7E', '0x27E', 'binary 0010 0111 1110'],
+        correct: 2,
+        explanation: 'The 0x prefix (0x27E) is the standard way hex literals are written in C, C++, Java, and most other programming languages.'
+      },
+      {
+        type: 'tf',
+        prompt: '32. True or False: Octal digits range from 0 to 7, and each octal digit represents exactly 3 binary bits.',
+        options: ['True', 'False'],
+        correct: 0,
+        explanation: 'True. Since 2\u00b3 = 8, every possible 3-bit pattern (000 to 111) maps to exactly one octal digit (0 to 7), the same way 4-bit patterns map to hex digits.'
+      },
+      {
+        type: 'calc',
+        prompt: '33. Convert octal 546 to binary using 3-bit groups (no need to pad to a byte). Type the result without spaces.',
+        answer: '101100110',
+        explanation: '5 = 101, 4 = 100, 6 = 110. Concatenated: 101100110.'
+      },
+      {
+        type: 'mc',
+        prompt: '34. In a general base-N number system, what range of values can a single digit take?',
+        options: ['1 to N', '0 to N', '0 to N\u22121', '1 to N\u22121'],
+        correct: 2,
+        explanation: 'A digit always runs from 0 up to one less than the base. Base 10: 0\u20139. Base 16: 0\u2013F (0\u201315). Base 8: 0\u20137.'
+      },
+      {
+        type: 'mc',
+        prompt: '35. The hex number 0xAF1 is shifted left one byte to get 0xAF100. What arithmetic operation does this shift perform?',
+        options: ['Adds 1', 'Multiplies by 16', 'Multiplies by 256', 'Divides by 256'],
+        correct: 2,
+        explanation: 'One byte is 8 bits, which is 2 hex digits. Shifting left by one byte appends two zero hex digits, which is the same as multiplying by 16\u00b2 = 256.'
+      },
+      {
+        type: 'calc',
+        prompt: '36. Confirm question 35 by calculation: what is 0xAF1 in decimal?',
+        answer: '2801',
+        explanation: '0xAF1 = 10\u00d716\u00b2 + 15\u00d716\u00b9 + 1\u00d716\u2070 = 2560 + 240 + 1 = 2801.'
+      },
+      {
+        type: 'calc',
+        prompt: '37. Now confirm the shift: what is 0xAF100 in decimal, and does it equal 2801 \u00d7 256?',
+        answer: '717056',
+        explanation: '0xAF100 = 2801 \u00d7 256 = 717056. Shifting left one byte multiplied the value by exactly 256, confirming question 35.'
+      }
+    ];
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : {};
+      } catch (e) { return {}; }
+    }
+
+    function saveState(state) {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) { /* ignore */ }
+    }
+
+    let state = loadState();
+
+    function updateScoreBar() {
+      const answered = Object.keys(state).filter(k => state[k] && state[k].answered).length;
+      const correct = Object.keys(state).filter(k => state[k] && state[k].correct).length;
+      document.getElementById('answeredCount').textContent = answered;
+      document.getElementById('correctCount').textContent = correct;
+      document.getElementById('totalCount').textContent = questions.length;
+    }
+
+    function render() {
+      const list = document.getElementById('questionList');
+      list.innerHTML = '';
+
+      questions.forEach((q, idx) => {
+        const card = document.createElement('div');
+        card.className = 'q-card';
+
+        const label = document.createElement('div');
+        label.className = 'q-num';
+        const typeLabels = { mc: 'Multiple choice', tf: 'True / False', calc: 'Calculation', written: 'Written answer' };
+        label.textContent = typeLabels[q.type] || 'Question';
+        card.appendChild(label);
+
+        const prompt = document.createElement('div');
+        prompt.className = 'q-prompt';
+        prompt.textContent = q.prompt;
+        card.appendChild(prompt);
+
+        const saved = state[idx] || {};
+
+        if (q.type === 'mc' || q.type === 'tf') {
+          const optsDiv = document.createElement('div');
+          optsDiv.className = 'q-options';
+          q.options.forEach((opt, oi) => {
+            const btn = document.createElement('button');
+            btn.className = 'q-option';
+            btn.textContent = opt;
+            if (saved.answered) {
+              if (oi === q.correct) btn.dataset.state = 'correct';
+              else if (oi === saved.picked) btn.dataset.state = 'incorrect';
+            }
+            btn.addEventListener('click', () => {
+              state[idx] = { answered: true, picked: oi, correct: oi === q.correct };
+              saveState(state);
+              render();
+              updateScoreBar();
+            });
+            optsDiv.appendChild(btn);
+          });
+          card.appendChild(optsDiv);
+
+          const exp = document.createElement('div');
+          exp.className = 'explanation' + (saved.answered ? ' show' : '');
+          exp.textContent = q.explanation;
+          card.appendChild(exp);
+
+        } else if (q.type === 'calc') {
+          const row = document.createElement('div');
+          row.className = 'q-input-row';
+          const inp = document.createElement('input');
+          inp.type = 'text';
+          inp.value = saved.typed || '';
+          const btn = document.createElement('button');
+          btn.className = 'check-btn';
+          btn.textContent = 'Check answer';
+          btn.addEventListener('click', () => {
+            const typed = inp.value.trim();
+            const correct = typed.toLowerCase().replace(/\s+/g, ' ') === q.answer.toLowerCase().replace(/\s+/g, ' ');
+            state[idx] = { answered: true, typed, correct };
+            saveState(state);
+            render();
+            updateScoreBar();
+          });
+          row.appendChild(inp);
+          row.appendChild(btn);
+          card.appendChild(row);
+
+          const exp = document.createElement('div');
+          exp.className = 'explanation' + (saved.answered ? ' show' : '');
+          exp.innerHTML = saved.answered
+            ? (saved.correct ? '<strong>Correct.</strong> ' : `<strong>Not quite \u2014 correct answer: ${q.answer}.</strong> `) + q.explanation
+            : '';
+          card.appendChild(exp);
+
+        } else if (q.type === 'written') {
+          const btn = document.createElement('button');
+          btn.className = 'check-btn';
+          btn.textContent = saved.answered ? 'Hide sample answer' : 'Show sample answer';
+          btn.style.marginBottom = '8px';
+          btn.addEventListener('click', () => {
+            state[idx] = { answered: !saved.answered };
+            saveState(state);
+            render();
+            updateScoreBar();
+          });
+          card.appendChild(btn);
+
+          const exp = document.createElement('div');
+          exp.className = 'explanation' + (saved.answered ? ' show' : '');
+          exp.innerHTML = `<strong>Sample answer:</strong> ${q.sample}`;
+          card.appendChild(exp);
+        }
+
+        list.appendChild(card);
+      });
+
+      updateScoreBar();
+    }
+
+    document.getElementById('resetLink').addEventListener('click', (e) => {
+      e.preventDefault();
+      state = {};
+      saveState(state);
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>

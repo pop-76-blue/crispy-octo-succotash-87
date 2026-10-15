@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lab 8d &amp; 8e Walkthrough — Voltage Division</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#8a6d1a; --accent-dark:#6b5313; --accent-tint:#f6f0dc; }
+  table.compare { width:100%; border-collapse:collapse; font-family:var(--sans); font-size:14px; margin:16px 0; }
+  table.compare th, table.compare td { border:1px solid var(--line); padding:8px 12px; text-align:left; }
+  table.compare th { background:var(--accent-tint); }
+  .qa { background:var(--surface); border:1px solid var(--line); border-left:4px solid var(--accent); border-radius:var(--radius); padding:12px 16px; margin:12px 0; }
+  .qa .q { font-weight:700; font-family:var(--sans); margin-bottom:6px; }
+  .qa .a { font-family:var(--sans); font-size:14.5px; color:var(--ink); }
+  .field-row { display:flex; justify-content:center; align-items:center; gap:14px; margin:14px 0; flex-wrap:wrap; }
+  .field-row label { font-family:var(--sans); font-size:14px; display:flex; align-items:center; gap:6px; }
+  .field-row input[type="text"] { font-family:var(--mono); font-size:16px; padding:6px 10px; border:1px solid var(--line); border-radius:5px; width:90px; text-align:center; }
+  .bar-row { display:flex; height:34px; border-radius:6px; overflow:hidden; border:1px solid var(--line); margin:14px 0 6px; font-family:var(--mono); font-size:12px; }
+  .bar-seg { display:flex; align-items:center; justify-content:center; color:#fff; white-space:nowrap; overflow:hidden; min-width:2px; }
+  .seg-r { background:var(--accent-dark); }
+  .seg-b1 { background:#c9a227; color:#1e2430; }
+  .seg-b2 { background:#e0c25a; color:#1e2430; }
+  .check-note { text-align:center; font-family:var(--sans); font-size:13.5px; color:var(--ink-soft); margin-top:6px; }
+  .check-note.ok { color:#2e7d32; font-weight:700; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../index.html">&larr; TER3M1</a>
+    <span class="crumb-current">Lab 8d &amp; 8e Walkthrough</span>
+  </div>
+
+  <div class="wrap">
+    <h1>Lab 8d &amp; 8e — Why Voltage Divides the Way It Does</h1>
+    <p class="subtitle">Unit 3 &nbsp;&middot;&nbsp; Practice on measuring: a resistor + 2 bulbs vs. 3 bulbs, all on 9V</p>
+
+    <div class="panel">
+      <p>Lab 8d puts two series groups side by side across the same 9V battery. <strong>Sub-circuit 1</strong> is one resistor plus bulb 1 and bulb 2. <strong>Sub-circuit 2</strong> is bulbs 3, 4 and 5. Every bulb is 48&Omega;. Lab 8e then asks you to explain what you measured. The key idea is that <strong>in a series group, voltage splits in proportion to resistance</strong> &mdash; the same current flows through every part, so a bigger resistance takes a bigger share (V = I &times; R).</p>
+      <table class="compare">
+        <tr><th>Measured in Lab 8d</th><th>Voltage</th></tr>
+        <tr><td>Resistor</td><td>8.12 V</td></tr>
+        <tr><td>Bulb 1</td><td>390 mV = 0.39 V</td></tr>
+        <tr><td>Bulb 2</td><td>390 mV = 0.39 V</td></tr>
+        <tr><td>Bulbs 3, 4, 5 (each)</td><td>2.97 V</td></tr>
+      </table>
+    </div>
+
+    <div class="panel">
+      <h2 style="border:none;padding:0;margin:0 0 10px;">Lab 8e, question by question</h2>
+
+      <div class="qa">
+        <div class="q">1. Total voltage drop in the resistor + bulb 1 + bulb 2 group?</div>
+        <div class="a">By Kirchhoff's Voltage Law the drops in a series group add up to the supply: 8.12 + 0.39 + 0.39 = 8.90 V, which is about the 9 V battery. The small gap is a measurement/rounding difference &mdash; the law says it should be 9 V.</div>
+      </div>
+      <div class="qa">
+        <div class="q">2. Is the same true for bulbs 3, 4 and 5?</div>
+        <div class="a">Yes. 2.97 &times; 3 = 8.91 V &asymp; 9 V. Both sub-circuits are in parallel across the battery, so each one's drops must add up to 9 V.</div>
+      </div>
+      <div class="qa">
+        <div class="q">3. Why is bulb 1's drop so much smaller than bulb 3's?</div>
+        <div class="a">Same current flows through everything in a series group, so voltage splits by resistance. In sub-circuit 1 the resistor is far larger than a 48&Omega; bulb, so it takes nearly all of the 9 V and leaves only a sliver for each bulb. In sub-circuit 2 there are three equal 48&Omega; bulbs, so each takes an equal third: 9 &divide; 3 &asymp; 3 V.</div>
+      </div>
+      <div class="qa">
+        <div class="q">4. Voltage drop across the resistor and bulb 1 together (calculation and measurement)?</div>
+        <div class="a"><strong>Theory (KVL):</strong> 9 &minus; V<sub>bulb 2</sub> = 9 &minus; 0.39 = <strong>8.61 V</strong>.<br><strong>Measurement:</strong> add the two readings you took, 8.12 + 0.39 = 8.51 V, or put one multimeter across both. Write down both numbers and note they agree closely.</div>
+      </div>
+      <div class="qa">
+        <div class="q">5. Find the resistor from the measurements, then read its colour bands.</div>
+        <div class="a">
+          <strong>Current:</strong> bulb 1 is 48&Omega; with 0.39 V across it, so I = V/R = 0.39 / 48 = 0.008125 A (8.125 mA). The same current flows through the resistor.<br>
+          <strong>Resistor:</strong> R = V/I = 8.12 / 0.008125 &asymp; 999 &Omega; &asymp; <strong>1000 &Omega; (1 k&Omega;)</strong>.<br>
+          <strong>Colour bands:</strong> 1000 = 10 &times; 10<sup>2</sup> &rarr; brown, black, red (check the fourth band on your resistor). With a gold band (&plusmn;5%) the range is 950 &Omega; to 1050 &Omega;. You can confirm the bands with the <a href="resistor-color-code.html">Resistor Color Code Decoder</a>.
+        </div>
+      </div>
+    </div>
+
+    <div class="demo">
+      <h3 style="text-align:center;">Voltage divider: sub-circuit 1 on a 9 V battery</h3>
+      <p style="text-align:center; color:var(--ink-soft); font-size:13.5px;">Change the resistor and watch how the 9 V is shared with the two 48&Omega; bulbs.</p>
+      <div class="field-row">
+        <label>Battery (V): <input type="text" id="supplyV" value="9"></label>
+        <label>Resistor (&Omega;): <input type="text" id="resR" value="1000"></label>
+        <label>Each bulb (&Omega;): <input type="text" id="bulbR" value="48"></label>
+      </div>
+      <div class="bar-row" id="barRow"></div>
+      <div class="decimal-readout" id="divReadout"></div>
+      <div class="check-note" id="divNote"></div>
+    </div>
+
+    <div class="demo">
+      <h3 style="text-align:center;">Find the resistor from measurements (Question 5)</h3>
+      <div class="field-row">
+        <label>Resistor drop (V): <input type="text" id="mVr" value="8.12"></label>
+        <label>One bulb drop (V): <input type="text" id="mVb" value="0.39"></label>
+        <label>Bulb (&Omega;): <input type="text" id="mRb" value="48"></label>
+      </div>
+      <div class="decimal-readout" id="findReadout"></div>
+    </div>
+
+    <div class="callout">
+      <strong>Try this:</strong> Set the resistor to 48&Omega; in the divider and predict each part's share first &mdash; all three parts are equal, so each gets 3 V, just like bulbs 3, 4 and 5. Then put it back to 1000&Omega; and notice how little the bulbs get.
+    </div>
+  </div>
+
+  <script>
+    function num(id) { const v = parseFloat(document.getElementById(id).value); return isNaN(v) ? null : v; }
+
+    function renderDivider() {
+      const V = num('supplyV'), R = num('resR'), Rb = num('bulbR');
+      const bar = document.getElementById('barRow');
+      const out = document.getElementById('divReadout');
+      const note = document.getElementById('divNote');
+      if (V === null || R === null || Rb === null || R <= 0 || Rb <= 0) {
+        bar.innerHTML = ''; out.textContent = 'Enter positive numbers in all three boxes.'; note.textContent = ''; return;
+      }
+      const total = R + 2 * Rb;
+      const I = V / total;
+      const vr = I * R, vb = I * Rb;
+      const pct = x => Math.max((x / V) * 100, 0);
+      bar.innerHTML =
+        `<div class="bar-seg seg-r" style="width:${pct(vr)}%">${pct(vr) > 12 ? 'Resistor' : ''}</div>` +
+        `<div class="bar-seg seg-b1" style="width:${pct(vb)}%"></div>` +
+        `<div class="bar-seg seg-b2" style="width:${pct(vb)}%"></div>`;
+      out.innerHTML =
+        `I = ${V} / ${total} = <strong>${(I*1000).toFixed(3)} mA</strong> &nbsp;&middot;&nbsp; ` +
+        `resistor: <strong>${vr.toFixed(3)} V</strong> &nbsp;&middot;&nbsp; each bulb: <strong>${vb.toFixed(3)} V</strong>`;
+      const sum = vr + 2 * vb;
+      note.className = 'check-note ok';
+      note.textContent = `\u2713 ${vr.toFixed(3)} + ${vb.toFixed(3)} + ${vb.toFixed(3)} = ${sum.toFixed(3)} V (equals the battery)`;
+    }
+
+    function renderFind() {
+      const Vr = num('mVr'), Vb = num('mVb'), Rb = num('mRb');
+      const out = document.getElementById('findReadout');
+      if (Vr === null || Vb === null || Rb === null || Vb <= 0 || Rb <= 0) { out.textContent = 'Enter positive numbers in all three boxes.'; return; }
+      const I = Vb / Rb;
+      const R = Vr / I;
+      out.innerHTML = `I = ${Vb} / ${Rb} = ${(I*1000).toFixed(3)} mA &nbsp;&middot;&nbsp; R = ${Vr} / ${I.toFixed(6)} = <strong>${R.toFixed(1)} \u03a9</strong>`;
+    }
+
+    ['supplyV','resR','bulbR'].forEach(id => document.getElementById(id).addEventListener('input', renderDivider));
+    ['mVr','mVb','mRb'].forEach(id => document.getElementById(id).addEventListener('input', renderFind));
+    renderDivider();
+    renderFind();
+  </script>
+</body>
+</html>
