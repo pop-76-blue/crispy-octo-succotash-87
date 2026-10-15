@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Unit 2 Practice Set — Digital Logic</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#8a6d1a; --accent-dark:#6b5313; --accent-tint:#f6f0dc; }
+  .q-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    margin: 16px 0;
+  }
+  .q-num {
+    font-family: var(--sans);
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .q-prompt {
+    font-family: var(--sans);
+    font-size: 16px;
+    margin: 6px 0 14px;
+  }
+  .q-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .q-option {
+    font-family: var(--sans);
+    font-size: 14.5px;
+    text-align: left;
+    padding: 9px 14px;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    background: var(--surface);
+    cursor: pointer;
+  }
+  .q-option[data-state="correct"] { background: #e3f3e3; border-color: #2e7d32; }
+  .q-option[data-state="incorrect"] { background: #fbe6e6; border-color: #b3261e; }
+  .q-input-row { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; }
+  .q-input-row input {
+    font-family: var(--mono);
+    font-size: 15px;
+    padding: 6px 10px;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    width: 160px;
+  }
+  .check-btn {
+    font-family: var(--sans);
+    font-size: 13.5px;
+    padding: 6px 14px;
+    border: 1px solid var(--accent);
+    background: var(--accent);
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  .explanation {
+    display: none;
+    font-family: var(--sans);
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    background: var(--accent-tint);
+    border-radius: 5px;
+    padding: 10px 14px;
+    margin-top: 8px;
+  }
+  .explanation.show { display: block; }
+  .score-bar {
+    position: sticky;
+    top: 0;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    padding: 10px 20px;
+    font-family: var(--sans);
+    font-size: 14px;
+    text-align: center;
+    z-index: 5;
+  }
+  .reset-link {
+    font-family: var(--sans);
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    text-align: center;
+    margin-top: 30px;
+  }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../index.html">&larr; TER3M1</a>
+    <span class="crumb-current">Unit 2 Practice Set</span>
+  </div>
+
+  <div class="score-bar">Answered: <strong id="answeredCount">0</strong>/<span id="totalCount">0</span> &nbsp;&middot;&nbsp; Correct: <strong id="correctCount">0</strong></div>
+
+  <div class="wrap">
+    <h1>Unit 2 Practice Set — Digital Logic</h1>
+    <p class="subtitle">Truth tables, order of operations, equivalent expressions, and gate circuits (2.1&ndash;2.8)</p>
+
+    <div class="callout" style="margin-bottom:20px;"><strong>How to use this:</strong> these are fresh practice questions, separate from your assigned exercises. Check your own homework with the <a href="truth-table-builder.html">Truth Table Builder</a> and the <a href="digital-gates-circuit-drawer.html">Circuit Drawer</a> &mdash; they show the grouping and each gate's value so you can find where a mistake crept in.</div>
+
+    <div id="questionList"></div>
+
+    <p class="reset-link"><a href="#" id="resetLink">Reset my saved answers on this page</a></p>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'ter3m1-unit2-practice-set';
+
+    const questions = [
+      { type:'mc', prompt:'1. Which operator is a unary operator \u2014 one that takes just a single operand?',
+        options:['AND','OR','NOT','XOR'], correct:2,
+        explanation:'NOT flips one value. AND, OR and XOR are binary operators: each takes two operands.' },
+      { type:'tf', prompt:'2. True or False: the truth table for an expression with 4 different variables has 16 rows.',
+        options:['True','False'], correct:0,
+        explanation:'True. The number of rows is 2 to the power of the number of different variables: 2\u2074 = 16.' },
+      { type:'calc', prompt:'3. How many rows does the truth table for P AND Q OR NOT R AND P have?',
+        answer:'8',
+        explanation:'Only three different variables appear (P, Q, R). P is used twice but counts once, so 2\u00b3 = 8 rows.' },
+      { type:'calc', prompt:'4. How many rows does the truth table for A OR B AND C OR D AND NOT A have?',
+        answer:'16',
+        explanation:'Four different variables (A, B, C, D); A repeats but counts once. 2\u2074 = 16 rows.' },
+      { type:'mc', prompt:'5. Evaluate: T OR F AND F',
+        options:['TRUE','FALSE'], correct:0,
+        explanation:'AND is done before OR: F AND F = F. Then T OR F = T, so the result is TRUE.' },
+      { type:'mc', prompt:'6. Evaluate: NOT T AND NOT F',
+        options:['TRUE','FALSE'], correct:1,
+        explanation:'NOT comes first: NOT T = F and NOT F = T. Then F AND T = F, so the result is FALSE.' },
+      { type:'mc', prompt:'7. Evaluate: NOT (F OR T)',
+        options:['TRUE','FALSE'], correct:1,
+        explanation:'Brackets first: F OR T = T. Then NOT T = F.' },
+      { type:'mc', prompt:'8. Evaluate: F OR T AND NOT F',
+        options:['TRUE','FALSE'], correct:0,
+        explanation:'NOT first: NOT F = T. Then AND: T AND T = T. Then OR: F OR T = T.' },
+      { type:'tf', prompt:'9. True or False: P OR Q AND R means exactly the same thing as (P OR Q) AND R.',
+        options:['True','False'], correct:1,
+        explanation:'False. AND is done before OR, so the first is P OR (Q AND R). With P = 1, Q = 0, R = 0 the first is 1 but the second is 0.' },
+      { type:'mc', prompt:'10. Which is the C/Java form of: NOT P AND (Q OR R)?',
+        options:['!P && (Q || R)','!(P && Q) || R','!P || Q && R','P && !Q || R'], correct:0,
+        explanation:'NOT is !, AND is &&, OR is ||. The brackets must stay around Q || R so that it is done first.' },
+      { type:'tf', prompt:'11. True or False: XOR gives TRUE when both of its operands are TRUE.',
+        options:['True','False'], correct:1,
+        explanation:'False. Exclusive-OR is TRUE only when exactly one operand is TRUE. With both TRUE (or both FALSE) it is FALSE.' },
+      { type:'mc', prompt:'12. Which gate has an output of 1 only when both of its inputs are 1?',
+        options:['OR','AND','XOR','NOT'], correct:1,
+        explanation:'That is the AND gate \u2014 the only row of its truth table with output 1 is 1, 1.' },
+      { type:'calc', prompt:'13. With A = 1, B = 0, C = 1, evaluate NOT A OR B AND C. Answer 1 or 0.',
+        answer:'0',
+        explanation:'NOT A = 0. B AND C = 0 AND 1 = 0 (AND before OR). Then 0 OR 0 = 0.' },
+      { type:'calc', prompt:'14. With A = 1, B = 1, C = 0, evaluate (A OR C) AND NOT B. Answer 1 or 0.',
+        answer:'0',
+        explanation:'Bracket: A OR C = 1. NOT B = 0. Then 1 AND 0 = 0.' },
+      { type:'calc', prompt:'15. With P = 0, Q = 1, evaluate NOT P AND Q OR P. Answer 1 or 0.',
+        answer:'1',
+        explanation:'NOT P = 1. Then 1 AND Q = 1. Then 1 OR P = 1 OR 0 = 1.' },
+      { type:'mc', prompt:'16. Which expression is equivalent to NOT (P OR Q)?',
+        options:['NOT P AND NOT Q','NOT P OR NOT Q','P AND Q','NOT P AND Q'], correct:0,
+        explanation:'NOT (P OR Q) is TRUE only when P and Q are both FALSE \u2014 which is exactly when NOT P AND NOT Q is TRUE. (NOT P OR NOT Q is the equivalent of NOT (P AND Q) instead.)' },
+      { type:'calc', prompt:'17. How many gates are needed to draw the circuit for NOT A AND NOT B?',
+        answer:'3',
+        explanation:'One NOT gate on A, one NOT gate on B, and one AND gate combining the two outputs.' },
+      { type:'calc', prompt:'18. How many gates are needed to draw A AND B OR C AND D?',
+        answer:'3',
+        explanation:'Two AND gates (A with B, and C with D) feeding one OR gate.' },
+      { type:'mc', prompt:'19. When drawing the circuit for A AND B OR C, what is drawn first?',
+        options:['An AND gate with inputs A and B','An OR gate with inputs A and B','An OR gate with inputs B and C','A NOT gate on C'], correct:0,
+        explanation:'AND is done before OR, so draw A AND B first, then join its output with C using an OR gate.' },
+      { type:'tf', prompt:'20. True or False: (P OR Q) AND NOT (P AND Q) gives the same results as P XOR Q.',
+        options:['True','False'], correct:0,
+        explanation:'True. The first part says \u201cat least one is TRUE\u201d and the second says \u201cnot both\u201d, which together mean exactly one \u2014 the definition of XOR.' },
+      { type:'written', prompt:'21. Written answer: NOT A AND B and NOT (A AND B) have different truth tables. Explain why, and name the rows (values of A and B) where they differ.',
+        sample:'In NOT A AND B, NOT has higher priority than AND, so it applies to A alone: (NOT A) AND B. In NOT (A AND B) the brackets make NOT apply to the whole AND. They differ when A = 1, B = 0 (first gives 0, second gives 1) and when A = 0, B = 0 (first gives 0, second gives 1).' }
+    ];
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : {};
+      } catch (e) { return {}; }
+    }
+
+    function saveState(state) {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) { /* ignore */ }
+    }
+
+    let state = loadState();
+
+    function updateScoreBar() {
+      const answered = Object.keys(state).filter(k => state[k] && state[k].answered).length;
+      const correct = Object.keys(state).filter(k => state[k] && state[k].correct).length;
+      document.getElementById('answeredCount').textContent = answered;
+      document.getElementById('correctCount').textContent = correct;
+      document.getElementById('totalCount').textContent = questions.length;
+    }
+
+    function render() {
+      const list = document.getElementById('questionList');
+      list.innerHTML = '';
+
+      questions.forEach((q, idx) => {
+        const card = document.createElement('div');
+        card.className = 'q-card';
+
+        const label = document.createElement('div');
+        label.className = 'q-num';
+        const typeLabels = { mc: 'Multiple choice', tf: 'True / False', calc: 'Calculation', written: 'Written answer' };
+        label.textContent = typeLabels[q.type] || 'Question';
+        card.appendChild(label);
+
+        const prompt = document.createElement('div');
+        prompt.className = 'q-prompt';
+        prompt.textContent = q.prompt;
+        card.appendChild(prompt);
+
+        const saved = state[idx] || {};
+
+        if (q.type === 'mc' || q.type === 'tf') {
+          const optsDiv = document.createElement('div');
+          optsDiv.className = 'q-options';
+          q.options.forEach((opt, oi) => {
+            const btn = document.createElement('button');
+            btn.className = 'q-option';
+            btn.textContent = opt;
+            if (saved.answered) {
+              if (oi === q.correct) btn.dataset.state = 'correct';
+              else if (oi === saved.picked) btn.dataset.state = 'incorrect';
+            }
+            btn.addEventListener('click', () => {
+              state[idx] = { answered: true, picked: oi, correct: oi === q.correct };
+              saveState(state);
+              render();
+              updateScoreBar();
+            });
+            optsDiv.appendChild(btn);
+          });
+          card.appendChild(optsDiv);
+
+          const exp = document.createElement('div');
+          exp.className = 'explanation' + (saved.answered ? ' show' : '');
+          exp.textContent = q.explanation;
+          card.appendChild(exp);
+
+        } else if (q.type === 'calc') {
+          const row = document.createElement('div');
+          row.className = 'q-input-row';
+          const inp = document.createElement('input');
+          inp.type = 'text';
+          inp.value = saved.typed || '';
+          const btn = document.createElement('button');
+          btn.className = 'check-btn';
+          btn.textContent = 'Check answer';
+          btn.addEventListener('click', () => {
+            const typed = inp.value.trim();
+            const correct = typed.toLowerCase().replace(/\s+/g, ' ') === q.answer.toLowerCase().replace(/\s+/g, ' ');
+            state[idx] = { answered: true, typed, correct };
+            saveState(state);
+            render();
+            updateScoreBar();
+          });
+          row.appendChild(inp);
+          row.appendChild(btn);
+          card.appendChild(row);
+
+          const exp = document.createElement('div');
+          exp.className = 'explanation' + (saved.answered ? ' show' : '');
+          exp.innerHTML = saved.answered
+            ? (saved.correct ? '<strong>Correct.</strong> ' : `<strong>Not quite \u2014 correct answer: ${q.answer}.</strong> `) + q.explanation
+            : '';
+          card.appendChild(exp);
+
+        } else if (q.type === 'written') {
+          const btn = document.createElement('button');
+          btn.className = 'check-btn';
+          btn.textContent = saved.answered ? 'Hide sample answer' : 'Show sample answer';
+          btn.style.marginBottom = '8px';
+          btn.addEventListener('click', () => {
+            state[idx] = { answered: !saved.answered };
+            saveState(state);
+            render();
+            updateScoreBar();
+          });
+          card.appendChild(btn);
+
+          const exp = document.createElement('div');
+          exp.className = 'explanation' + (saved.answered ? ' show' : '');
+          exp.innerHTML = `<strong>Sample answer:</strong> ${q.sample}`;
+          card.appendChild(exp);
+        }
+
+        list.appendChild(card);
+      });
+
+      updateScoreBar();
+    }
+
+    document.getElementById('resetLink').addEventListener('click', (e) => {
+      e.preventDefault();
+      state = {};
+      saveState(state);
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>

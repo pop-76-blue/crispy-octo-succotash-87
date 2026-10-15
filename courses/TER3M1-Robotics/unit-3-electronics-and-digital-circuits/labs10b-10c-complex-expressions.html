@@ -55,7 +55,9 @@
 
     <div class="panel">
       <h2 style="border:none;padding:0;margin:0 0 10px;">A note on order of operations</h2>
-      <p>Both lab expressions are written without brackets, so you have to decide how to group them. The widely used rule is <strong>NOT first, then AND, then OR</strong>. That settles Lab 10b. Lab 10c is harder: <span style="font-family:var(--mono)">P XNOR Q NAND R</span> has no single universal reading, because it mixes XOR-type and AND-type operators. Below, both readings are shown with the rule each one follows &mdash; <strong>use the order-of-operations rule from your Unit 2 notes (section 2.5) to choose, or ask in class</strong>. The two readings give different truth tables, so it does matter.</p>
+      <p>Both lab expressions are written without brackets, so the grouping comes from the order of operations in your Unit 2 notes (section 2.5): <strong>brackets, then NOT, then AND, then OR</strong>, with operators at the same level done left to right.</p>
+      <p><strong>Lab 10b</strong> is settled by that rule: <span style="font-family:var(--mono)">P OR Q AND NOT R</span> means <span style="font-family:var(--mono)">P OR (Q AND (NOT R))</span>.</p>
+      <p><strong>Lab 10c</strong> uses XNOR and NAND, which the 2.5 list doesn't rank. Two clues in your notes point the same way: NAND is just NOT AND, so it sits at AND's level; and 2.2 introduces XOR as one of the "two types of OR", so XNOR sits down at OR's level. AND-level operators are done before OR-level ones, so <span style="font-family:var(--mono)">P XNOR Q NAND R</span> is most consistent with your notes as <span style="font-family:var(--mono)">P XNOR (Q NAND R)</span>. That is the first tab below. The notes never say this outright, so if you want to be certain, confirm with your teacher, or write the brackets into your answer. The other tab shows what you'd get by simply going left to right; the two truth tables differ, so it does matter.</p>
     </div>
 
     <div class="demo">
@@ -96,7 +98,7 @@
     </div>
 
     <div class="callout">
-      <strong>Try this:</strong> For your chosen lab, fill in the truth table on paper before using the builder, then compare. Then switch to the other reading and find a row where the two readings disagree &mdash; that is exactly the kind of row that would catch a wrongly grouped circuit.
+      <strong>Try this:</strong> For your chosen lab, fill in the truth table on paper before using the builder, then compare. You can also type the expression into the <a href="../unit-2-digital-logic/truth-table-builder.html">Truth Table Builder</a> from Unit 2 and see its grouping. Then switch to the other reading and find a row where the two readings disagree &mdash; that is exactly the kind of row that would catch a wrongly grouped circuit.
     </div>
   </div>
 
@@ -106,10 +108,10 @@
       '10b': {
         title: 'P OR Q AND NOT R',
         readings: {
-          std: { tab: 'NOT, then AND, then OR', text: 'P OR (Q AND (NOT R))', rule: 'Rule: NOT first, then AND, then OR.',
+          std: { tab: 'Your notes: NOT, AND, then OR', text: 'P OR (Q AND (NOT R))', rule: 'Rule (notes, 2.5): brackets, then NOT, then AND, then OR.',
             steps: [['NOT R', (p,q,r)=>NOT(r)], ['Q AND (NOT R)', (p,q,r)=>AND(q,NOT(r))], ['P OR (Q AND NOT R)', (p,q,r)=>OR(p,AND(q,NOT(r)))]],
             plan: [['7404 (NOT)', 'NOT R'], ['7408 (AND)', 'Q AND (NOT R)'], ['7432 (OR)', 'P OR the result \u2192 drives the LED']], counts: '1 NOT, 1 AND, 1 OR', last: '7432' },
-          ltr: { tab: 'Left to right', text: '(P OR Q) AND (NOT R)', rule: 'Rule: operators applied left to right (NOT still applies to R first).',
+          ltr: { tab: 'Mistake to avoid: OR first', text: '(P OR Q) AND (NOT R)', rule: 'This ignores AND-before-OR. It is shown so you can see how a wrong grouping changes the table.',
             steps: [['NOT R', (p,q,r)=>NOT(r)], ['P OR Q', (p,q,r)=>OR(p,q)], ['(P OR Q) AND NOT R', (p,q,r)=>AND(OR(p,q),NOT(r))]],
             plan: [['7404 (NOT)', 'NOT R'], ['7432 (OR)', 'P OR Q'], ['7408 (AND)', 'combine both \u2192 drives the LED']], counts: '1 NOT, 1 OR, 1 AND', last: '7408' }
         }
@@ -117,12 +119,12 @@
       '10c': {
         title: 'P XNOR Q NAND R',
         readings: {
-          A: { tab: '(P XNOR Q) NAND R', text: '(P XNOR Q) NAND R', rule: 'Rule: operators applied left to right.',
-            steps: [['P XNOR Q', (p,q,r)=>XNOR(p,q)], ['(P XNOR Q) AND R', (p,q,r)=>AND(XNOR(p,q),r)], ['NOT of that = NAND', (p,q,r)=>NOT(AND(XNOR(p,q),r))]],
-            plan: [['7404 (NOT)', 'NOT P and NOT Q'], ['7408 (AND)', 'P AND Q; and (NOT P) AND (NOT Q)'], ['7432 (OR)', 'OR those two = P XNOR Q'], ['7408 (AND)', '(P XNOR Q) AND R'], ['7404 (NOT)', 'NOT of that \u2192 drives the LED']], counts: '3 NOT, 3 AND, 1 OR', last: '7404' },
-          B: { tab: 'P XNOR (Q NAND R)', text: 'P XNOR (Q NAND R)', rule: 'Rule: AND-type operators (AND/NAND) before XOR-type (XOR/XNOR), like AND before OR.',
+          B: { tab: 'AND-level first (fits your notes)', text: 'P XNOR (Q NAND R)', rule: 'Rule: NAND is at AND\u2019s level and XNOR at OR\u2019s level, so NAND is done first.',
             steps: [['Q AND R', (p,q,r)=>AND(q,r)], ['Q NAND R', (p,q,r)=>NOT(AND(q,r))], ['P XNOR (Q NAND R)', (p,q,r)=>XNOR(p,NOT(AND(q,r)))]],
-            plan: [['7408 (AND)', 'W = Q AND R'], ['7404 (NOT)', 'X = NOT W (that is Q NAND R) and NOT P'], ['7408 (AND)', 'P AND X; and (NOT P) AND W'], ['7432 (OR)', 'OR those two = P XNOR X \u2192 drives the LED']], counts: '2 NOT, 3 AND, 1 OR', last: '7432' }
+            plan: [['7408 (AND)', 'W = Q AND R'], ['7404 (NOT)', 'X = NOT W (that is Q NAND R) and NOT P'], ['7408 (AND)', 'P AND X; and (NOT P) AND W'], ['7432 (OR)', 'OR those two = P XNOR X \u2192 drives the LED']], counts: '2 NOT, 3 AND, 1 OR', last: '7432' },
+          A: { tab: 'Left to right', text: '(P XNOR Q) NAND R', rule: 'Rule: simply left to right. This ignores AND-level-before-OR-level.',
+            steps: [['P XNOR Q', (p,q,r)=>XNOR(p,q)], ['(P XNOR Q) AND R', (p,q,r)=>AND(XNOR(p,q),r)], ['NOT of that = NAND', (p,q,r)=>NOT(AND(XNOR(p,q),r))]],
+            plan: [['7404 (NOT)', 'NOT P and NOT Q'], ['7408 (AND)', 'P AND Q; and (NOT P) AND (NOT Q)'], ['7432 (OR)', 'OR those two = P XNOR Q'], ['7408 (AND)', '(P XNOR Q) AND R'], ['7404 (NOT)', 'NOT of that \u2192 drives the LED']], counts: '3 NOT, 3 AND, 1 OR', last: '7404' }
         }
       }
     };

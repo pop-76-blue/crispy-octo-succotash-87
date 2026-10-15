@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Truth Table Builder</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#8a6d1a; --accent-dark:#6b5313; --accent-tint:#f6f0dc; }
+  table.compare { width:100%; border-collapse:collapse; font-family:var(--sans); font-size:14px; margin:14px 0; }
+  table.compare th, table.compare td { border:1px solid var(--line); padding:8px 12px; text-align:left; vertical-align:top; }
+  table.compare th { background:var(--accent-tint); }
+  .scroll-x { overflow-x:auto; }
+  table.truth { border-collapse:collapse; font-family:var(--mono); font-size:13.5px; margin:14px auto 4px; }
+  table.truth th, table.truth td { border:1px solid var(--line); padding:6px 12px; text-align:center; white-space:nowrap; }
+  table.truth th { background:var(--accent-tint); font-family:var(--sans); font-size:12.5px; }
+  table.truth th.var-col { background:#fff; font-family:var(--mono); font-size:14px; }
+  table.truth td.out, table.truth th.out { border-left:3px solid var(--accent); font-weight:700; }
+  table.truth td.diff { background:#fbe6e6; font-weight:700; }
+  .expr-input { width:100%; max-width:520px; font-family:var(--mono); font-size:17px; padding:9px 12px; border:1px solid var(--line); border-radius:6px; }
+  .center { text-align:center; }
+  .btn-row { display:flex; justify-content:center; gap:6px; flex-wrap:wrap; margin:10px 0; }
+  .chip { font-family:var(--mono); font-size:13px; padding:5px 10px; border:1px solid var(--line); border-radius:5px; background:var(--surface); color:var(--ink); cursor:pointer; }
+  .chip:hover { border-color:var(--accent); }
+  .chip.preset { font-family:var(--sans); font-size:12.5px; }
+  .opts-row { display:flex; justify-content:center; gap:18px; flex-wrap:wrap; font-family:var(--sans); font-size:13.5px; margin:10px 0; }
+  .opts-row select { font-family:var(--sans); font-size:13.5px; padding:4px 8px; border:1px solid var(--line); border-radius:5px; }
+  .error-text { text-align:center; color:#b3261e; font-family:var(--sans); font-size:13.5px; min-height:18px; }
+  .info-line { text-align:center; font-family:var(--sans); font-size:13.5px; color:var(--ink-soft); margin:4px 0; }
+  .info-line strong { color:var(--ink); font-family:var(--mono); }
+  .verdict { text-align:center; font-family:var(--sans); font-size:14.5px; margin-top:10px; }
+  .verdict.ok { color:#2e7d32; font-weight:700; }
+  .verdict.bad { color:#b3261e; font-weight:700; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../index.html">&larr; TER3M1</a>
+    <span class="crumb-current">Truth Table Builder</span>
+  </div>
+
+  <div class="wrap">
+    <h1>Truth Table Builder</h1>
+    <p class="subtitle">Unit 2 &nbsp;&middot;&nbsp; 2.1&ndash;2.7 &mdash; type any logical expression, get its complete truth table</p>
+
+    <div class="panel">
+      <p>A truth table lists every possible TRUE/FALSE combination of the variables and the result of the expression for each one. The number of rows is always 2<sup>n</sup>, where <em>n</em> is the number of <strong>different</strong> variables &mdash; a variable that appears twice still counts once.</p>
+      <h2 style="border:none;padding:0;margin:14px 0 8px;">Order of operations (from your notes, 2.5)</h2>
+      <table class="compare">
+        <tr><th>Priority</th><th>Operator</th><th>Example</th></tr>
+        <tr><td>1st</td><td>Brackets ( )</td><td><span style="font-family:var(--mono)">NOT (A OR B)</span> &mdash; the bracket is worked out first</td></tr>
+        <tr><td>2nd</td><td>NOT</td><td><span style="font-family:var(--mono)">NOT A AND B</span> means <span style="font-family:var(--mono)">(NOT A) AND B</span>, not NOT (A AND B)</td></tr>
+        <tr><td>3rd</td><td>AND</td><td><span style="font-family:var(--mono)">P OR Q AND R</span> means <span style="font-family:var(--mono)">P OR (Q AND R)</span></td></tr>
+        <tr><td>4th</td><td>OR</td><td>Done last</td></tr>
+      </table>
+      <p>Operators at the same level are done left to right. Your notes also use <span style="font-family:var(--mono)">BUT</span> to mean AND, and the C/Java symbols <span style="font-family:var(--mono)">&amp;&amp;</span> (AND), <span style="font-family:var(--mono)">||</span> (OR) and <span style="font-family:var(--mono)">!</span> (NOT) &mdash; the builder understands all of these. Your notes treat XOR as a kind of OR but don't rank it in the list above, so the builder lets you choose; when in doubt, <strong>use brackets</strong> around XOR.</p>
+    </div>
+
+    <div class="demo">
+      <h3 class="center">Build a truth table</h3>
+      <div class="center"><input type="text" id="exprInput" class="expr-input" value="(A OR B) AND NOT (A AND B)" autocomplete="off" spellcheck="false"></div>
+      <div class="btn-row" id="insertRow"></div>
+      <div class="opts-row">
+        <label>XOR ranks:
+          <select id="xorSel">
+            <option value="between">between AND and OR (like C)</option>
+            <option value="same">same level as OR</option>
+          </select>
+        </label>
+        <label>Show values as:
+          <select id="fmtSel">
+            <option value="01">1 / 0</option>
+            <option value="TF">T / F</option>
+          </select>
+        </label>
+      </div>
+      <div class="error-text" id="errBox"></div>
+      <div class="info-line">Grouped as: <strong id="groupedText"></strong></div>
+      <div class="info-line" id="rowsInfo"></div>
+      <div class="scroll-x"><table class="truth" id="truthTable"></table></div>
+      <p class="info-line" style="margin-top:12px;">Examples from your notes:</p>
+      <div class="btn-row" id="presetRow"></div>
+    </div>
+
+    <div class="demo">
+      <h3 class="center">Are two expressions equivalent?</h3>
+      <p class="info-line">Two expressions are equivalent when they give the same result on <em>every</em> row.</p>
+      <div class="center" style="display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
+        <input type="text" id="eqA" class="expr-input" style="max-width:300px;" value="!(P && Q)" autocomplete="off" spellcheck="false">
+        <input type="text" id="eqB" class="expr-input" style="max-width:300px;" value="!P || !Q" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="btn-row" id="eqPresetRow"></div>
+      <div class="error-text" id="eqErr"></div>
+      <div class="scroll-x"><table class="truth" id="eqTable"></table></div>
+      <div class="verdict" id="eqVerdict"></div>
+    </div>
+
+    <div class="callout">
+      <strong>Try this:</strong> Before typing an expression in, write its truth table on paper &mdash; and write the grouping with brackets first. Then compare with the builder. If a column disagrees, look at the &ldquo;Grouped as&rdquo; line: a wrong grouping is the most common mistake. Also try <span style="font-family:var(--mono)">P OR Q AND R</span> and <span style="font-family:var(--mono)">(P OR Q) AND R</span> in the equivalence checker to see exactly which rows differ.
+    </div>
+  </div>
+
+  <script>
+/* ---- Boolean expression core (follows the course order of operations: brackets, NOT, AND, OR; ties left to right) ---- */
+const OPWORDS = ['AND','BUT','OR','NOT','XOR','XNOR','NAND','NOR'];
+function tokenize(src) {
+  const toks = []; let i = 0;
+  while (i < src.length) {
+    const c = src[i];
+    if (/\s/.test(c)) { i++; continue; }
+    if (c === '(' || c === ')') { toks.push({ k: c }); i++; continue; }
+    if (src.startsWith('&&', i)) { toks.push({ k: 'op', v: 'AND' }); i += 2; continue; }
+    if (c === '&') { toks.push({ k: 'op', v: 'AND' }); i++; continue; }
+    if (src.startsWith('||', i)) { toks.push({ k: 'op', v: 'OR' }); i += 2; continue; }
+    if (c === '|') { toks.push({ k: 'op', v: 'OR' }); i++; continue; }
+    if (c === '!' || c === '~') { toks.push({ k: 'op', v: 'NOT' }); i++; continue; }
+    if (c === '^') { toks.push({ k: 'op', v: 'XOR' }); i++; continue; }
+    if (/[A-Za-z_]/.test(c)) {
+      let j = i; while (j < src.length && /[A-Za-z0-9_]/.test(src[j])) j++;
+      const w = src.slice(i, j), u = w.toUpperCase();
+      if (OPWORDS.includes(u)) toks.push({ k: 'op', v: u === 'BUT' ? 'AND' : u });
+      else if (w === 'T' || u === 'TRUE') toks.push({ k: 'const', v: 1 });
+      else if (w === 'F' || u === 'FALSE') toks.push({ k: 'const', v: 0 });
+      else toks.push({ k: 'var', v: w });
+      i = j; continue;
+    }
+    if (c === '0' || c === '1') { toks.push({ k: 'const', v: Number(c) }); i++; continue; }
+    throw new Error('Unexpected character "' + c + '"');
+  }
+  return toks;
+}
+function parseExpr(src, opts) {
+  opts = opts || {};
+  const toks = tokenize(src); let p = 0;
+  if (!toks.length) throw new Error('Type an expression first.');
+  const levels = opts.xorSameAsOr
+    ? [['OR', 'NOR', 'XOR', 'XNOR'], ['AND', 'NAND']]
+    : [['OR', 'NOR'], ['XOR', 'XNOR'], ['AND', 'NAND']];
+  const isOp = set => toks[p] && toks[p].k === 'op' && set.includes(toks[p].v);
+  function level(idx) {
+    if (idx === levels.length) return unary();
+    let left = level(idx + 1);
+    while (isOp(levels[idx])) { const op = toks[p++].v; const right = level(idx + 1); left = { t: 'bin', op, l: left, r: right }; }
+    return left;
+  }
+  function unary() {
+    if (isOp(['NOT'])) { p++; return { t: 'not', a: unary() }; }
+    return primary();
+  }
+  function primary() {
+    const t = toks[p];
+    if (!t) throw new Error('The expression ends too early \u2014 something is missing after the last operator.');
+    if (t.k === '(') { p++; const e = level(0); if (!toks[p] || toks[p].k !== ')') throw new Error('A closing bracket is missing.'); p++; return e; }
+    if (t.k === 'var') { p++; return { t: 'var', name: t.v }; }
+    if (t.k === 'const') { p++; return { t: 'const', v: t.v }; }
+    if (t.k === ')') throw new Error('There is a closing bracket with no matching opening bracket.');
+    throw new Error('An operand (a variable or a bracket) was expected here, but found "' + t.v + '".');
+  }
+  const e = level(0);
+  if (p < toks.length) {
+    const t = toks[p];
+    throw new Error(t.k === ')' ? 'There is a closing bracket with no matching opening bracket.' : 'Unexpected "' + (t.v || t.k) + '" \u2014 is an operator missing before it?');
+  }
+  return e;
+}
+function evalNode(n, env) {
+  if (n.t === 'var') return env[n.name];
+  if (n.t === 'const') return n.v;
+  if (n.t === 'not') return 1 - evalNode(n.a, env);
+  const a = evalNode(n.l, env), b = evalNode(n.r, env);
+  switch (n.op) {
+    case 'AND': return a & b; case 'OR': return a | b; case 'XOR': return a ^ b;
+    case 'NAND': return 1 - (a & b); case 'NOR': return 1 - (a | b); default: return 1 - (a ^ b);
+  }
+}
+function varsOf(n, acc) {
+  acc = acc || [];
+  if (n.t === 'var') { if (!acc.includes(n.name)) acc.push(n.name); }
+  else if (n.t === 'not') varsOf(n.a, acc);
+  else if (n.t === 'bin') { varsOf(n.l, acc); varsOf(n.r, acc); }
+  return acc;
+}
+function textOf(n, wrap) {
+  if (n.t === 'var') return n.name;
+  if (n.t === 'const') return n.v ? 'T' : 'F';
+  if (n.t === 'not') { const s = 'NOT ' + textOf(n.a, true); return (wrap && n.a.t !== 'bin') ? '(' + s + ')' : s; }
+  const s = textOf(n.l, true) + ' ' + n.op + ' ' + textOf(n.r, true);
+  return wrap ? '(' + s + ')' : s;
+}
+function stepsOf(n, out, seen) {
+  out = out || []; seen = seen || {};
+  if (n.t === 'not') stepsOf(n.a, out, seen);
+  else if (n.t === 'bin') { stepsOf(n.l, out, seen); stepsOf(n.r, out, seen); }
+  if (n.t !== 'var' && n.t !== 'const') { const lab = textOf(n, false); if (!seen[lab]) { seen[lab] = 1; out.push({ node: n, label: lab }); } }
+  return out;
+}
+function expandNegated(n) {
+  if (n.t === 'not') return { t: 'not', a: expandNegated(n.a) };
+  if (n.t !== 'bin') return n;
+  const l = expandNegated(n.l), r = expandNegated(n.r);
+  const base = { NAND: 'AND', NOR: 'OR', XNOR: 'XOR' }[n.op];
+  return base ? { t: 'not', a: { t: 'bin', op: base, l, r } } : { t: 'bin', op: n.op, l, r };
+}
+function allRows(vars) {
+  const n = vars.length, N = 1 << n, rows = [];
+  for (let k = 0; k < N; k++) { const env = {}; vars.forEach((v, i) => { env[v] = ((N - 1 - k) >> (n - 1 - i)) & 1; }); rows.push(env); }
+  return rows;
+}
+
+    const $ = id => document.getElementById(id);
+    let fmt = '01';
+    const show = v => fmt === 'TF' ? (v ? 'T' : 'F') : String(v);
+    const opts = () => ({ xorSameAsOr: $('xorSel').value === 'same' });
+
+    function renderTable() {
+      const err = $('errBox'), tbl = $('truthTable');
+      err.textContent = '';
+      let ast;
+      try { ast = parseExpr($('exprInput').value, opts()); }
+      catch (e) { err.textContent = e.message; tbl.innerHTML = ''; $('groupedText').textContent = '\u2014'; $('rowsInfo').textContent = ''; return; }
+      const vars = varsOf(ast);
+      if (vars.length > 6) { err.textContent = 'Up to 6 different variables are supported (64 rows).'; tbl.innerHTML = ''; return; }
+      $('groupedText').textContent = textOf(ast, false);
+      const n = vars.length;
+      $('rowsInfo').innerHTML = n === 0
+        ? 'No variables, so there is just <strong>1 row</strong>.'
+        : `${n} different variable${n === 1 ? '' : 's'} &rarr; 2<sup>${n}</sup> = <strong>${1 << n} rows</strong>`;
+      let cols = stepsOf(ast);
+      if (cols.length === 0) cols = [{ node: ast, label: textOf(ast, false) }];
+      let h = '<tr>' + vars.map(v => `<th class="var-col">${v}</th>`).join('') +
+        cols.map((c, i) => `<th class="${i === cols.length - 1 ? 'out' : ''}" title="${c.label}">${c.label}</th>`).join('') + '</tr>';
+      const rows = n === 0 ? [{}] : allRows(vars);
+      rows.forEach(env => {
+        h += '<tr>' + vars.map(v => `<td>${show(env[v])}</td>`).join('') +
+          cols.map((c, i) => `<td class="${i === cols.length - 1 ? 'out' : ''}">${show(evalNode(c.node, env))}</td>`).join('') + '</tr>';
+      });
+      tbl.innerHTML = h;
+    }
+
+    function renderEquiv() {
+      const err = $('eqErr'), tbl = $('eqTable'), verdict = $('eqVerdict');
+      err.textContent = ''; verdict.textContent = ''; verdict.className = 'verdict';
+      let a, b;
+      try { a = parseExpr($('eqA').value, opts()); b = parseExpr($('eqB').value, opts()); }
+      catch (e) { err.textContent = e.message; tbl.innerHTML = ''; return; }
+      const vars = varsOf(a); varsOf(b, vars);
+      if (vars.length > 6) { err.textContent = 'Up to 6 different variables are supported.'; tbl.innerHTML = ''; return; }
+      const rows = vars.length ? allRows(vars) : [{}];
+      let h = '<tr>' + vars.map(v => `<th class="var-col">${v}</th>`).join('') + `<th>${textOf(a, false)}</th><th>${textOf(b, false)}</th></tr>`;
+      let diffs = 0;
+      rows.forEach(env => {
+        const x = evalNode(a, env), y = evalNode(b, env), d = x !== y; if (d) diffs++;
+        h += '<tr>' + vars.map(v => `<td>${show(env[v])}</td>`).join('') + `<td class="${d ? 'diff' : ''}">${show(x)}</td><td class="${d ? 'diff' : ''}">${show(y)}</td></tr>`;
+      });
+      tbl.innerHTML = h;
+      if (diffs === 0) { verdict.textContent = '\u2713 Equivalent \u2014 the results match on all ' + rows.length + ' rows.'; verdict.className = 'verdict ok'; }
+      else { verdict.textContent = 'Not equivalent \u2014 they differ on ' + diffs + ' of ' + rows.length + ' row' + (rows.length === 1 ? '' : 's') + ' (shaded).'; verdict.className = 'verdict bad'; }
+    }
+
+    function insertAtCursor(text) {
+      const el = $('exprInput'), s = el.selectionStart == null ? el.value.length : el.selectionStart, e = el.selectionEnd == null ? s : el.selectionEnd;
+      const pad = /[A-Za-z]/.test(text) ? ' ' : '';
+      el.value = el.value.slice(0, s) + pad + text + pad + el.value.slice(e);
+      const pos = s + pad.length + text.length + pad.length; el.focus(); try { el.setSelectionRange(pos, pos); } catch (x) {}
+      renderTable();
+    }
+    ['AND', 'OR', 'NOT', 'XOR', '(', ')'].forEach(t => {
+      const b = document.createElement('button'); b.className = 'chip'; b.textContent = t; b.addEventListener('click', () => insertAtCursor(t)); $('insertRow').appendChild(b);
+    });
+    const presets = [
+      ['A AND B OR C', 'A AND B OR C'],
+      ['(A OR B) AND NOT (A AND B)', '(A OR B) AND NOT (A AND B)'],
+      ['P AND Q OR R', 'P AND Q OR R'],
+      ['T AND F OR F', 'T AND F OR F'],
+      ['NOT T OR NOT F', 'NOT T OR NOT F'],
+      ['F OR NOT F OR T', 'F OR NOT F OR T']
+    ];
+    presets.forEach(p => {
+      const b = document.createElement('button'); b.className = 'chip preset'; b.textContent = p[0];
+      b.addEventListener('click', () => { $('exprInput').value = p[1]; renderTable(); }); $('presetRow').appendChild(b);
+    });
+    const eqPresets = [
+      ['De Morgan: !(P && Q) vs !P || !Q', '!(P && Q)', '!P || !Q'],
+      ['XOR identity', 'P XOR Q', '(P || Q) && !(P && Q)'],
+      ['Grouping matters: P OR Q AND R vs (P OR Q) AND R', 'P OR Q AND R', '(P OR Q) AND R']
+    ];
+    eqPresets.forEach(p => {
+      const b = document.createElement('button'); b.className = 'chip preset'; b.textContent = p[0];
+      b.addEventListener('click', () => { $('eqA').value = p[1]; $('eqB').value = p[2]; renderEquiv(); }); $('eqPresetRow').appendChild(b);
+    });
+
+    $('exprInput').addEventListener('input', renderTable);
+    $('xorSel').addEventListener('change', () => { renderTable(); renderEquiv(); });
+    $('fmtSel').addEventListener('change', () => { fmt = $('fmtSel').value; renderTable(); renderEquiv(); });
+    $('eqA').addEventListener('input', renderEquiv);
+    $('eqB').addEventListener('input', renderEquiv);
+    renderTable(); renderEquiv();
+  </script>
+</body>
+</html>

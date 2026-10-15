@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Digital Gates — Circuit Drawer</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#8a6d1a; --accent-dark:#6b5313; --accent-tint:#f6f0dc; }
+  table.compare { width:100%; border-collapse:collapse; font-family:var(--sans); font-size:14px; margin:14px 0; }
+  table.compare th, table.compare td { border:1px solid var(--line); padding:8px 12px; text-align:left; vertical-align:middle; }
+  table.compare th { background:var(--accent-tint); }
+  table.compare td.sym { text-align:center; width:130px; }
+  .expr-input { width:100%; max-width:520px; font-family:var(--mono); font-size:17px; padding:9px 12px; border:1px solid var(--line); border-radius:6px; }
+  .center { text-align:center; }
+  .btn-row { display:flex; justify-content:center; gap:6px; flex-wrap:wrap; margin:10px 0; }
+  .chip { font-family:var(--sans); font-size:12.5px; padding:5px 10px; border:1px solid var(--line); border-radius:5px; background:var(--surface); color:var(--ink); cursor:pointer; }
+  .chip:hover { border-color:var(--accent); }
+  .opts-row { display:flex; justify-content:center; gap:18px; flex-wrap:wrap; font-family:var(--sans); font-size:13.5px; margin:10px 0; }
+  .opts-row select { font-family:var(--sans); font-size:13.5px; padding:4px 8px; border:1px solid var(--line); border-radius:5px; }
+  .error-text { text-align:center; color:#b3261e; font-family:var(--sans); font-size:13.5px; min-height:18px; }
+  .info-line { text-align:center; font-family:var(--sans); font-size:13.5px; color:var(--ink-soft); margin:4px 0; }
+  .info-line strong { color:var(--ink); font-family:var(--mono); }
+  .switch-row { display:flex; justify-content:center; gap:22px; margin:14px 0 4px; }
+  .switch-block { display:flex; flex-direction:column; align-items:center; gap:5px; }
+  .switch-block .label { font-family:var(--mono); font-size:13px; color:var(--ink-soft); }
+  .svg-wrap { overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); background:#fff; margin:10px 0; }
+  #circuitSvg { display:block; margin:0 auto; }
+  .gate path, .gate circle { fill:#fff; stroke:#1e2430; stroke-width:2; }
+  .gate text { font-family:monospace; font-size:10px; fill:#565d6b; }
+  .bus-label { font-family:monospace; font-size:14px; font-weight:700; fill:#1e2430; }
+  .y-label { font-family:monospace; font-size:15px; font-weight:700; fill:#6b5313; }
+  ol.build { font-family:var(--sans); font-size:14.5px; padding-left:22px; }
+  ol.build li { margin:6px 0; }
+  ol.build .val { font-family:var(--mono); font-weight:700; color:var(--accent-dark); }
+  .legend { display:flex; justify-content:center; gap:18px; font-family:var(--sans); font-size:12.5px; color:var(--ink-soft); }
+  .legend span::before { content:""; display:inline-block; width:22px; height:3px; margin-right:6px; vertical-align:middle; }
+  .legend .l1::before { background:#2e7d32; } .legend .l0::before { background:#9aa0aa; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../index.html">&larr; TER3M1</a>
+    <span class="crumb-current">Digital Gates &mdash; Circuit Drawer</span>
+  </div>
+
+  <div class="wrap">
+    <h1>Digital Gates &mdash; Circuit Drawer</h1>
+    <p class="subtitle">Unit 2 &nbsp;&middot;&nbsp; 2.8 Digital Gates &mdash; from a logical expression to a gate diagram, and back to a test</p>
+
+    <div class="panel">
+      <p>In a circuit, each logical operator becomes a <strong>gate</strong>. A gate takes one or two input wires and produces one output wire. Following the order of operations (2.5) tells you which gate gets drawn first &mdash; the same order you use to evaluate the expression.</p>
+      <table class="compare">
+        <tr><th>Operator</th><th>Gate</th><th>Output is 1 when&hellip;</th></tr>
+        <tr><td>AND</td><td class="sym"><svg width="70" height="42" viewBox="0 0 70 42"><g class="gate"><path d="M10 3 H38 A22 18 0 0 1 38 39 H10 Z"/></g></svg></td><td>both inputs are 1</td></tr>
+        <tr><td>OR</td><td class="sym"><svg width="70" height="42" viewBox="0 0 70 42"><g class="gate"><path d="M10 3 Q40 3 60 21 Q40 39 10 39 Q24 21 10 3 Z"/></g></svg></td><td>at least one input is 1</td></tr>
+        <tr><td>NOT</td><td class="sym"><svg width="70" height="42" viewBox="0 0 70 42"><g class="gate"><path d="M14 3 L48 21 L14 39 Z"/><circle cx="52" cy="21" r="4"/></g></svg></td><td>the input is 0 (it flips the value)</td></tr>
+        <tr><td>XOR</td><td class="sym"><svg width="70" height="42" viewBox="0 0 70 42"><g class="gate"><path d="M14 3 Q44 3 64 21 Q44 39 14 39 Q28 21 14 3 Z"/><path d="M7 3 Q21 21 7 39" style="fill:none"/></g></svg></td><td>exactly one input is 1</td></tr>
+      </table>
+      <p>NAND, NOR and XNOR are drawn as the gate followed by a NOT gate.</p>
+    </div>
+
+    <div class="demo">
+      <h3 class="center">Draw a circuit</h3>
+      <div class="center"><input type="text" id="exprInput" class="expr-input" value="(A OR B) AND NOT (A AND B)" autocomplete="off" spellcheck="false"></div>
+      <div class="opts-row">
+        <label>XOR ranks:
+          <select id="xorSel">
+            <option value="between">between AND and OR (like C)</option>
+            <option value="same">same level as OR</option>
+          </select>
+        </label>
+      </div>
+      <div class="error-text" id="errBox"></div>
+      <div class="info-line">Grouped as: <strong id="groupedText"></strong></div>
+      <div class="switch-row" id="switchRow"></div>
+      <div class="legend"><span class="l1">wire carries 1</span><span class="l0">wire carries 0</span></div>
+      <div class="svg-wrap"><svg id="circuitSvg" xmlns="http://www.w3.org/2000/svg"></svg></div>
+      <div class="info-line" id="yLine"></div>
+      <p class="info-line" style="margin-top:12px;">Examples from your notes:</p>
+      <div class="btn-row" id="presetRow"></div>
+    </div>
+
+    <div class="panel">
+      <h2 style="border:none;padding:0;margin:0 0 10px;">How the circuit was built, gate by gate</h2>
+      <p>The list follows the order of operations. Click the input switches above and watch each value update &mdash; this is the check your notes ask for: the expression and the circuit must give the same result for the same inputs.</p>
+      <ol class="build" id="buildList"></ol>
+    </div>
+
+    <div class="callout">
+      <strong>Try this:</strong> Before using the drawer, draw the circuit for an expression yourself on paper (inputs on the left, output Y on the right). Then type the expression in and compare the gate order. Next, set the inputs to the test values you want to check, work out the value at every gate by hand, and compare each line of the list above. A mismatch means the drawing or the calculation has an error.
+    </div>
+  </div>
+
+  <script>
+/* ---- Boolean expression core (follows the course order of operations: brackets, NOT, AND, OR; ties left to right) ---- */
+const OPWORDS = ['AND','BUT','OR','NOT','XOR','XNOR','NAND','NOR'];
+function tokenize(src) {
+  const toks = []; let i = 0;
+  while (i < src.length) {
+    const c = src[i];
+    if (/\s/.test(c)) { i++; continue; }
+    if (c === '(' || c === ')') { toks.push({ k: c }); i++; continue; }
+    if (src.startsWith('&&', i)) { toks.push({ k: 'op', v: 'AND' }); i += 2; continue; }
+    if (c === '&') { toks.push({ k: 'op', v: 'AND' }); i++; continue; }
+    if (src.startsWith('||', i)) { toks.push({ k: 'op', v: 'OR' }); i += 2; continue; }
+    if (c === '|') { toks.push({ k: 'op', v: 'OR' }); i++; continue; }
+    if (c === '!' || c === '~') { toks.push({ k: 'op', v: 'NOT' }); i++; continue; }
+    if (c === '^') { toks.push({ k: 'op', v: 'XOR' }); i++; continue; }
+    if (/[A-Za-z_]/.test(c)) {
+      let j = i; while (j < src.length && /[A-Za-z0-9_]/.test(src[j])) j++;
+      const w = src.slice(i, j), u = w.toUpperCase();
+      if (OPWORDS.includes(u)) toks.push({ k: 'op', v: u === 'BUT' ? 'AND' : u });
+      else if (w === 'T' || u === 'TRUE') toks.push({ k: 'const', v: 1 });
+      else if (w === 'F' || u === 'FALSE') toks.push({ k: 'const', v: 0 });
+      else toks.push({ k: 'var', v: w });
+      i = j; continue;
+    }
+    if (c === '0' || c === '1') { toks.push({ k: 'const', v: Number(c) }); i++; continue; }
+    throw new Error('Unexpected character "' + c + '"');
+  }
+  return toks;
+}
+function parseExpr(src, opts) {
+  opts = opts || {};
+  const toks = tokenize(src); let p = 0;
+  if (!toks.length) throw new Error('Type an expression first.');
+  const levels = opts.xorSameAsOr
+    ? [['OR', 'NOR', 'XOR', 'XNOR'], ['AND', 'NAND']]
+    : [['OR', 'NOR'], ['XOR', 'XNOR'], ['AND', 'NAND']];
+  const isOp = set => toks[p] && toks[p].k === 'op' && set.includes(toks[p].v);
+  function level(idx) {
+    if (idx === levels.length) return unary();
+    let left = level(idx + 1);
+    while (isOp(levels[idx])) { const op = toks[p++].v; const right = level(idx + 1); left = { t: 'bin', op, l: left, r: right }; }
+    return left;
+  }
+  function unary() {
+    if (isOp(['NOT'])) { p++; return { t: 'not', a: unary() }; }
+    return primary();
+  }
+  function primary() {
+    const t = toks[p];
+    if (!t) throw new Error('The expression ends too early \u2014 something is missing after the last operator.');
+    if (t.k === '(') { p++; const e = level(0); if (!toks[p] || toks[p].k !== ')') throw new Error('A closing bracket is missing.'); p++; return e; }
+    if (t.k === 'var') { p++; return { t: 'var', name: t.v }; }
+    if (t.k === 'const') { p++; return { t: 'const', v: t.v }; }
+    if (t.k === ')') throw new Error('There is a closing bracket with no matching opening bracket.');
+    throw new Error('An operand (a variable or a bracket) was expected here, but found "' + t.v + '".');
+  }
+  const e = level(0);
+  if (p < toks.length) {
+    const t = toks[p];
+    throw new Error(t.k === ')' ? 'There is a closing bracket with no matching opening bracket.' : 'Unexpected "' + (t.v || t.k) + '" \u2014 is an operator missing before it?');
+  }
+  return e;
+}
+function evalNode(n, env) {
+  if (n.t === 'var') return env[n.name];
+  if (n.t === 'const') return n.v;
+  if (n.t === 'not') return 1 - evalNode(n.a, env);
+  const a = evalNode(n.l, env), b = evalNode(n.r, env);
+  switch (n.op) {
+    case 'AND': return a & b; case 'OR': return a | b; case 'XOR': return a ^ b;
+    case 'NAND': return 1 - (a & b); case 'NOR': return 1 - (a | b); default: return 1 - (a ^ b);
+  }
+}
+function varsOf(n, acc) {
+  acc = acc || [];
+  if (n.t === 'var') { if (!acc.includes(n.name)) acc.push(n.name); }
+  else if (n.t === 'not') varsOf(n.a, acc);
+  else if (n.t === 'bin') { varsOf(n.l, acc); varsOf(n.r, acc); }
+  return acc;
+}
+function textOf(n, wrap) {
+  if (n.t === 'var') return n.name;
+  if (n.t === 'const') return n.v ? 'T' : 'F';
+  if (n.t === 'not') { const s = 'NOT ' + textOf(n.a, true); return (wrap && n.a.t !== 'bin') ? '(' + s + ')' : s; }
+  const s = textOf(n.l, true) + ' ' + n.op + ' ' + textOf(n.r, true);
+  return wrap ? '(' + s + ')' : s;
+}
+function stepsOf(n, out, seen) {
+  out = out || []; seen = seen || {};
+  if (n.t === 'not') stepsOf(n.a, out, seen);
+  else if (n.t === 'bin') { stepsOf(n.l, out, seen); stepsOf(n.r, out, seen); }
+  if (n.t !== 'var' && n.t !== 'const') { const lab = textOf(n, false); if (!seen[lab]) { seen[lab] = 1; out.push({ node: n, label: lab }); } }
+  return out;
+}
+function expandNegated(n) {
+  if (n.t === 'not') return { t: 'not', a: expandNegated(n.a) };
+  if (n.t !== 'bin') return n;
+  const l = expandNegated(n.l), r = expandNegated(n.r);
+  const base = { NAND: 'AND', NOR: 'OR', XNOR: 'XOR' }[n.op];
+  return base ? { t: 'not', a: { t: 'bin', op: base, l, r } } : { t: 'bin', op: n.op, l, r };
+}
+function allRows(vars) {
+  const n = vars.length, N = 1 << n, rows = [];
+  for (let k = 0; k < N; k++) { const env = {}; vars.forEach((v, i) => { env[v] = ((N - 1 - k) >> (n - 1 - i)) & 1; }); rows.push(env); }
+  return rows;
+}
+
+    const $ = id => document.getElementById(id);
+    const NS = 'http://www.w3.org/2000/svg';
+    const GW = 50, NW = 42, GH = 36, SLOT = 60, BUSGAP = 28, LEFT = 34, TOP = 56;
+    let env = {};
+
+    function annotate(n, e) { // sets .val on every node
+      if (n.t === 'var') n.val = e[n.name];
+      else if (n.t === 'not') { annotate(n.a, e); n.val = 1 - n.a.val; }
+      else { annotate(n.l, e); annotate(n.r, e); n.val = evalNode(n, e); }
+    }
+    function hasConst(n) { return n.t === 'const' || (n.t === 'not' && hasConst(n.a)) || (n.t === 'bin' && (hasConst(n.l) || hasConst(n.r))); }
+    const col = v => v ? '#2e7d32' : '#9aa0aa';
+
+    function draw() {
+      const err = $('errBox'), svg = $('circuitSvg');
+      err.textContent = '';
+      let ast;
+      try { ast = parseExpr($('exprInput').value, { xorSameAsOr: $('xorSel').value === 'same' }); }
+      catch (e) { err.textContent = e.message; svg.innerHTML = ''; $('groupedText').textContent = '\u2014'; $('buildList').innerHTML = ''; $('yLine').textContent = ''; return; }
+      if (hasConst(ast)) { err.textContent = 'Use variables (A, B, C \u2026) in the circuit drawer; TRUE/FALSE constants have no wire.'; svg.innerHTML = ''; return; }
+      const vars = varsOf(ast);
+      if (vars.length > 5) { err.textContent = 'Up to 5 different variables are supported here.'; svg.innerHTML = ''; return; }
+      $('groupedText').textContent = textOf(ast, false);
+      vars.forEach(v => { if (env[v] === undefined) env[v] = 1; });
+      renderSwitches(vars);
+
+      const d = expandNegated(ast);
+      annotate(d, env);
+      let slot = 0;
+      (function walk(n) { if (n.t === 'var') n.y = TOP + slot++ * SLOT; else if (n.t === 'not') walk(n.a); else { walk(n.l); walk(n.r); } })(d);
+      (function lay(n) {
+        if (n.t === 'var') { n.lev = 0; return; }
+        if (n.t === 'not') { lay(n.a); n.lev = n.a.lev + 1; n.y = n.a.y; return; }
+        lay(n.l); lay(n.r); n.lev = 1 + Math.max(n.l.lev, n.r.lev); n.y = (n.l.y + n.r.y) / 2;
+      })(d);
+      const nv = vars.length, busX = {}; vars.forEach((v, i) => busX[v] = LEFT + i * BUSGAP);
+      const busEnd = LEFT + nv * BUSGAP + 8, COLW = GW + 58;
+      const cxOf = lev => busEnd + 34 + (lev - 1) * COLW + GW / 2;
+      let maxLev = d.lev, parts = [], wires = [], gates = [], dots = [];
+      const pinOut = n => n.t === 'var' ? { x: busX[n.name], y: n.y } : { x: cxOf(n.lev) + (n.t === 'not' ? NW : GW) / 2, y: n.y };
+      const pinX = n => n.op === 'XOR' ? -GW / 2 - 2 : n.op === 'OR' ? -GW / 2 + 5 : -GW / 2;
+      function wire(from, to, v) {
+        let mx = to.x - 14; if (mx < from.x + 6) mx = (from.x + to.x) / 2;
+        wires.push(`<path d="M${from.x} ${from.y} H${mx} V${to.y} H${to.x}" fill="none" stroke="${col(v)}" stroke-width="2.6" stroke-linejoin="round"/>`);
+      }
+      (function emit(n) {
+        if (n.t === 'var') return;
+        const cx = cxOf(n.lev), cy = n.y, x0 = cx - GW / 2, y0 = cy - GH / 2;
+        if (n.t === 'not') {
+          emit(n.a);
+          const xn = cx - NW / 2;
+          wire(pinOut(n.a), { x: xn, y: cy }, n.a.val);
+          gates.push(`<g class="gate" data-op="NOT"><path d="M${xn} ${cy - 18} L${xn + 34} ${cy} L${xn} ${cy + 18} Z"/><circle cx="${xn + 38}" cy="${cy}" r="4"/><text x="${cx}" y="${cy + 32}" text-anchor="middle">NOT</text></g>`);
+          wires.push(`<line x1="${xn + 42}" y1="${cy}" x2="${xn + 46}" y2="${cy}" stroke="${col(n.val)}" stroke-width="2.6"/>`);
+          return;
+        }
+        emit(n.l); emit(n.r);
+        const px = cx + pinX(n);
+        wire(pinOut(n.l), { x: px, y: cy - 9 }, n.l.val);
+        wire(pinOut(n.r), { x: px, y: cy + 9 }, n.r.val);
+        let shape;
+        if (n.op === 'AND') shape = `<path d="M${x0} ${y0} H${x0 + 28} A22 18 0 0 1 ${x0 + 28} ${y0 + GH} H${x0} Z"/>`;
+        else shape = `<path d="M${x0} ${y0} Q${x0 + 30} ${y0} ${x0 + 50} ${cy} Q${x0 + 30} ${y0 + GH} ${x0} ${y0 + GH} Q${x0 + 14} ${cy} ${x0} ${y0} Z"/>` +
+          (n.op === 'XOR' ? `<path d="M${x0 - 7} ${y0} Q${x0 + 7} ${cy} ${x0 - 7} ${y0 + GH}" style="fill:none"/>` : '');
+        gates.push(`<g class="gate" data-op="${n.op}">${shape}<text x="${cx}" y="${cy + 32}" text-anchor="middle">${n.op}</text></g>`);
+      })(d);
+      // wires from the root to Y
+      const root = pinOut(d), W = cxOf(maxLev) + GW / 2 + 110, H = TOP + (slot - 1) * SLOT + 62;
+      wires.push(`<line x1="${root.x + (d.t === 'not' ? 4 : 0)}" y1="${root.y}" x2="${root.x + 52}" y2="${root.y}" stroke="${col(d.val)}" stroke-width="2.6"/>`);
+      // buses with taps
+      const taps = [];
+      (function collect(n) { if (n.t === 'var') taps.push(n); else if (n.t === 'not') collect(n.a); else { collect(n.l); collect(n.r); } })(d);
+      const buses = vars.map(v => {
+        const ys = taps.filter(t => t.name === v).map(t => t.y), bottom = Math.max(...ys) + 8;
+        return `<line x1="${busX[v]}" y1="${TOP - 24}" x2="${busX[v]}" y2="${bottom}" stroke="${col(env[v])}" stroke-width="2.6"/>` +
+          `<text class="bus-label" x="${busX[v]}" y="${TOP - 32}" text-anchor="middle">${v}</text>`;
+      }).join('');
+      const tapDots = taps.map(t => `<circle cx="${busX[t.name]}" cy="${t.y}" r="4" fill="${col(env[t.name])}"/>`).join('');
+      svg.setAttribute('width', W); svg.setAttribute('height', H); svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+      svg.innerHTML = buses + wires.join('') + tapDots + gates.join('') +
+        `<text class="y-label" x="${root.x + 58}" y="${root.y + 5}">Y = ${d.val}</text>`;
+      $('yLine').innerHTML = `Output <strong>Y = ${d.val}</strong> for ` + vars.map(v => `${v} = ${env[v]}`).join(', ');
+
+      const steps = stepsOf(ast); const orig = ast; annotate(orig, env);
+      $('buildList').innerHTML = steps.map(s => {
+        annotate(s.node, env);
+        return `<li><span style="font-family:var(--mono)">${s.label}</span> &nbsp;=&nbsp; <span class="val">${s.node.val}</span></li>`;
+      }).join('') || `<li>The output is just the input <span class="val">${orig.val}</span> &mdash; no gate needed.</li>`;
+    }
+
+    function renderSwitches(vars) {
+      const row = $('switchRow'); row.innerHTML = '';
+      vars.forEach(v => {
+        const b = document.createElement('div'); b.className = 'switch-block';
+        const bit = document.createElement('div'); bit.className = 'bit'; bit.dataset.on = env[v]; bit.textContent = env[v];
+        bit.addEventListener('click', () => { env[v] = env[v] ? 0 : 1; draw(); });
+        const l = document.createElement('div'); l.className = 'label'; l.textContent = v;
+        b.appendChild(bit); b.appendChild(l); row.appendChild(b);
+      });
+    }
+
+    const presets = [
+      ['A AND B OR C', 'A AND B OR C'],
+      ['NOT A AND B', 'NOT A AND B'],
+      ['(A OR B) AND NOT (A AND B)', '(A OR B) AND NOT (A AND B)'],
+      ['NOT (A AND B) XOR B', 'NOT (A AND B) XOR B'],
+      ['(A XOR B) XOR C', '(A XOR B) XOR C'],
+      ['(A AND B) OR ((A XOR B) AND C)', '(A AND B) OR ((A XOR B) AND C)']
+    ];
+    presets.forEach(p => {
+      const b = document.createElement('button'); b.className = 'chip'; b.textContent = p[0];
+      b.addEventListener('click', () => { $('exprInput').value = p[1]; draw(); }); $('presetRow').appendChild(b);
+    });
+    $('exprInput').addEventListener('input', draw);
+    $('xorSel').addEventListener('change', draw);
+    draw();
+  </script>
+</body>
+</html>
