@@ -125,19 +125,20 @@
 
     <!-- LED RESISTOR SIZING -->
     <div id="panelLed" class="demo" style="display:none;">
-      <h3 style="text-align:center;">R = (V<sub>s</sub> &minus; V<sub>L</sub>) / I</h3>
-      <p style="text-align:center; color:var(--ink-soft); font-size:13.5px;">The safe current range for these LEDs is 12&ndash;20 mA.</p>
+      <h3 style="text-align:center;">R = (V<sub>s</sub> &minus; V<sub>L</sub>) / I &minus; R<sub>chip</sub></h3>
+      <p style="text-align:center; color:var(--ink-soft); font-size:13.5px;">The safe current range for these LEDs is 12&ndash;20 mA. If a logic chip drives the LED (Labs 9&ndash;10), its 45&Omega; output resistance is in series, so subtract it; leave it at 0 for a plain battery-LED circuit.</p>
       <div class="field-row">
         <label>Supply voltage V<sub>s</sub>: <input type="text" id="ledVs" value="4.5"></label>
         <label>LED forward voltage V<sub>L</sub>: <input type="text" id="ledVl" value="2"></label>
         <label>Desired current (mA): <input type="text" id="ledI" value="18"></label>
+        <label>Chip resistance (&Omega;): <input type="text" id="ledRc" value="0"></label>
       </div>
       <div class="decimal-readout" id="ledResult"></div>
       <div class="warning-text" id="ledWarning"></div>
     </div>
 
     <div class="callout">
-      <strong>Try this:</strong> In Ohm's Law, set V = 9 and R = 45, solve for I &mdash; then compare to Lab 7d's schematic (9V, 45&Omega;). In Find a Missing Resistor, use the defaults (9V, 295mA, parallel) with known resistors 50&Omega; and 100&Omega; and check you get 360&Omega; &mdash; that's Lab 7L. In LED Sizing, try Vs = 3, VL = 2, I = 20mA and check it matches the 50&Omega; worked example from the LED slide.
+      <strong>Try this:</strong> In Ohm's Law, set V = 9 and R = 45, solve for I &mdash; then compare to Lab 7d's schematic (9V, 45&Omega;). In Find a Missing Resistor, use the defaults (9V, 295mA, parallel) with known resistors 50&Omega; and 100&Omega; and check you get 360&Omega; &mdash; that's Lab 7L. In LED Sizing, try Vs = 3, VL = 2, I = 20mA and check it matches the 50&Omega; worked example from the LED slide; then try Vs = 6, VL = 2.05, I = 16mA and a chip resistance of 45&Omega; (Lab 9b/10a).
     </div>
   </div>
 
@@ -355,25 +356,31 @@
       const Vs = parseNum('ledVs');
       const Vl = parseNum('ledVl');
       const Imilli = parseNum('ledI');
+      const RcRaw = parseNum('ledRc');
+      const Rc = RcRaw === null ? 0 : RcRaw;
       const result = document.getElementById('ledResult');
       const warning = document.getElementById('ledWarning');
       warning.textContent = '';
 
       if (Vs === null || Vl === null || Imilli === null || Imilli === 0) {
-        result.textContent = 'Fill in all three values.';
+        result.textContent = 'Fill in supply voltage, LED voltage and desired current.';
         return;
       }
       const I = Imilli / 1000;
-      const R = (Vs - Vl) / I;
-      result.innerHTML = `R = (${Vs}V &minus; ${Vl}V) / ${I}A = <strong>${R.toFixed(2)} \u03a9</strong>`;
+      const R = (Vs - Vl) / I - Rc;
+      const chipPart = Rc > 0 ? ` &minus; ${Rc}\u03a9` : '';
+      result.innerHTML = `R = (${Vs}V &minus; ${Vl}V) / ${I}A${chipPart} = <strong>${R.toFixed(2)} \u03a9</strong>`;
       if (Imilli < 12 || Imilli > 20) {
         warning.textContent = `${Imilli} mA is outside the safe 12\u201320 mA range for these LEDs.`;
+      }
+      if (R <= 0) {
+        warning.textContent = 'No resistor is needed (or possible): the chip\u2019s own resistance already limits the current to this value or less.';
       }
       if (Vs <= Vl) {
         warning.textContent = 'Supply voltage must be greater than the LED\u2019s forward voltage.';
       }
     }
-    ['ledVs', 'ledVl', 'ledI'].forEach(id => document.getElementById(id).addEventListener('input', renderLed));
+    ['ledVs', 'ledVl', 'ledI', 'ledRc'].forEach(id => document.getElementById(id).addEventListener('input', renderLed));
 
     // ---------------- TABS ----------------
     document.querySelectorAll('.tab-row .op-btn').forEach(btn => {

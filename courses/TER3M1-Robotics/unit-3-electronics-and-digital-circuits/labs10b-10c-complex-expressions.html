@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Labs 10b &amp; 10c — Complex Logical Expressions</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent:#8a6d1a; --accent-dark:#6b5313; --accent-tint:#f6f0dc; }
+  table.compare { width:100%; border-collapse:collapse; font-family:var(--sans); font-size:14px; margin:16px 0; }
+  table.compare th, table.compare td { border:1px solid var(--line); padding:8px 12px; text-align:left; vertical-align:top; }
+  table.compare th { background:var(--accent-tint); }
+  table.truth { border-collapse:collapse; font-family:var(--mono); font-size:13.5px; margin:14px auto 4px; }
+  table.truth th, table.truth td { border:1px solid var(--line); padding:6px 12px; text-align:center; }
+  table.truth th { background:var(--accent-tint); font-family:var(--sans); font-size:12.5px; }
+  table.truth td.out, table.truth th.out { border-left:3px solid var(--accent); font-weight:700; }
+  table.truth tr.live-row td { background:var(--accent-tint); }
+  .tab-row { display:flex; justify-content:center; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
+  .expr-line { text-align:center; font-family:var(--mono); font-size:16px; color:var(--accent-dark); margin:8px 0 4px; }
+  .rule-line { text-align:center; font-family:var(--sans); font-size:13.5px; color:var(--ink-soft); margin-bottom:10px; }
+  .switch-row { display:flex; justify-content:center; gap:20px; margin:14px 0; }
+  .switch-block { display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .switch-block .label { font-family:var(--sans); font-size:12px; color:var(--ink-soft); }
+  .led-readout { text-align:center; margin:12px 0; }
+  .led-icon { width:54px; height:54px; border-radius:50%; border:3px solid var(--line); display:inline-flex; align-items:center; justify-content:center; font-family:var(--sans); font-weight:700; font-size:12px; background:var(--surface); color:var(--ink-soft); transition:background .15s, box-shadow .15s; }
+  .led-icon[data-on="true"] { background:#ffd9d6; border-color:#d32f2f; color:#8e1b14; box-shadow:0 0 14px 4px rgba(211,47,47,.45); }
+  .field-row { display:flex; justify-content:center; align-items:center; gap:14px; margin:14px 0; flex-wrap:wrap; }
+  .field-row label { font-family:var(--sans); font-size:14px; display:flex; align-items:center; gap:6px; }
+  .field-row input[type="text"] { font-family:var(--mono); font-size:16px; padding:6px 10px; border:1px solid var(--line); border-radius:5px; width:80px; text-align:center; }
+  .check-note { text-align:center; font-family:var(--sans); font-size:13.5px; color:var(--ink-soft); margin-top:6px; }
+  .check-note.ok { color:#2e7d32; font-weight:700; }
+  .check-note.warn { color:#b3261e; font-weight:700; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../index.html">&larr; TER3M1</a>
+    <span class="crumb-current">Labs 10b &amp; 10c</span>
+  </div>
+
+  <div class="wrap">
+    <h1>Labs 10b &amp; 10c — Complex Logical Expressions</h1>
+    <p class="subtitle">Unit 3 &nbsp;&middot;&nbsp; Digital Circuits Part 2 &mdash; turning an expression into a chain of chips</p>
+
+    <div class="panel">
+      <p>Both labs follow the same recipe. <strong>Task 1</strong> is in TinkerCAD: build the expression from AND (7408), OR (7432) and NOT (7404) chips, write the truth table on paper, and check every row against the LED, with a multimeter showing about 18 mA through it. <strong>Task 2</strong> is the physical circuit, wired <em>exactly</em> like your TinkerCAD design (physical resistor values may differ a little). You only need to do one lab (10b or 10c) &mdash; the method below is the same for both.</p>
+      <table class="compare">
+        <tr><th>Step</th><th>What to do</th></tr>
+        <tr><td>1. Decide the grouping</td><td>Work out which operator happens first (see the order-of-operations note below).</td></tr>
+        <tr><td>2. Break into gates</td><td>Every operator becomes one gate. Name each sub-result (these become the extra columns in your truth table).</td></tr>
+        <tr><td>3. Truth table</td><td>8 rows for 3 variables. Add one column per gate so you can debug the circuit one gate at a time.</td></tr>
+        <tr><td>4. Chain the chips</td><td>Each gate's output leg feeds the next gate's input leg. Power every chip: Vcc to leg 14, GND to leg 7.</td></tr>
+        <tr><td>5. LED + resistor</td><td>The last chip drives the LED through a resistor; that chip's 45&Omega; is in series with it (calculator below).</td></tr>
+      </table>
+    </div>
+
+    <div class="panel">
+      <h2 style="border:none;padding:0;margin:0 0 10px;">A note on order of operations</h2>
+      <p>Both lab expressions are written without brackets, so you have to decide how to group them. The widely used rule is <strong>NOT first, then AND, then OR</strong>. That settles Lab 10b. Lab 10c is harder: <span style="font-family:var(--mono)">P XNOR Q NAND R</span> has no single universal reading, because it mixes XOR-type and AND-type operators. Below, both readings are shown with the rule each one follows &mdash; <strong>use the order-of-operations rule from your Unit 2 notes (section 2.5) to choose, or ask in class</strong>. The two readings give different truth tables, so it does matter.</p>
+    </div>
+
+    <div class="demo">
+      <h3 style="text-align:center;">Truth table builder</h3>
+      <div class="tab-row" id="labTabs">
+        <button class="op-btn" data-lab="10b" data-active="true">Lab 10b</button>
+        <button class="op-btn" data-lab="10c">Lab 10c</button>
+      </div>
+      <div class="tab-row" id="readingTabs"></div>
+      <div class="expr-line" id="exprLine"></div>
+      <div class="rule-line" id="ruleLine"></div>
+      <div class="switch-row" id="swRow"></div>
+      <div class="led-readout"><div class="led-icon" id="ledIcon">OFF</div></div>
+      <table class="truth" id="truthTable"></table>
+    </div>
+
+    <div class="panel">
+      <h2 style="border:none;padding:0;margin:0 0 10px;">Gate plan for the reading you selected</h2>
+      <div id="planBox"></div>
+      <p style="font-size:13.5px; color:var(--ink-soft);">The labs only provide AND, OR and NOT chips, so XNOR has to be built from them: P XNOR Q = (P AND Q) OR ((NOT P) AND (NOT Q)). Try the four combinations of P and Q on paper to see both sides agree. This is one valid design, not the only one &mdash; if you find a shorter one that matches the truth table, use it.</p>
+    </div>
+
+    <div class="demo">
+      <h3 style="text-align:center;">LED resistor (the last chip adds 45&Omega; in series)</h3>
+      <div class="field-row">
+        <label>Battery (V): <input type="text" id="rVs" value="6"></label>
+        <label>LED drop (V): <input type="text" id="rVL" value="2.05"></label>
+        <label>Target (mA): <input type="text" id="rI" value="18"></label>
+        <label>Chip (&Omega;): <input type="text" id="rRc" value="45"></label>
+      </div>
+      <div class="decimal-readout" id="rResult"></div>
+      <div class="field-row">
+        <label>Resistor you actually have (&Omega;): <input type="text" id="rHave" value="180"></label>
+      </div>
+      <div class="decimal-readout" id="rHaveResult"></div>
+      <div class="check-note" id="rNote"></div>
+      <p style="text-align:center; font-size:13px; color:var(--ink-soft);">The slides don't give the battery voltage for these labs; 6 V (four 1.5 V cells) is assumed, as in Lab 9. Change it if yours differs.</p>
+    </div>
+
+    <div class="callout">
+      <strong>Try this:</strong> For your chosen lab, fill in the truth table on paper before using the builder, then compare. Then switch to the other reading and find a row where the two readings disagree &mdash; that is exactly the kind of row that would catch a wrongly grouped circuit.
+    </div>
+  </div>
+
+  <script>
+    const NOT = a => 1 - a, AND = (a, b) => a & b, OR = (a, b) => a | b, XNOR = (a, b) => (a === b ? 1 : 0);
+    const defs = {
+      '10b': {
+        title: 'P OR Q AND NOT R',
+        readings: {
+          std: { tab: 'NOT, then AND, then OR', text: 'P OR (Q AND (NOT R))', rule: 'Rule: NOT first, then AND, then OR.',
+            steps: [['NOT R', (p,q,r)=>NOT(r)], ['Q AND (NOT R)', (p,q,r)=>AND(q,NOT(r))], ['P OR (Q AND NOT R)', (p,q,r)=>OR(p,AND(q,NOT(r)))]],
+            plan: [['7404 (NOT)', 'NOT R'], ['7408 (AND)', 'Q AND (NOT R)'], ['7432 (OR)', 'P OR the result \u2192 drives the LED']], counts: '1 NOT, 1 AND, 1 OR', last: '7432' },
+          ltr: { tab: 'Left to right', text: '(P OR Q) AND (NOT R)', rule: 'Rule: operators applied left to right (NOT still applies to R first).',
+            steps: [['NOT R', (p,q,r)=>NOT(r)], ['P OR Q', (p,q,r)=>OR(p,q)], ['(P OR Q) AND NOT R', (p,q,r)=>AND(OR(p,q),NOT(r))]],
+            plan: [['7404 (NOT)', 'NOT R'], ['7432 (OR)', 'P OR Q'], ['7408 (AND)', 'combine both \u2192 drives the LED']], counts: '1 NOT, 1 OR, 1 AND', last: '7408' }
+        }
+      },
+      '10c': {
+        title: 'P XNOR Q NAND R',
+        readings: {
+          A: { tab: '(P XNOR Q) NAND R', text: '(P XNOR Q) NAND R', rule: 'Rule: operators applied left to right.',
+            steps: [['P XNOR Q', (p,q,r)=>XNOR(p,q)], ['(P XNOR Q) AND R', (p,q,r)=>AND(XNOR(p,q),r)], ['NOT of that = NAND', (p,q,r)=>NOT(AND(XNOR(p,q),r))]],
+            plan: [['7404 (NOT)', 'NOT P and NOT Q'], ['7408 (AND)', 'P AND Q; and (NOT P) AND (NOT Q)'], ['7432 (OR)', 'OR those two = P XNOR Q'], ['7408 (AND)', '(P XNOR Q) AND R'], ['7404 (NOT)', 'NOT of that \u2192 drives the LED']], counts: '3 NOT, 3 AND, 1 OR', last: '7404' },
+          B: { tab: 'P XNOR (Q NAND R)', text: 'P XNOR (Q NAND R)', rule: 'Rule: AND-type operators (AND/NAND) before XOR-type (XOR/XNOR), like AND before OR.',
+            steps: [['Q AND R', (p,q,r)=>AND(q,r)], ['Q NAND R', (p,q,r)=>NOT(AND(q,r))], ['P XNOR (Q NAND R)', (p,q,r)=>XNOR(p,NOT(AND(q,r)))]],
+            plan: [['7408 (AND)', 'W = Q AND R'], ['7404 (NOT)', 'X = NOT W (that is Q NAND R) and NOT P'], ['7408 (AND)', 'P AND X; and (NOT P) AND W'], ['7432 (OR)', 'OR those two = P XNOR X \u2192 drives the LED']], counts: '2 NOT, 3 AND, 1 OR', last: '7432' }
+        }
+      }
+    };
+    let lab = '10b', reading = 'std', sw = [1, 0, 0];
+
+    function current() { return defs[lab].readings[reading]; }
+    function renderTabs() {
+      const rt = document.getElementById('readingTabs'); rt.innerHTML = '';
+      Object.keys(defs[lab].readings).forEach(k => {
+        const b = document.createElement('button'); b.className = 'op-btn'; b.textContent = defs[lab].readings[k].tab;
+        b.dataset.active = k === reading ? 'true' : 'false';
+        b.addEventListener('click', () => { reading = k; render(); });
+        rt.appendChild(b);
+      });
+      document.querySelectorAll('#labTabs .op-btn').forEach(b => b.dataset.active = b.dataset.lab === lab ? 'true' : 'false');
+    }
+    function render() {
+      renderTabs();
+      const d = current();
+      document.getElementById('exprLine').textContent = `${defs[lab].title}  \u2192  ${d.text}`;
+      document.getElementById('ruleLine').textContent = d.rule;
+      const row = document.getElementById('swRow'); row.innerHTML = '';
+      ['P','Q','R'].forEach((n, i) => {
+        const blk = document.createElement('div'); blk.className = 'switch-block';
+        const bit = document.createElement('div'); bit.className = 'bit'; bit.dataset.on = sw[i]; bit.textContent = sw[i];
+        bit.addEventListener('click', () => { sw[i] = sw[i] ? 0 : 1; render(); });
+        const l = document.createElement('div'); l.className = 'label'; l.textContent = n;
+        blk.appendChild(bit); blk.appendChild(l); row.appendChild(blk);
+      });
+      const outNow = d.steps[d.steps.length - 1][1](sw[0], sw[1], sw[2]);
+      const led = document.getElementById('ledIcon'); led.dataset.on = outNow ? 'true' : 'false'; led.textContent = outNow ? 'ON' : 'OFF';
+      let html = '<tr><th>P</th><th>Q</th><th>R</th>' + d.steps.map((s, i) => `<th class="${i === d.steps.length - 1 ? 'out' : ''}">${s[0]}</th>`).join('') + '</tr>';
+      for (let k = 0; k < 8; k++) {
+        const p = (k >> 2) & 1, q = (k >> 1) & 1, r = k & 1;
+        const live = p === sw[0] && q === sw[1] && r === sw[2];
+        html += `<tr class="${live ? 'live-row' : ''}"><td>${p}</td><td>${q}</td><td>${r}</td>` +
+          d.steps.map((s, i) => `<td class="${i === d.steps.length - 1 ? 'out' : ''}">${s[1](p, q, r)}</td>`).join('') + '</tr>';
+      }
+      document.getElementById('truthTable').innerHTML = html;
+      document.getElementById('planBox').innerHTML =
+        '<table class="compare"><tr><th>Chip</th><th>Job</th></tr>' + d.plan.map(x => `<tr><td>${x[0]}</td><td>${x[1]}</td></tr>`).join('') + '</table>' +
+        `<p><strong>Gates used:</strong> ${d.counts}. <strong>Last chip (the one wired to the LED):</strong> ${d.last}.</p>`;
+    }
+    document.querySelectorAll('#labTabs .op-btn').forEach(b => b.addEventListener('click', () => {
+      lab = b.dataset.lab; reading = Object.keys(defs[lab].readings)[0]; render();
+    }));
+
+    // ---------- resistor ----------
+    function num(id) { const v = parseFloat(document.getElementById(id).value); return isNaN(v) ? null : v; }
+    function renderResistor() {
+      const Vs = num('rVs'), VL = num('rVL'), mA = num('rI'), Rc = num('rRc'), have = num('rHave');
+      const out = document.getElementById('rResult'), out2 = document.getElementById('rHaveResult'), note = document.getElementById('rNote');
+      note.textContent = ''; note.className = 'check-note';
+      if (Vs === null || VL === null || mA === null || Rc === null || mA <= 0 || Vs <= VL) { out.textContent = 'Enter valid numbers (battery must exceed the LED drop).'; out2.textContent = ''; return; }
+      const need = (Vs - VL) / (mA / 1000) - Rc;
+      out.innerHTML = `R = (${Vs} \u2212 ${VL}) / ${mA/1000} \u2212 ${Rc} = <strong>${need.toFixed(1)} \u03a9</strong>`;
+      if (have === null || have + Rc <= 0) { out2.textContent = ''; return; }
+      const I = (Vs - VL) / (have + Rc) * 1000;
+      out2.innerHTML = `With ${have} \u03a9 the current is <strong>${I.toFixed(1)} mA</strong>`;
+      const ok = Math.abs(I - mA) <= 1;
+      note.className = 'check-note ' + (ok ? 'ok' : 'warn');
+      note.textContent = ok ? '\u2713 close to the target' : (I > 20 ? 'Above 20 mA \u2014 too much for the LED.' : 'Not close to the target; try a nearby resistor value.');
+    }
+    ['rVs','rVL','rI','rRc','rHave'].forEach(id => document.getElementById(id).addEventListener('input', renderResistor));
+
+    render(); renderResistor();
+  </script>
+</body>
+</html>
