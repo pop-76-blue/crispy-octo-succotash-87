@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Introduction to Vectors - SPH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root {
+    --accent: #1a5f8a;
+    --accent-dark: #123f5c;
+    --accent-tint: #e6f0f6;
+  }
+  .graph-wrap { max-width: 480px; margin: 10px auto; }
+  svg { width: 100%; height: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+  .axis-line { stroke: var(--line); stroke-width: 1; }
+  .vec-a { stroke: #1a6b3a; stroke-width: 3; }
+  .vec-b { stroke: #b5452e; stroke-width: 3; }
+  .vec-r { stroke: var(--accent-dark); stroke-width: 3.5; }
+  .vec-ghost { stroke-dasharray: 4 3; opacity: 0.55; }
+  .tick-label { font-size: 10.5px; fill: var(--ink-soft); font-family: var(--sans); }
+  .slider-block { margin: 12px 0; }
+  .slider-block label { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 4px; }
+  .slider-block input[type=range] { width: 100%; }
+  .vec-group { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 10px 0; }
+  @media (max-width: 600px) { .vec-group { grid-template-columns: 1fr; } }
+  .vec-col h4 { margin: 0 0 6px; font-size: 13.5px; }
+  .vec-col.a h4 { color: #1a6b3a; }
+  .vec-col.b h4 { color: #b5452e; }
+  .readout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 16px; }
+  @media (max-width: 600px) { .readout-grid { grid-template-columns: 1fr; } }
+  .readout-box { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px; text-align: center; }
+  .readout-box .num { font-family: var(--mono); font-size: 20px; font-weight: 700; color: var(--accent-dark); }
+  .readout-box .lbl { font-size: 12.5px; color: var(--ink-soft); margin-top: 4px; }
+  .resource-links { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Home</a>
+  <a href="../index.html">SPH3U</a>
+  <span class="crumb-current">Introduction to Vectors</span>
+</div>
+
+<div class="wrap">
+  <h1>2.1 Introduction to Vectors</h1>
+  <p class="subtitle">Representing vectors, and adding them graphically using the tip-to-tail method.</p>
+
+  <div class="panel">
+    <p>Recall from Unit 1: a <strong>scalar</strong> has only magnitude (size), while a <strong>vector</strong>
+    has both magnitude and direction. In two dimensions, we draw a vector as an arrow: the length
+    represents the magnitude, and the arrow points in the direction.</p>
+    <p>We write a 2D direction either as a compass-style bearing in brackets, like
+    <strong>65 km [E25&deg;N]</strong> (meaning: start facing East, then rotate 25&deg; toward North),
+    or using an angle measured from a reference axis, like <strong>65 km at 25&deg; above the horizontal</strong>.
+    Your teacher's notation may use one or the other &mdash; both describe the same vector.</p>
+  </div>
+
+  <h2>Adding Vectors: Tip-to-Tail</h2>
+  <div class="panel">
+    <p>To add two vectors graphically, draw the first vector, then start the second vector's
+    <strong>tail</strong> at the <strong>tip</strong> (arrowhead) of the first. The <strong>resultant
+    vector</strong> is the arrow drawn from the very start (the tail of the first vector) to the very
+    end (the tip of the second vector).</p>
+    <p>This works no matter what order you add them in &mdash; A + B gives the same resultant as B + A.</p>
+  </div>
+
+  <h2>Try it: Tip-to-Tail Vector Adder</h2>
+  <div class="demo">
+    <p>Set the magnitude and direction of two vectors and watch the resultant get drawn tip-to-tail.
+    Angles are measured counterclockwise from East (the positive x-axis), same as in math class.</p>
+
+    <div class="graph-wrap">
+      <svg id="vecSvg" viewBox="0 0 400 400"></svg>
+    </div>
+
+    <div class="vec-group">
+      <div class="vec-col a">
+        <h4>Vector A</h4>
+        <div class="slider-block">
+          <label><span>Magnitude</span> <span id="magALabel">40</span></label>
+          <input type="range" id="magASlider" min="5" max="80" value="40" step="1">
+        </div>
+        <div class="slider-block">
+          <label><span>Angle</span> <span id="angALabel">0&deg;</span></label>
+          <input type="range" id="angASlider" min="0" max="359" value="0" step="1">
+        </div>
+      </div>
+      <div class="vec-col b">
+        <h4>Vector B</h4>
+        <div class="slider-block">
+          <label><span>Magnitude</span> <span id="magBLabel">30</span></label>
+          <input type="range" id="magBSlider" min="5" max="80" value="30" step="1">
+        </div>
+        <div class="slider-block">
+          <label><span>Angle</span> <span id="angBLabel">90&deg;</span></label>
+          <input type="range" id="angBSlider" min="0" max="359" value="90" step="1">
+        </div>
+      </div>
+    </div>
+
+    <div class="readout-grid">
+      <div class="readout-box">
+        <div class="num" id="resMagOut">0</div>
+        <div class="lbl">Resultant magnitude</div>
+      </div>
+      <div class="readout-box">
+        <div class="num" id="resAngOut">0&deg;</div>
+        <div class="lbl">Resultant direction (from East)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>Try this:</strong> Set Vector A to 30 units at 0&deg; (due East) and Vector B to 40 units
+    at 90&deg; (due North). Before reading the readout, calculate the resultant by hand using the
+    Pythagorean theorem and inverse tangent. Then check your answer against the tool &mdash; it
+    should come out to 50 units.
+  </div>
+
+  <h2>More Practice</h2>
+  <div class="panel">
+    <p>These simulations are good for building intuition with vectors and angles:</p>
+    <div class="resource-links">
+      <a href="https://phet.colorado.edu/sims/html/vector-addition/latest/vector-addition_all.html" target="_blank" rel="noopener">Vector Addition simulator (PhET)</a>
+      <a href="https://nrich.maths.org/games/estimating-angles" target="_blank" rel="noopener">Estimating Angles game (nrich.maths.org)</a>
+    </div>
+  </div>
+
+  <p class="page-foot">SPH3U Study Hub</p>
+</div>
+
+<script>
+const svgNS = "http://www.w3.org/2000/svg";
+const svg = document.getElementById('vecSvg');
+const CX = 200, CY = 200;
+const SCALE = 1.6;
+
+function el(tag, attrs) {
+  const e = document.createElementNS(svgNS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  return e;
+}
+
+function toXY(mag, angDeg) {
+  const rad = angDeg * Math.PI / 180;
+  return { x: mag * SCALE * Math.cos(rad), y: -mag * SCALE * Math.sin(rad) };
+}
+
+function drawArrow(x1, y1, x2, y2, cls) {
+  svg.appendChild(el('line', { class: cls, x1, y1, x2, y2 }));
+  const ang = Math.atan2(y2 - y1, x2 - x1);
+  const headLen = 10;
+  const p1x = x2 - headLen * Math.cos(ang - Math.PI / 6);
+  const p1y = y2 - headLen * Math.sin(ang - Math.PI / 6);
+  const p2x = x2 - headLen * Math.cos(ang + Math.PI / 6);
+  const p2y = y2 - headLen * Math.sin(ang + Math.PI / 6);
+  svg.appendChild(el('polygon', { class: cls, points: x2+","+y2+" "+p1x+","+p1y+" "+p2x+","+p2y, fill: 'currentColor' }));
+}
+
+function render() {
+  const magA = Number(document.getElementById('magASlider').value);
+  const angA = Number(document.getElementById('angASlider').value);
+  const magB = Number(document.getElementById('magBSlider').value);
+  const angB = Number(document.getElementById('angBSlider').value);
+
+  document.getElementById('magALabel').textContent = magA;
+  document.getElementById('angALabel').textContent = angA + "\u00b0";
+  document.getElementById('magBLabel').textContent = magB;
+  document.getElementById('angBLabel').textContent = angB + "\u00b0";
+
+  svg.innerHTML = "";
+  // axes
+  svg.appendChild(el('line', {class:'axis-line', x1:0, y1:CY, x2:400, y2:CY}));
+  svg.appendChild(el('line', {class:'axis-line', x1:CX, y1:0, x2:CX, y2:400}));
+  const nLbl = el('text', {class:'tick-label', x:CX+6, y:12}); nLbl.textContent = 'N'; svg.appendChild(nLbl);
+  const eLbl = el('text', {class:'tick-label', x:386, y:CY-6}); eLbl.textContent = 'E'; svg.appendChild(eLbl);
+
+  const a = toXY(magA, angA);
+  const b = toXY(magB, angB);
+
+  // Vector A from origin
+  drawArrow(CX, CY, CX + a.x, CY + a.y, 'vec-a');
+  // Vector B tip-to-tail from tip of A
+  drawArrow(CX + a.x, CY + a.y, CX + a.x + b.x, CY + a.y + b.y, 'vec-b');
+  // Resultant from origin to final tip
+  drawArrow(CX, CY, CX + a.x + b.x, CY + a.y + b.y, 'vec-r');
+
+  const rx = a.x + b.x, ry = a.y + b.y;
+  const resMag = Math.sqrt(rx*rx + ry*ry) / SCALE;
+  let resAngRad = Math.atan2(-ry, rx);
+  let resAngDeg = resAngRad * 180 / Math.PI;
+  if (resAngDeg < 0) resAngDeg += 360;
+
+  document.getElementById('resMagOut').textContent = resMag.toFixed(1);
+  document.getElementById('resAngOut').textContent = resAngDeg.toFixed(1) + "\u00b0";
+}
+
+['magASlider','angASlider','magBSlider','angBSlider'].forEach(id => document.getElementById(id).addEventListener('input', render));
+render();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit Test Prep (Ch. 1-2) - SPH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root {
+    --accent: #1a5f8a;
+    --accent-dark: #123f5c;
+    --accent-tint: #e6f0f6;
+  }
+  .quickref-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0; }
+  @media (max-width: 650px) { .quickref-grid { grid-template-columns: 1fr; } }
+  .quickref-box {
+    background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--accent);
+    border-radius: var(--radius); padding: 14px 18px;
+  }
+  .quickref-box h3 { margin-top: 0; }
+  details.practice {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 12px 18px; margin-bottom: 12px;
+  }
+  details.practice summary { cursor: pointer; font-weight: 600; color: var(--accent-dark); padding: 4px 0; }
+  details.practice .ans { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line); }
+  .topic-tag {
+    display: inline-block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em;
+    background: var(--accent-tint); color: var(--accent-dark); padding: 2px 8px; border-radius: 10px;
+    margin-bottom: 6px;
+  }
+  .checklist-box {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 16px 20px; margin: 16px 0;
+  }
+  .checklist-box ul { margin: 8px 0; padding-left: 20px; }
+  .checklist-box li { margin-bottom: 6px; font-family: var(--mono); font-size: 14px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Home</a>
+  <a href="../index.html">SPH3U</a>
+  <span class="crumb-current">Unit Test Prep</span>
+</div>
+
+<div class="wrap">
+  <h1>Unit Test Prep &mdash; Chapters 1 &amp; 2</h1>
+  <p class="subtitle">Covers everything from the kinematics unit through projectile motion. Scope: 1D kinematics, vectors, vector components, and projectile motion.</p>
+
+  <div class="callout">
+    Before anything else: go back and correct your most recent quiz using the answer key your
+    teacher gave you &mdash; it's the fastest way to catch gaps. Then work through this page.
+  </div>
+
+  <h2>Quick Reference</h2>
+  <div class="quickref-grid">
+    <div class="quickref-box">
+      <h3>1D Kinematics</h3>
+      <p>Distance (scalar) vs. displacement (vector). Speed = distance/time, velocity =
+      displacement/time. Slope of a d-t graph = velocity. Slope of a v-t graph = acceleration. Area
+      under a v-t graph = displacement.</p>
+      <a href="../unit-1-motion/quiz-prep.html">&rarr; Full kinematics review</a>
+    </div>
+    <div class="quickref-box">
+      <h3>Big Five Equations</h3>
+      <p>Five equations linking v<sub>1</sub>, v<sub>2</sub>, a, &Delta;d, &Delta;t &mdash; each
+      missing exactly one variable. Pick the equation that's missing the variable you don't know
+      and don't need.</p>
+      <a href="../unit-1-motion/kinematics-equations-gravity.html">&rarr; Big Five solver</a>
+    </div>
+    <div class="quickref-box">
+      <h3>Vectors</h3>
+      <p>Add vectors graphically tip-to-tail, or algebraically using components:
+      v<sub>x</sub> = v cos&theta;, v<sub>y</sub> = v sin&theta;. Recombine with the Pythagorean
+      theorem and inverse tangent.</p>
+      <a href="introduction-to-vectors.html">&rarr; Vectors review</a> &middot;
+      <a href="vector-components.html">&rarr; Components review</a>
+    </div>
+    <div class="quickref-box">
+      <h3>Projectile Motion</h3>
+      <p>Horizontal velocity is constant. Vertical velocity changes at g = 9.8 m/s&sup2;. Solve the
+      vertical motion for time first, then use that time in the horizontal motion.</p>
+      <a href="projectile-motion.html">&rarr; Projectile motion review</a>
+    </div>
+  </div>
+
+  <h2>Mixed Practice</h2>
+  <p>Try each on paper first, then reveal the answer.</p>
+
+  <details class="practice">
+    <summary><span class="topic-tag">Free Fall</span><br>A ball is thrown straight down from a bridge. It is in the air for 3.2 s and hits the water below with a velocity of 134 m/s [down]. How tall is the bridge?</summary>
+    <div class="ans">
+      Taking down as negative: v<sub>2</sub> = &minus;134 m/s, &Delta;t = 3.2 s, a = &minus;9.8 m/s&sup2;.<br>
+      Use the equation that doesn't need v<sub>1</sub>: &Delta;d = v<sub>2</sub>&Delta;t &minus; &frac12;a&Delta;t&sup2;<br>
+      &Delta;d = (&minus;134)(3.2) &minus; &frac12;(&minus;9.8)(3.2)&sup2; = &minus;428.8 + 50.2 &asymp; &minus;379 m<br>
+      The bridge is about <strong>380 m</strong> tall (rounded to 2 sig figs, matching the precision of the given values).
+      You can check this on the <a href="../unit-1-motion/kinematics-equations-gravity.html">Big Five solver</a> &mdash;
+      just note you'll need to type something into v<sub>1</sub> to use the tool (it won't affect
+      this particular equation's answer, since this equation doesn't use v<sub>1</sub> at all).
+    </div>
+  </details>
+
+  <details class="practice">
+    <summary><span class="topic-tag">Vectors</span><br>A hiker walks 30 m [E], then 40 m [N]. Find the hiker's total displacement (magnitude and direction).</summary>
+    <div class="ans">
+      This is a right triangle: magnitude = &radic;(30&sup2; + 40&sup2;) = &radic;2500 = 50 m.<br>
+      Direction: &theta; = tan<sup>-1</sup>(40/30) &asymp; 53&deg; north of east.<br>
+      Displacement &asymp; <strong>50 m [E53&deg;N]</strong>.
+    </div>
+  </details>
+
+  <details class="practice">
+    <summary><span class="topic-tag">Vector Components</span><br>Two forces act on an object: 60 N at 20&deg; and 45 N at 100&deg; (both measured from East). Find the resultant force.</summary>
+    <div class="ans">
+      Force A: A<sub>x</sub> = 60cos(20&deg;) &asymp; 56.4 N, A<sub>y</sub> = 60sin(20&deg;) &asymp; 20.5 N<br>
+      Force B: B<sub>x</sub> = 45cos(100&deg;) &asymp; &minus;7.8 N, B<sub>y</sub> = 45sin(100&deg;) &asymp; 44.3 N<br>
+      Resultant components: R<sub>x</sub> &asymp; 48.6 N, R<sub>y</sub> &asymp; 64.8 N<br>
+      Magnitude: R = &radic;(48.6&sup2; + 64.8&sup2;) &asymp; <strong>81.0 N</strong>, at
+      &theta; = tan<sup>-1</sup>(64.8/48.6) &asymp; <strong>53&deg;</strong> above East.<br>
+      Check it on the <a href="vector-components.html">Vector Components tool</a>.
+    </div>
+  </details>
+
+  <details class="practice">
+    <summary><span class="topic-tag">Projectile Motion</span><br>A ball is kicked at 20 m/s at an angle of 30&deg; above the ground. Find its time of flight, range, and maximum height.</summary>
+    <div class="ans">
+      v<sub>x</sub> = 20cos(30&deg;) &asymp; 17.3 m/s, v<sub>y0</sub> = 20sin(30&deg;) = 10 m/s<br>
+      Time of flight: &Delta;t = 2v<sub>y0</sub>/g = 20/9.8 &asymp; 2.04 s<br>
+      Range: R = v<sub>x</sub> &times; &Delta;t &asymp; 17.3 &times; 2.04 &asymp; 35.3 m<br>
+      Max height: h = v<sub>y0</sub>&sup2;/(2g) = 100/19.6 &asymp; 5.1 m<br>
+      Check it on the <a href="projectile-motion.html">Projectile Motion simulator</a>.
+    </div>
+  </details>
+
+  <h2>Textbook Practice (Nelson Physics 11)</h2>
+  <div class="checklist-box">
+    <p>Your teacher's suggested problem sets for review:</p>
+    <ul>
+      <li>Self Quiz, p. 98: #1, 11, 14, 19&ndash;27</li>
+      <li>Unit Review, p. 100&ndash;102: #1&ndash;5, 12&ndash;15, 33, 36, 39&ndash;42, 51, 55, 57</li>
+    </ul>
+    <p style="font-family: var(--sans); font-size: 13.5px; color: var(--ink-soft);">
+      Work through these directly in your textbook or its PDF &mdash; this page doesn't reproduce
+      the questions themselves, just the list so you can track what's left.</p>
+  </div>
+
+  <h2>More Practice</h2>
+  <div class="panel">
+    <div style="display:flex; flex-direction:column; gap:6px;">
+      <a href="https://www.physicsclassroom.com/interactive/1d-kinematics/graph-that-motion" target="_blank" rel="noopener">Graph That Motion (physicsclassroom.com)</a>
+      <a href="https://phet.colorado.edu/sims/html/vector-addition/latest/vector-addition_all.html" target="_blank" rel="noopener">Vector Addition simulator (PhET)</a>
+      <a href="https://nrich.maths.org/games/estimating-angles" target="_blank" rel="noopener">Estimating Angles game (nrich.maths.org)</a>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>Try this:</strong> Take the <a href="unit-test-practice-quiz.html">10-question practice
+    quiz</a> for this unit under test conditions &mdash; no notes, time yourself &mdash; then come
+    back to whichever quick-reference box matches anything you missed.
+  </div>
+
+  <p class="page-foot">SPH3U Study Hub</p>
+</div>
+
+</body>
+</html>

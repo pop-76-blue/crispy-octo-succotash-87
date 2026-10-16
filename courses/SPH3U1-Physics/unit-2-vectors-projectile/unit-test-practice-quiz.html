@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit Test Practice Quiz - SPH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root {
+    --accent: #1a5f8a;
+    --accent-dark: #123f5c;
+    --accent-tint: #e6f0f6;
+  }
+  .qcard {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 16px 20px; margin-bottom: 14px;
+  }
+  .qcard.correct { border-left: 4px solid #1a6b3a; }
+  .qcard.incorrect { border-left: 4px solid #a83232; }
+  .qnum {
+    display: inline-block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em;
+    background: var(--accent-tint); color: var(--accent-dark); padding: 2px 8px; border-radius: 10px;
+    margin-bottom: 8px;
+  }
+  .qprompt { font-size: 15px; margin-bottom: 10px; }
+  .qoptions { display: flex; flex-direction: column; gap: 6px; }
+  .qoptions label { display: flex; gap: 8px; align-items: center; font-size: 14.5px; cursor: pointer; }
+  .qnumeric input {
+    font-family: var(--mono); font-size: 15px; padding: 6px 10px; border: 1px solid var(--line);
+    border-radius: 6px; width: 140px;
+  }
+  .qfeedback { margin-top: 10px; font-size: 14px; padding-top: 10px; border-top: 1px dashed var(--line); display: none; }
+  .qfeedback.show { display: block; }
+  .qfeedback.correct-text { color: #1a6b3a; }
+  .qfeedback.incorrect-text { color: #a83232; }
+  #scoreBox {
+    text-align: center; padding: 20px; background: var(--accent-tint); border-radius: var(--radius);
+    margin: 20px 0; display: none;
+  }
+  #scoreBox.show { display: block; }
+  #scoreBox .score-num { font-size: 32px; font-weight: 700; color: var(--accent-dark); font-family: var(--mono); }
+  #submitBtn { display: block; margin: 20px auto; }
+  .retry-note { text-align: center; font-size: 13px; color: var(--ink-soft); margin-top: -10px; margin-bottom: 20px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Home</a>
+  <a href="../index.html">SPH3U</a>
+  <span class="crumb-current">Unit Test Practice Quiz</span>
+</div>
+
+<div class="wrap">
+  <h1>Unit Test Practice Quiz</h1>
+  <p class="subtitle">10 questions covering kinematics, vectors, components, and projectile motion.</p>
+
+  <div class="callout">
+    Try this under test conditions &mdash; no notes, no calculator reference sheet open. Then hit
+    <strong>Submit</strong> to grade yourself and see explanations.
+  </div>
+
+  <div id="quizContainer"></div>
+
+  <button class="op-btn" id="submitBtn" data-active="true">Submit Quiz</button>
+
+  <div id="scoreBox">
+    <div class="score-num" id="scoreNum">0 / 10</div>
+    <div id="scoreMsg" style="margin-top: 6px; font-size: 14px; color: var(--ink-soft);"></div>
+  </div>
+  <p class="retry-note" id="retryNote"></p>
+
+  <p class="page-foot">SPH3U Study Hub</p>
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    type: "mc",
+    tag: "Big Five",
+    prompt: "Which variable does the equation \u0394d = \u00bd(v\u2081+v\u2082)\u0394t leave out?",
+    options: ["v\u2081", "v\u2082", "a", "\u0394t"],
+    correct: 2,
+    explain: "This equation uses v\u2081, v\u2082, and \u0394t, but never needs acceleration \u2014 handy when a isn't given or asked for."
+  },
+  {
+    type: "numeric",
+    tag: "Free Fall",
+    prompt: "An object is dropped from rest and falls for 2.0 s. What is the magnitude of its displacement, in m? (use g = 9.8 m/s\u00b2)",
+    correct: 19.6,
+    tolerance: 0.3,
+    explain: "\u0394d = v\u2081\u0394t + \u00bda\u0394t\u00b2 = 0 + \u00bd(9.8)(2.0)\u00b2 = 19.6 m."
+  },
+  {
+    type: "mc",
+    tag: "Vectors",
+    prompt: "Which of these is a vector quantity?",
+    options: ["Speed", "Distance", "Force", "Time"],
+    correct: 2,
+    explain: "Force has both a magnitude and a direction, so it's a vector. Speed, distance, and time are all scalars."
+  },
+  {
+    type: "numeric",
+    tag: "Vectors",
+    prompt: "A hiker walks 30 m [E], then 40 m [N]. What is the magnitude of the total displacement, in m?",
+    correct: 50,
+    tolerance: 0.5,
+    explain: "This is a 3-4-5-style right triangle: \u221a(30\u00b2 + 40\u00b2) = \u221a2500 = 50 m."
+  },
+  {
+    type: "numeric",
+    tag: "Vectors",
+    prompt: "Same hiker (30 m [E] then 40 m [N]) \u2014 what angle, in degrees north of east, does the displacement point?",
+    correct: 53,
+    tolerance: 2,
+    explain: "\u03b8 = tan\u207b\u00b9(40/30) \u2248 53\u00b0 north of east."
+  },
+  {
+    type: "mc",
+    tag: "Components",
+    prompt: "For a vector with magnitude v at angle \u03b8 from the positive x-axis, the x-component is:",
+    options: ["v cos\u03b8", "v sin\u03b8", "v tan\u03b8", "v / cos\u03b8"],
+    correct: 0,
+    explain: "v\u2093 = v cos\u03b8 and v\u1d67 = v sin\u03b8 \u2014 cosine goes with the x-component."
+  },
+  {
+    type: "numeric",
+    tag: "Components",
+    prompt: "Two forces combine to give components R\u2093 = 48.6 N and R\u1d67 = 64.8 N. What is the magnitude of the resultant, in N?",
+    correct: 81.0,
+    tolerance: 1.5,
+    explain: "R = \u221a(48.6\u00b2 + 64.8\u00b2) \u2248 81.0 N."
+  },
+  {
+    type: "mc",
+    tag: "Projectile Motion",
+    prompt: "During projectile motion (ignoring air resistance), which velocity component stays constant?",
+    options: ["Horizontal", "Vertical", "Both", "Neither"],
+    correct: 0,
+    explain: "No horizontal force acts on the projectile, so v\u2093 never changes. Gravity only affects the vertical component, v\u1d67."
+  },
+  {
+    type: "numeric",
+    tag: "Projectile Motion",
+    prompt: "A ball is kicked at 20 m/s at 30\u00b0 above the ground. What is its time of flight, in seconds? (round to 2 decimals)",
+    correct: 2.04,
+    tolerance: 0.1,
+    explain: "v\u1d67\u2080 = 20 sin(30\u00b0) = 10 m/s. \u0394t = 2v\u1d67\u2080/g = 20/9.8 \u2248 2.04 s."
+  },
+  {
+    type: "numeric",
+    tag: "Projectile Motion",
+    prompt: "Same ball (20 m/s at 30\u00b0) \u2014 what is its range, in m? (round to 1 decimal)",
+    correct: 35.3,
+    tolerance: 1.5,
+    explain: "v\u2093 = 20 cos(30\u00b0) \u2248 17.3 m/s. Range = v\u2093 \u00d7 \u0394t \u2248 17.3 \u00d7 2.04 \u2248 35.3 m."
+  },
+];
+
+const container = document.getElementById('quizContainer');
+
+QUESTIONS.forEach((q, i) => {
+  const card = document.createElement('div');
+  card.className = 'qcard';
+  card.dataset.index = i;
+
+  let inner = '<div class="qnum">Q' + (i+1) + ' \u00b7 ' + q.tag + '</div>';
+  inner += '<div class="qprompt">' + q.prompt + '</div>';
+
+  if (q.type === 'mc') {
+    inner += '<div class="qoptions">';
+    q.options.forEach((opt, oi) => {
+      inner += '<label><input type="radio" name="q' + i + '" value="' + oi + '"> ' + opt + '</label>';
+    });
+    inner += '</div>';
+  } else {
+    inner += '<div class="qnumeric"><input type="text" id="q' + i + 'input" placeholder="your answer"></div>';
+  }
+
+  inner += '<div class="qfeedback" id="q' + i + 'feedback"></div>';
+  card.innerHTML = inner;
+  container.appendChild(card);
+});
+
+document.getElementById('submitBtn').addEventListener('click', function() {
+  let score = 0;
+  QUESTIONS.forEach((q, i) => {
+    const card = document.querySelector('.qcard[data-index="' + i + '"]');
+    const fb = document.getElementById('q' + i + 'feedback');
+    let isCorrect = false;
+
+    if (q.type === 'mc') {
+      const checked = document.querySelector('input[name="q' + i + '"]:checked');
+      if (checked) isCorrect = Number(checked.value) === q.correct;
+    } else {
+      const val = document.getElementById('q' + i + 'input').value.trim();
+      const num = Number(val);
+      if (val !== "" && !isNaN(num)) isCorrect = Math.abs(num - q.correct) <= q.tolerance;
+    }
+
+    if (isCorrect) score++;
+    card.classList.remove('correct', 'incorrect');
+    card.classList.add(isCorrect ? 'correct' : 'incorrect');
+
+    fb.classList.add('show');
+    fb.classList.add(isCorrect ? 'correct-text' : 'incorrect-text');
+    let correctText = q.type === 'mc' ? q.options[q.correct] : q.correct;
+    fb.innerHTML = (isCorrect ? '<strong>Correct!</strong> ' : ('<strong>Not quite.</strong> Correct answer: ' + correctText + '. ')) + q.explain;
+  });
+
+  const scoreBox = document.getElementById('scoreBox');
+  scoreBox.classList.add('show');
+  document.getElementById('scoreNum').textContent = score + " / " + QUESTIONS.length;
+  let msg;
+  if (score >= 9) msg = "Excellent \u2014 you're ready for the test.";
+  else if (score >= 7) msg = "Solid! Review the ones you missed, then you're set.";
+  else if (score >= 5) msg = "Getting there \u2014 revisit the quick-reference boxes for anything you missed.";
+  else msg = "Worth another pass through the unit pages before the test.";
+  document.getElementById('scoreMsg').textContent = msg;
+  document.getElementById('retryNote').textContent = "Reload this page for a fresh attempt.";
+
+  scoreBox.scrollIntoView({behavior: 'smooth', block: 'center'});
+});
+</script>
+
+</body>
+</html>

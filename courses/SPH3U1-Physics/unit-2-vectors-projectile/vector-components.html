@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vector Components - SPH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root {
+    --accent: #1a5f8a;
+    --accent-dark: #123f5c;
+    --accent-tint: #e6f0f6;
+  }
+  .vec-group { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 10px 0; }
+  @media (max-width: 600px) { .vec-group { grid-template-columns: 1fr; } }
+  .vec-col h4 { margin: 0 0 6px; font-size: 13.5px; }
+  .vec-col.a h4 { color: #1a6b3a; }
+  .vec-col.b h4 { color: #b5452e; }
+  .slider-block { margin: 12px 0; }
+  .slider-block label { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 4px; }
+  .slider-block input[type=range] { width: 100%; }
+  table.comp-table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 14px; }
+  table.comp-table th, table.comp-table td { border: 1px solid var(--line); padding: 8px 10px; text-align: center; }
+  table.comp-table th { background: var(--accent-tint); color: var(--accent-dark); }
+  table.comp-table tr:last-child td { font-weight: 700; border-top: 2px solid var(--accent); }
+  .readout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 16px; }
+  @media (max-width: 600px) { .readout-grid { grid-template-columns: 1fr; } }
+  .readout-box { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px; text-align: center; }
+  .readout-box .num { font-family: var(--mono); font-size: 20px; font-weight: 700; color: var(--accent-dark); }
+  .readout-box .lbl { font-size: 12.5px; color: var(--ink-soft); margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Home</a>
+  <a href="../index.html">SPH3U</a>
+  <span class="crumb-current">Vector Components</span>
+</div>
+
+<div class="wrap">
+  <h1>2.2 Vector Components</h1>
+  <p class="subtitle">Resolving a vector into x and y pieces &mdash; and using them to add vectors algebraically.</p>
+
+  <div class="panel">
+    <p>Any vector can be broken into two perpendicular pieces: an <strong>x-component</strong> and a
+    <strong>y-component</strong>. If a vector has magnitude <em>v</em> and angle &theta; measured from
+    the positive x-axis (East):</p>
+    <p style="text-align:center; font-family: var(--mono); font-size:17px;">
+      v<sub>x</sub> = v cos&theta; &nbsp;&nbsp;&nbsp; v<sub>y</sub> = v sin&theta;
+    </p>
+    <p>To add two (or more) vectors algebraically: resolve each into components, <strong>add the
+    x-components together</strong> and <strong>add the y-components together</strong>, then recombine
+    the totals into a resultant magnitude and angle:</p>
+    <p style="text-align:center; font-family: var(--mono); font-size:17px;">
+      R = &radic;(R<sub>x</sub>&sup2; + R<sub>y</sub>&sup2;) &nbsp;&nbsp;&nbsp; &theta; = tan<sup>-1</sup>(R<sub>y</sub> / R<sub>x</sub>)
+    </p>
+    <p>This is usually faster and more precise than drawing a scale diagram, especially once you're
+    adding more than two vectors.</p>
+  </div>
+
+  <h2>Try it: Component Calculator</h2>
+  <div class="demo">
+    <p>Set two vectors by magnitude and angle (measured counterclockwise from East) and see their
+    components, then the resultant of adding them together.</p>
+
+    <div class="vec-group">
+      <div class="vec-col a">
+        <h4>Vector A</h4>
+        <div class="slider-block">
+          <label><span>Magnitude</span> <span id="magALabel">50</span></label>
+          <input type="range" id="magASlider" min="5" max="100" value="50" step="1">
+        </div>
+        <div class="slider-block">
+          <label><span>Angle</span> <span id="angALabel">30&deg;</span></label>
+          <input type="range" id="angASlider" min="0" max="359" value="30" step="1">
+        </div>
+      </div>
+      <div class="vec-col b">
+        <h4>Vector B</h4>
+        <div class="slider-block">
+          <label><span>Magnitude</span> <span id="magBLabel">35</span></label>
+          <input type="range" id="magBSlider" min="5" max="100" value="35" step="1">
+        </div>
+        <div class="slider-block">
+          <label><span>Angle</span> <span id="angBLabel">150&deg;</span></label>
+          <input type="range" id="angBSlider" min="0" max="359" value="150" step="1">
+        </div>
+      </div>
+    </div>
+
+    <table class="comp-table">
+      <thead><tr><th>Vector</th><th>x-component</th><th>y-component</th></tr></thead>
+      <tbody id="compBody"></tbody>
+    </table>
+
+    <div class="readout-grid">
+      <div class="readout-box">
+        <div class="num" id="resMagOut">0</div>
+        <div class="lbl">Resultant magnitude</div>
+      </div>
+      <div class="readout-box">
+        <div class="num" id="resAngOut">0&deg;</div>
+        <div class="lbl">Resultant direction (from East)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>Try this:</strong> Set Vector A to 50 at 30&deg; and Vector B to 35 at 150&deg;. Before
+    reading the table, calculate v<sub>x</sub> and v<sub>y</sub> for each vector by hand using cos
+    and sin. Then check the table, add your two sets of components, and verify the resultant
+    magnitude and angle yourself using the Pythagorean theorem and inverse tangent.
+  </div>
+
+  <p class="page-foot">SPH3U Study Hub</p>
+</div>
+
+<script>
+function components(mag, angDeg) {
+  const rad = angDeg * Math.PI / 180;
+  return { x: mag * Math.cos(rad), y: mag * Math.sin(rad) };
+}
+
+function render() {
+  const magA = Number(document.getElementById('magASlider').value);
+  const angA = Number(document.getElementById('angASlider').value);
+  const magB = Number(document.getElementById('magBSlider').value);
+  const angB = Number(document.getElementById('angBSlider').value);
+
+  document.getElementById('magALabel').textContent = magA;
+  document.getElementById('angALabel').textContent = angA + "\u00b0";
+  document.getElementById('magBLabel').textContent = magB;
+  document.getElementById('angBLabel').textContent = angB + "\u00b0";
+
+  const a = components(magA, angA);
+  const b = components(magB, angB);
+  const rx = a.x + b.x, ry = a.y + b.y;
+
+  document.getElementById('compBody').innerHTML =
+    "<tr><td>A</td><td>" + a.x.toFixed(2) + "</td><td>" + a.y.toFixed(2) + "</td></tr>" +
+    "<tr><td>B</td><td>" + b.x.toFixed(2) + "</td><td>" + b.y.toFixed(2) + "</td></tr>" +
+    "<tr><td>Resultant (sum)</td><td>" + rx.toFixed(2) + "</td><td>" + ry.toFixed(2) + "</td></tr>";
+
+  const resMag = Math.sqrt(rx*rx + ry*ry);
+  let resAng = Math.atan2(ry, rx) * 180 / Math.PI;
+  if (resAng < 0) resAng += 360;
+
+  document.getElementById('resMagOut').textContent = resMag.toFixed(1);
+  document.getElementById('resAngOut').textContent = resAng.toFixed(1) + "\u00b0";
+}
+
+['magASlider','angASlider','magBSlider','angBSlider'].forEach(id => document.getElementById(id).addEventListener('input', render));
+render();
+</script>
+
+</body>
+</html>
