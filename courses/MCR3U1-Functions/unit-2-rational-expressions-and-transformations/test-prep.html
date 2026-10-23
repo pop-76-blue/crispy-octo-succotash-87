@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Test Prep: Chapter 2 — MCR3U1</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  .panel > h2:first-child { border-top:none; margin-top:0; padding-top:0; }
+  :root { --accent:#3b4f94; --accent-dark:#2b3a70; --accent-tint:#e8ebf6; }
+  .frac { display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; margin:0 0.15em; line-height:1.25; }
+  .frac > span:first-child { border-bottom:1.5px solid currentColor; padding:0 0.25em 1px; }
+  .frac > span:last-child { padding:1px 0.25em 0; }
+  .procedure-list { background:#fff; border:1px solid #ddd; border-radius:8px; padding:1rem 1.3rem 1rem 2.3rem; margin:0.75rem 0; }
+  .procedure-list li { margin-bottom:0.4rem; }
+  .choice-row { display:flex; gap:0.5rem; flex-wrap:wrap; margin:0.75rem 0 1rem; }
+  .choice-btn { border:2px solid var(--accent); background:#fff; color:var(--accent-dark); border-radius:8px;
+    padding:0.45rem 0.9rem; font-size:0.92rem; font-weight:600; cursor:pointer; }
+  .choice-btn:hover { background:var(--accent-tint); }
+  .choice-btn.active { background:var(--accent); color:#fff; }
+  .choice-btn:disabled { opacity:0.4; cursor:not-allowed; }
+  .step { background:#fff; border:1px solid #ddd; border-radius:8px; padding:0.8rem 1.1rem; margin-bottom:0.55rem; opacity:0.3; transition:opacity 0.2s; }
+  .step.shown { opacity:1; }
+  .step .tag { font-size:0.78rem; text-transform:uppercase; letter-spacing:0.03em; color:var(--accent-dark); font-weight:700; }
+  .problem-box { background:var(--accent-tint); border-radius:8px; padding:0.8rem 1.1rem; margin-bottom:0.8rem; font-weight:600; }
+  .final { font-weight:700; color:var(--accent-dark); }
+  .demo-grid { display:flex; flex-wrap:wrap; gap:1.5rem; }
+  .controls-col { flex:1; min-width:270px; }
+  .canvas-col { flex:2; min-width:320px; text-align:center; }
+  .slider-row { margin-bottom:1rem; }
+  .slider-row label { display:flex; justify-content:space-between; font-weight:600; margin-bottom:0.25rem; }
+  .slider-row output { color:var(--accent-dark); font-variant-numeric:tabular-nums; }
+  .slider-row input[type=range] { width:100%; accent-color:var(--accent); }
+  .readout { background:#fff; border:1px solid #ddd; border-radius:8px; padding:0.9rem 1.1rem; margin-top:1rem; }
+  .readout div { padding:0.25rem 0; }
+  .readout .k { color:var(--accent-dark); font-weight:600; display:inline-block; min-width:8.5rem; }
+  canvas.graph { background:#fff; border:1px solid #ddd; border-radius:8px; max-width:100%; }
+  .tool input[type=number], .tool input[type=text], .tool textarea { border:1px solid #bbb; border-radius:6px; padding:0.4rem 0.6rem; font-size:1rem; }
+  .tool input[type=number] { width:5rem; }
+  .topic-card { background:#fff; border:1px solid #ddd; border-left:4px solid var(--accent); border-radius:8px; padding:1rem 1.3rem; margin-bottom:1.1rem; }
+  .topic-card h2 { border-top:none; padding-top:0; margin-top:0; }
+  .topic-card ol, .topic-card ul { margin:0.4rem 0 0.6rem; padding-left:1.3rem; }
+  .topic-card .example { background:var(--accent-tint); border-radius:6px; padding:0.6rem 0.9rem; margin-top:0.5rem; font-size:0.95rem; }
+  .topic-card .go-deeper { margin-top:0.6rem; font-size:0.9rem; }
+  .toc { display:flex; flex-wrap:wrap; gap:0.5rem; margin:1rem 0 1.5rem; }
+  .toc a { text-decoration:none; border:1px solid var(--accent); color:var(--accent-dark); border-radius:6px; padding:0.35rem 0.8rem; font-size:0.9rem; font-weight:600; }
+  .toc a:hover { background:var(--accent-tint); }
+  .progress-bar-wrap { background:#eee; border-radius:8px; height:10px; overflow:hidden; margin:0.5rem 0 1.25rem; }
+  .progress-bar-fill { background:var(--accent); height:100%; width:0%; transition:width 0.2s; }
+  .progress-label { font-weight:600; color:var(--accent-dark); }
+  .section-title { margin-top:2rem; }
+  .q-card { background:#fff; border:1px solid #ddd; border-left:4px solid #ddd; border-radius:10px; padding:1rem 1.2rem; margin-bottom:0.9rem; }
+  .q-card.marked-good { border-left-color:#1a7a3c; }
+  .q-card.marked-retry { border-left-color:#b3311d; }
+  .q-prompt { font-size:1.08rem; margin-bottom:0.5rem; }
+  .q-controls { display:flex; gap:0.6rem; flex-wrap:wrap; align-items:center; }
+  button.reveal-btn { border:2px solid var(--accent); background:#fff; color:var(--accent-dark); border-radius:6px; padding:0.35rem 0.8rem; cursor:pointer; font-weight:600; font-size:0.9rem; }
+  button.reveal-btn:hover { background:var(--accent-tint); }
+  button.mark-btn { border:1px solid #bbb; background:#fff; border-radius:6px; padding:0.35rem 0.7rem; cursor:pointer; font-size:0.9rem; }
+  button.mark-btn.good:hover, button.mark-btn.good.active { background:#e4f3e9; border-color:#1a7a3c; color:#1a7a3c; }
+  button.mark-btn.retry:hover, button.mark-btn.retry.active { background:#fbe9e6; border-color:#b3311d; color:#b3311d; }
+  .answer-box { display:none; background:var(--accent-tint); border-radius:6px; padding:0.7rem 0.9rem; margin-top:0.6rem; line-height:1.8; }
+  .answer-box.shown { display:block; }
+  .reset-row { margin-top:2rem; }
+  button.reset-btn { background:none; border:none; color:#999; text-decoration:underline; cursor:pointer; font-size:0.85rem; padding:0; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../../../index.html">&larr; All courses</a>
+    <a href="../index.html">MCR3U1 — Functions</a>
+    <span class="crumb-current">Test Prep (Chapter 2)</span>
+  </div>
+  <div class="wrap">
+    <h1>Test Prep: Chapter 2</h1>
+    <p class="subtitle">MCR3U1 &middot; Unit 2 &middot; Upcoming test</p>
+
+    <div class="callout">A mixed set for the upcoming test, plus the habits that earn marks. This assumes the test covers all of Chapter 2 so far (lessons 2.1 to 2.4). If more lessons are added before the test, ask for the matching page. Mark each question “got it” or “retry”.</div>
+    
+    <div class="panel">
+      <h2>Before you start: the habits that earn marks</h2>
+      <ul>
+        <li><strong>Factor first.</strong> Every rational expression question starts with factoring. Fast factoring is the whole game.</li>
+        <li><strong>Cancel factors, not terms.</strong> In (x + 5)/x you can't cancel the x's, because the x in the numerator is only part of a sum.</li>
+        <li><strong>State restrictions</strong> from the original denominators, including factors that cancel.</li>
+        <li><strong>Brackets on subtraction.</strong> The numerator of the second fraction gets brackets before you distribute the minus.</li>
+        <li><strong>Translations:</strong> inside the bracket is opposite and horizontal, outside is matching and vertical.</li>
+      </ul>
+      <p>Procedure pages: <a href="simplify-rational.html">2.1 Simplify</a> &middot; <a href="multiply-divide-rational.html">2.2 Multiply and divide</a> &middot;
+      <a href="translations-procedure.html">2.3 Translations</a> &middot; <a href="add-subtract-rational.html">2.4 Add and subtract</a>.
+      If a skill feels shaky, factoring is revised in the <a href="../review/factoring-tool.html">Factoring Path Finder</a>.</p>
+    </div>
+    <span class="progress-label" id="progressLabel"></span>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressFill"></div></div>
+    <div id="questionArea"></div>
+    <div class="callout"><strong>Try this:</strong> Do the whole set in one sitting without looking at the procedure pages, as if it were the test. Mark honestly, then use the procedure pages on only the ones marked “retry”.</div>
+    <div class="panel"><h2>More practice elsewhere</h2><ul><li><a href="https://www.jensenmath.ca/math10-unit-3" target="_blank" rel="noopener">Jensen Math — Grade 10 Unit 3: Factoring</a> (factoring review with videos; you need this for every rational expression)</li><li><a href="https://www.jensenmath.ca/s/Exam-Review-Part-2a-Rational-Expressions.pdf" target="_blank" rel="noopener">Jensen Math — Rational Expressions exam review (PDF)</a> (solutions: <a href="https://www.jensenmath.ca/s/Exam-Review-Part-2a-Rational-Expressions-SOLUTIONS.pdf" target="_blank" rel="noopener">PDF</a>)</li><li><a href="https://www.jensenmath.ca/s/Exam-Review-Part-2b-Transformations-of-Functions.pdf" target="_blank" rel="noopener">Jensen Math — Transformations of Functions exam review (PDF)</a> (solutions: <a href="https://www.jensenmath.ca/s/Exam-Review-Part-2b-Transformations-of-Functions-SOLUTIONS.pdf" target="_blank" rel="noopener">PDF</a>)</li><li><a href="https://www.jensenmath.ca/new-home-page-1-1-2" target="_blank" rel="noopener">Jensen Math — Grade 11 (MCR3U)</a></li></ul></div>
+    <div class="reset-row"><button class="reset-btn" id="resetBtn">Clear my saved progress on this page</button></div>
+  </div>
+<script>
+const questions = [{"id": "t1", "section": "Mixed Chapter 2 practice", "prompt": "<span class=\"frac\"><span>x² − 6x + 9</span><span>x² − 9</span></span>", "answer": "Factor: <span class=\"frac\"><span>(x − 3)²</span><span>(x − 3)(x + 3)</span></span> = <span class=\"frac\"><span>x − 3</span><span>x + 3</span></span> &nbsp;with x &ne; ±3."}, {"id": "t2", "section": "Mixed Chapter 2 practice", "prompt": "<span class=\"frac\"><span>x² + 2x − 15</span><span>x² − 25</span></span>", "answer": "Factor: <span class=\"frac\"><span>(x + 5)(x − 3)</span><span>(x − 5)(x + 5)</span></span> = <span class=\"frac\"><span>x − 3</span><span>x − 5</span></span> &nbsp;with x &ne; ±5."}, {"id": "t3", "section": "Mixed Chapter 2 practice", "prompt": "<span class=\"frac\"><span>4x² − 9</span><span>2x² + x − 3</span></span>", "answer": "Factor: <span class=\"frac\"><span>(2x − 3)(2x + 3)</span><span>(2x + 3)(x − 1)</span></span> = <span class=\"frac\"><span>2x − 3</span><span>x − 1</span></span> &nbsp;with x &ne; −3/2, 1."}, {"id": "t4", "section": "Mixed Chapter 2 practice", "prompt": "<span class=\"frac\"><span>x² − 1</span><span>x² + 4x + 4</span></span> &middot; <span class=\"frac\"><span>x + 2</span><span>x − 1</span></span>", "answer": "Factor: <span class=\"frac\"><span>(x − 1)(x + 1)</span><span>(x + 2)²</span></span> &middot; <span class=\"frac\"><span>x + 2</span><span>x − 1</span></span> = <span class=\"frac\"><span>x + 1</span><span>x + 2</span></span> &nbsp;with x &ne; −2, 1."}, {"id": "t5", "section": "Mixed Chapter 2 practice", "prompt": "<span class=\"frac\"><span>x² − 9</span><span>x² + x</span></span> &divide; <span class=\"frac\"><span>x − 3</span><span>x + 1</span></span>", "answer": "Flip: <span class=\"frac\"><span>(x − 3)(x + 3)</span><span>x(x + 1)</span></span> &middot; <span class=\"frac\"><span>x + 1</span><span>x − 3</span></span> = <span class=\"frac\"><span>x + 3</span><span>x</span></span>.<br>Restrictions: x &ne; 0, −1 (denominators) and x &ne; 3 (divisor's numerator)."}, {"id": "t6", "section": "Mixed Chapter 2 practice", "prompt": "<span class=\"frac\"><span>3</span><span>x − 2</span></span> − <span class=\"frac\"><span>2</span><span>x + 2</span></span>", "answer": "<span class=\"frac\"><span>3(x + 2) − 2(x − 2)</span><span>(x − 2)(x + 2)</span></span> = <span class=\"frac\"><span>3x + 6 − 2x + 4</span><span>(x − 2)(x + 2)</span></span> = <span class=\"frac\"><span>x + 10</span><span>(x − 2)(x + 2)</span></span> &nbsp;with x &ne; ±2."}, {"id": "t7", "section": "Mixed Chapter 2 practice", "prompt": "<span class=\"frac\"><span>x</span><span>x − 1</span></span> + <span class=\"frac\"><span>1</span><span>1 − x</span></span>", "answer": "Rewrite 1/(1 − x) as −1/(x − 1). Then <span class=\"frac\"><span>x − 1</span><span>x − 1</span></span> = 1, with x &ne; 1."}, {"id": "t8", "section": "Mixed Chapter 2 practice", "prompt": "Describe g(x) = √(x − 2) + 5 compared to √x. State its starting point, domain and range.", "answer": "Right 2, up 5. Starting point (2, 5). D = {x | x &ge; 2}, R = {y | y &ge; 5}."}, {"id": "t9", "section": "Mixed Chapter 2 practice", "prompt": "Write the equation of f(x) = x² shifted left 3 and up 4. State the vertex, domain and range.", "answer": "g(x) = (x + 3)² + 4. Vertex (−3, 4). D = {x &isin; &reals;}, R = {y | y &ge; 4}."}, {"id": "t10", "section": "Mixed Chapter 2 practice", "prompt": "Write the equation of y = 1/x shifted right 1 and down 2, and give its asymptotes.", "answer": "g(x) = 1/(x − 1) − 2. Asymptotes x = 1 and y = −2."}, {"id": "t11", "section": "Mixed Chapter 2 practice", "prompt": "The point (2, 4) is on f(x) = x². Where does it land on g(x) = (x − 1)² + 3?", "answer": "(2, 4) &rarr; (2 + 1, 4 + 3) = (3, 7). Check: g(3) = 4 + 3 = 7 ✓."}, {"id": "t12", "section": "Mixed Chapter 2 practice", "prompt": "A student writes <span class=\"frac\"><span>x + 5</span><span>x</span></span> = 5 by cancelling the x's. What went wrong?", "answer": "x is a <em>term</em> in the numerator (it's added to 5), not a factor. Only factors can be divided out. <span class=\"frac\"><span>x + 5</span><span>x</span></span> is already in lowest terms, with x &ne; 0. (Test x = 5: it gives 2, not 5.)"}];
+const STORAGE_KEY = "mcr3u1_unit2_test_prep_marks";
+function loadMarks() { try { const r = localStorage.getItem(STORAGE_KEY); return r ? JSON.parse(r) : {}; } catch (e) { return {}; } }
+function saveMarks(m) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(m)); } catch (e) {} }
+let marks = loadMarks();
+function updateProgress() {
+  const good = questions.filter(q => marks[q.id] === 'good').length;
+  document.getElementById('progressLabel').textContent = `${good} / ${questions.length} marked "got it"`;
+  document.getElementById('progressFill').style.width = `${(good / questions.length) * 100}%`;
+}
+const area = document.getElementById('questionArea');
+let section = null;
+questions.forEach(q => {
+  if (q.section !== section) { section = q.section; const h = document.createElement('h2'); h.className = 'section-title'; h.textContent = section; area.appendChild(h); }
+  const card = document.createElement('div');
+  card.className = 'q-card'; card.id = `card-${q.id}`;
+  card.innerHTML = `<div class="q-prompt">${q.prompt}</div>
+    <div class="q-controls">
+      <button class="reveal-btn" data-id="${q.id}">Show answer</button>
+      <button class="mark-btn good" data-id="${q.id}" data-mark="good">Got it</button>
+      <button class="mark-btn retry" data-id="${q.id}" data-mark="retry">Need to retry</button>
+    </div><div class="answer-box" id="ans-${q.id}">${q.answer}</div>`;
+  area.appendChild(card); applyMark(q.id);
+});
+function applyMark(id) {
+  const card = document.getElementById(`card-${id}`);
+  card.classList.remove('marked-good', 'marked-retry');
+  document.querySelectorAll(`button.mark-btn[data-id="${id}"]`).forEach(b => b.classList.remove('active'));
+  if (marks[id] === 'good') { card.classList.add('marked-good'); document.querySelector(`button.mark-btn.good[data-id="${id}"]`).classList.add('active'); }
+  else if (marks[id] === 'retry') { card.classList.add('marked-retry'); document.querySelector(`button.mark-btn.retry[data-id="${id}"]`).classList.add('active'); }
+}
+area.addEventListener('click', e => {
+  const id = e.target.dataset.id; if (!id) return;
+  if (e.target.classList.contains('reveal-btn')) document.getElementById(`ans-${id}`).classList.toggle('shown');
+  if (e.target.classList.contains('mark-btn')) {
+    const mark = e.target.dataset.mark;
+    if (marks[id] === mark) delete marks[id]; else marks[id] = mark;
+    saveMarks(marks); applyMark(id); updateProgress();
+  }
+});
+document.getElementById('resetBtn').addEventListener('click', () => {
+  if (confirm("Clear all saved marks for this practice set?")) { marks = {}; saveMarks(marks); questions.forEach(q => applyMark(q.id)); updateProgress(); }
+});
+updateProgress();
+</script>
+</body>
+</html>

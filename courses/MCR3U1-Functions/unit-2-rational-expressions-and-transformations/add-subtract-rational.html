@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Adding and Subtracting Rational Expressions — MCR3U1</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  .panel > h2:first-child { border-top:none; margin-top:0; padding-top:0; }
+  :root { --accent:#3b4f94; --accent-dark:#2b3a70; --accent-tint:#e8ebf6; }
+  .frac { display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; margin:0 0.15em; line-height:1.25; }
+  .frac > span:first-child { border-bottom:1.5px solid currentColor; padding:0 0.25em 1px; }
+  .frac > span:last-child { padding:1px 0.25em 0; }
+  .procedure-list { background:#fff; border:1px solid #ddd; border-radius:8px; padding:1rem 1.3rem 1rem 2.3rem; margin:0.75rem 0; }
+  .procedure-list li { margin-bottom:0.4rem; }
+  .choice-row { display:flex; gap:0.5rem; flex-wrap:wrap; margin:0.75rem 0 1rem; }
+  .choice-btn { border:2px solid var(--accent); background:#fff; color:var(--accent-dark); border-radius:8px;
+    padding:0.45rem 0.9rem; font-size:0.92rem; font-weight:600; cursor:pointer; }
+  .choice-btn:hover { background:var(--accent-tint); }
+  .choice-btn.active { background:var(--accent); color:#fff; }
+  .choice-btn:disabled { opacity:0.4; cursor:not-allowed; }
+  .step { background:#fff; border:1px solid #ddd; border-radius:8px; padding:0.8rem 1.1rem; margin-bottom:0.55rem; opacity:0.3; transition:opacity 0.2s; }
+  .step.shown { opacity:1; }
+  .step .tag { font-size:0.78rem; text-transform:uppercase; letter-spacing:0.03em; color:var(--accent-dark); font-weight:700; }
+  .problem-box { background:var(--accent-tint); border-radius:8px; padding:0.8rem 1.1rem; margin-bottom:0.8rem; font-weight:600; }
+  .final { font-weight:700; color:var(--accent-dark); }
+  .demo-grid { display:flex; flex-wrap:wrap; gap:1.5rem; }
+  .controls-col { flex:1; min-width:270px; }
+  .canvas-col { flex:2; min-width:320px; text-align:center; }
+  .slider-row { margin-bottom:1rem; }
+  .slider-row label { display:flex; justify-content:space-between; font-weight:600; margin-bottom:0.25rem; }
+  .slider-row output { color:var(--accent-dark); font-variant-numeric:tabular-nums; }
+  .slider-row input[type=range] { width:100%; accent-color:var(--accent); }
+  .readout { background:#fff; border:1px solid #ddd; border-radius:8px; padding:0.9rem 1.1rem; margin-top:1rem; }
+  .readout div { padding:0.25rem 0; }
+  .readout .k { color:var(--accent-dark); font-weight:600; display:inline-block; min-width:8.5rem; }
+  canvas.graph { background:#fff; border:1px solid #ddd; border-radius:8px; max-width:100%; }
+  .tool input[type=number], .tool input[type=text], .tool textarea { border:1px solid #bbb; border-radius:6px; padding:0.4rem 0.6rem; font-size:1rem; }
+  .tool input[type=number] { width:5rem; }
+  .topic-card { background:#fff; border:1px solid #ddd; border-left:4px solid var(--accent); border-radius:8px; padding:1rem 1.3rem; margin-bottom:1.1rem; }
+  .topic-card h2 { border-top:none; padding-top:0; margin-top:0; }
+  .topic-card ol, .topic-card ul { margin:0.4rem 0 0.6rem; padding-left:1.3rem; }
+  .topic-card .example { background:var(--accent-tint); border-radius:6px; padding:0.6rem 0.9rem; margin-top:0.5rem; font-size:0.95rem; }
+  .topic-card .go-deeper { margin-top:0.6rem; font-size:0.9rem; }
+  .toc { display:flex; flex-wrap:wrap; gap:0.5rem; margin:1rem 0 1.5rem; }
+  .toc a { text-decoration:none; border:1px solid var(--accent); color:var(--accent-dark); border-radius:6px; padding:0.35rem 0.8rem; font-size:0.9rem; font-weight:600; }
+  .toc a:hover { background:var(--accent-tint); }
+  .progress-bar-wrap { background:#eee; border-radius:8px; height:10px; overflow:hidden; margin:0.5rem 0 1.25rem; }
+  .progress-bar-fill { background:var(--accent); height:100%; width:0%; transition:width 0.2s; }
+  .progress-label { font-weight:600; color:var(--accent-dark); }
+  .section-title { margin-top:2rem; }
+  .q-card { background:#fff; border:1px solid #ddd; border-left:4px solid #ddd; border-radius:10px; padding:1rem 1.2rem; margin-bottom:0.9rem; }
+  .q-card.marked-good { border-left-color:#1a7a3c; }
+  .q-card.marked-retry { border-left-color:#b3311d; }
+  .q-prompt { font-size:1.08rem; margin-bottom:0.5rem; }
+  .q-controls { display:flex; gap:0.6rem; flex-wrap:wrap; align-items:center; }
+  button.reveal-btn { border:2px solid var(--accent); background:#fff; color:var(--accent-dark); border-radius:6px; padding:0.35rem 0.8rem; cursor:pointer; font-weight:600; font-size:0.9rem; }
+  button.reveal-btn:hover { background:var(--accent-tint); }
+  button.mark-btn { border:1px solid #bbb; background:#fff; border-radius:6px; padding:0.35rem 0.7rem; cursor:pointer; font-size:0.9rem; }
+  button.mark-btn.good:hover, button.mark-btn.good.active { background:#e4f3e9; border-color:#1a7a3c; color:#1a7a3c; }
+  button.mark-btn.retry:hover, button.mark-btn.retry.active { background:#fbe9e6; border-color:#b3311d; color:#b3311d; }
+  .answer-box { display:none; background:var(--accent-tint); border-radius:6px; padding:0.7rem 0.9rem; margin-top:0.6rem; line-height:1.8; }
+  .answer-box.shown { display:block; }
+  .reset-row { margin-top:2rem; }
+  button.reset-btn { background:none; border:none; color:#999; text-decoration:underline; cursor:pointer; font-size:0.85rem; padding:0; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../../../index.html">&larr; All courses</a>
+    <a href="../index.html">MCR3U1 — Functions</a>
+    <span class="crumb-current">Add and Subtract Rational Expressions</span>
+  </div>
+  <div class="wrap">
+    <h1>Adding and Subtracting Rational Expressions</h1>
+    <p class="subtitle">MCR3U1 &middot; Unit 2 &middot; Section 2.4</p>
+
+    <div class="callout">You add and subtract rational expressions exactly as you do fractions: you need a <strong>common denominator</strong> first. <span class="frac"><span>A</span><span>B</span></span> + <span class="frac"><span>C</span><span>B</span></span> = <span class="frac"><span>A + C</span><span>B</span></span>.</div>
+    <div class="panel"><h2>The method</h2><ol class="procedure-list"><li><strong>Factor</strong> every denominator.</li><li><strong>Find the LCD:</strong> every different factor, each used the highest number of times it appears.</li><li><strong>Rewrite</strong> each fraction over the LCD by multiplying its top and bottom by the missing factors.</li><li><strong>Combine the numerators</strong>. Put brackets around a numerator that is being subtracted, then distribute the minus sign.</li><li><strong>Factor and reduce</strong> if you can.</li><li><strong>State the restrictions</strong> from the original denominators (every factor).</li></ol></div>
+    
+    <div class="panel">
+      <h2>Worked examples</h2>
+      <p>Pick an example, then step through it one line at a time.</p>
+      <div class="choice-row" id="exChoices"></div>
+      <div id="problemBox" class="problem-box">Pick an example above.</div>
+      <div id="stepsArea"></div>
+      <button class="choice-btn" id="nextBtn" disabled>Show next step</button>
+    </div>
+    <div class="callout"><strong>Try this:</strong> Do <span class="frac"><span>2</span><span>x + 1</span></span> + <span class="frac"><span>3</span><span>x − 2</span></span> on paper before opening the extra example, then repeat it for subtraction: <span class="frac"><span>2</span><span>x + 1</span></span> − <span class="frac"><span>3</span><span>x − 2</span></span>. Which step changes?</div>
+    <div class="panel"><h2>More practice elsewhere</h2><ul><li><a href="https://www.jensenmath.ca/math10-unit-3" target="_blank" rel="noopener">Jensen Math — Grade 10 Unit 3: Factoring</a> (factoring review with videos; you need this for every rational expression)</li><li><a href="https://www.jensenmath.ca/s/Exam-Review-Part-2a-Rational-Expressions.pdf" target="_blank" rel="noopener">Jensen Math — Rational Expressions exam review (PDF)</a> (solutions: <a href="https://www.jensenmath.ca/s/Exam-Review-Part-2a-Rational-Expressions-SOLUTIONS.pdf" target="_blank" rel="noopener">PDF</a>)</li><li><a href="https://www.jensenmath.ca/s/Exam-Review-Part-2b-Transformations-of-Functions.pdf" target="_blank" rel="noopener">Jensen Math — Transformations of Functions exam review (PDF)</a> (solutions: <a href="https://www.jensenmath.ca/s/Exam-Review-Part-2b-Transformations-of-Functions-SOLUTIONS.pdf" target="_blank" rel="noopener">PDF</a>)</li><li><a href="https://www.jensenmath.ca/new-home-page-1-1-2" target="_blank" rel="noopener">Jensen Math — Grade 11 (MCR3U)</a></li></ul></div>
+  </div>
+<script>
+const groups = [{"name": "1a  common denominator", "problem": "Simplify: <span class=\"frac\"><span>4</span><span>x²</span></span> − <span class=\"frac\"><span>3</span><span>x²</span></span> + <span class=\"frac\"><span>7</span><span>x²</span></span>", "steps": [["Same denominator, so combine the numerators", "<span class=\"frac\"><span>4 − 3 + 7</span><span>x²</span></span>"], ["Answer", "<span class=\"frac\"><span>8</span><span>x²</span></span> &nbsp;with x &ne; 0", true]]}, {"name": "1b  watch the minus sign", "problem": "Simplify: <span class=\"frac\"><span>5x − 2</span><span>x + 1</span></span> − <span class=\"frac\"><span>x − 2</span><span>x + 1</span></span>", "steps": [["Combine the numerators, with brackets around the one being subtracted", "<span class=\"frac\"><span>(5x − 2) − (x − 2)</span><span>x + 1</span></span>"], ["Distribute the minus sign", "5x − 2 − x + 2 = 4x"], ["Answer", "<span class=\"frac\"><span>4x</span><span>x + 1</span></span> &nbsp;with x &ne; −1", true]]}, {"name": "Extra: unlike denominators", "problem": "Simplify: <span class=\"frac\"><span>2</span><span>x + 1</span></span> + <span class=\"frac\"><span>3</span><span>x − 2</span></span>", "steps": [["Common denominator", "Nothing is shared, so the LCD is (x + 1)(x − 2)."], ["Rewrite each fraction", "<span class=\"frac\"><span>2(x − 2)</span><span>(x + 1)(x − 2)</span></span> + <span class=\"frac\"><span>3(x + 1)</span><span>(x + 1)(x − 2)</span></span>"], ["Combine the numerators", "2x − 4 + 3x + 3 = 5x − 1"], ["Answer", "<span class=\"frac\"><span>5x − 1</span><span>(x + 1)(x − 2)</span></span> &nbsp;with x &ne; −1, 2", true]]}, {"name": "Extra: factor the denominators first", "problem": "Simplify: <span class=\"frac\"><span>x</span><span>x² − 4</span></span> − <span class=\"frac\"><span>1</span><span>x + 2</span></span>", "steps": [["Factor", "x² − 4 = (x − 2)(x + 2)"], ["The LCD is (x − 2)(x + 2). Rewrite the second fraction", "<span class=\"frac\"><span>1(x − 2)</span><span>(x + 2)(x − 2)</span></span>"], ["Combine (brackets on the subtracted numerator)", "<span class=\"frac\"><span>x − (x − 2)</span><span>(x − 2)(x + 2)</span></span> = <span class=\"frac\"><span>2</span><span>(x − 2)(x + 2)</span></span>"], ["Answer", "<span class=\"frac\"><span>2</span><span>(x − 2)(x + 2)</span></span> &nbsp;with x &ne; ±2", true]]}, {"name": "2a  three terms", "problem": "Simplify: <span class=\"frac\"><span>m</span><span>2m − 4</span></span> − <span class=\"frac\"><span>3</span><span>3m − 6</span></span> + 1", "steps": [["Factor the denominators", "2m − 4 = 2(m − 2), &nbsp; 3m − 6 = 3(m − 2)"], ["Reduce the middle fraction first", "<span class=\"frac\"><span>3</span><span>3(m − 2)</span></span> = <span class=\"frac\"><span>1</span><span>m − 2</span></span>"], ["The LCD is 2(m − 2). Rewrite each term", "<span class=\"frac\"><span>m</span><span>2(m − 2)</span></span> − <span class=\"frac\"><span>2</span><span>2(m − 2)</span></span> + <span class=\"frac\"><span>2(m − 2)</span><span>2(m − 2)</span></span>"], ["Combine the numerators", "m − 2 + 2m − 4 = 3m − 6, giving <span class=\"frac\"><span>3m − 6</span><span>2(m − 2)</span></span>"], ["Factor and reduce", "<span class=\"frac\"><span>3(m − 2)</span><span>2(m − 2)</span></span>"], ["Answer", "<span class=\"frac\"><span>3</span><span>2</span></span> &nbsp;with m &ne; 2", true], ["Check (m = 4)", "Original: 4/4 − 3/6 + 1 = 1 − 0.5 + 1 = 1.5 ✓"]]}, {"name": "2b  trinomial denominators", "problem": "Simplify: <span class=\"frac\"><span>4</span><span>y² + 5y + 6</span></span> − <span class=\"frac\"><span>5</span><span>y² − y − 12</span></span>", "steps": [["Factor the denominators", "y² + 5y + 6 = (y + 2)(y + 3), &nbsp; y² − y − 12 = (y − 4)(y + 3)"], ["The LCD uses each factor once", "(y + 2)(y + 3)(y − 4)"], ["Rewrite each fraction", "<span class=\"frac\"><span>4(y − 4)</span><span>(y + 2)(y + 3)(y − 4)</span></span> − <span class=\"frac\"><span>5(y + 2)</span><span>(y + 2)(y + 3)(y − 4)</span></span>"], ["Combine the numerators", "4(y − 4) − 5(y + 2) = 4y − 16 − 5y − 10 = −y − 26"], ["Answer", "<span class=\"frac\"><span>−y − 26</span><span>(y + 2)(y + 3)(y − 4)</span></span> &nbsp;with y &ne; −2, −3, 4", true], ["Check (y = 0)", "Original: 4/6 + 5/12 = 13/12. Answer: −26/(2 &middot; 3 &middot; −4) = 26/24 = 13/12 ✓"]]}];
+let current = null, idx = 0;
+const choices = document.getElementById('exChoices');
+const stepsArea = document.getElementById('stepsArea');
+const nextBtn = document.getElementById('nextBtn');
+const problemBox = document.getElementById('problemBox');
+groups.forEach((ex, i) => {
+  const b = document.createElement('button');
+  b.className = 'choice-btn'; b.textContent = ex.name;
+  b.addEventListener('click', () => {
+    document.querySelectorAll('#exChoices .choice-btn').forEach(x => x.classList.remove('active'));
+    b.classList.add('active'); load(i);
+  });
+  choices.appendChild(b);
+});
+function load(i) {
+  current = groups[i]; idx = 0;
+  problemBox.innerHTML = current.problem;
+  stepsArea.innerHTML = current.steps.map((s, n) =>
+    `<div class="step" id="st${n}"><span class="tag">${s[0]}</span><br><span class="${s[2] ? 'final' : ''}">${s[1]}</span></div>`).join('');
+  nextBtn.disabled = false; nextBtn.textContent = "Show next step";
+}
+nextBtn.addEventListener('click', () => {
+  if (!current) return;
+  if (idx < current.steps.length) { document.getElementById('st' + idx).classList.add('shown'); idx++; }
+  if (idx >= current.steps.length) { nextBtn.disabled = true; nextBtn.textContent = "All steps shown"; }
+});
+</script>
+</body>
+</html>

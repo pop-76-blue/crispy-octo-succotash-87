@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Simplifying Rational Expressions — MCR3U1</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  .panel > h2:first-child { border-top:none; margin-top:0; padding-top:0; }
+  :root { --accent:#3b4f94; --accent-dark:#2b3a70; --accent-tint:#e8ebf6; }
+  .frac { display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; margin:0 0.15em; line-height:1.25; }
+  .frac > span:first-child { border-bottom:1.5px solid currentColor; padding:0 0.25em 1px; }
+  .frac > span:last-child { padding:1px 0.25em 0; }
+  .procedure-list { background:#fff; border:1px solid #ddd; border-radius:8px; padding:1rem 1.3rem 1rem 2.3rem; margin:0.75rem 0; }
+  .procedure-list li { margin-bottom:0.4rem; }
+  .choice-row { display:flex; gap:0.5rem; flex-wrap:wrap; margin:0.75rem 0 1rem; }
+  .choice-btn { border:2px solid var(--accent); background:#fff; color:var(--accent-dark); border-radius:8px;
+    padding:0.45rem 0.9rem; font-size:0.92rem; font-weight:600; cursor:pointer; }
+  .choice-btn:hover { background:var(--accent-tint); }
+  .choice-btn.active { background:var(--accent); color:#fff; }
+  .choice-btn:disabled { opacity:0.4; cursor:not-allowed; }
+  .step { background:#fff; border:1px solid #ddd; border-radius:8px; padding:0.8rem 1.1rem; margin-bottom:0.55rem; opacity:0.3; transition:opacity 0.2s; }
+  .step.shown { opacity:1; }
+  .step .tag { font-size:0.78rem; text-transform:uppercase; letter-spacing:0.03em; color:var(--accent-dark); font-weight:700; }
+  .problem-box { background:var(--accent-tint); border-radius:8px; padding:0.8rem 1.1rem; margin-bottom:0.8rem; font-weight:600; }
+  .final { font-weight:700; color:var(--accent-dark); }
+  .demo-grid { display:flex; flex-wrap:wrap; gap:1.5rem; }
+  .controls-col { flex:1; min-width:270px; }
+  .canvas-col { flex:2; min-width:320px; text-align:center; }
+  .slider-row { margin-bottom:1rem; }
+  .slider-row label { display:flex; justify-content:space-between; font-weight:600; margin-bottom:0.25rem; }
+  .slider-row output { color:var(--accent-dark); font-variant-numeric:tabular-nums; }
+  .slider-row input[type=range] { width:100%; accent-color:var(--accent); }
+  .readout { background:#fff; border:1px solid #ddd; border-radius:8px; padding:0.9rem 1.1rem; margin-top:1rem; }
+  .readout div { padding:0.25rem 0; }
+  .readout .k { color:var(--accent-dark); font-weight:600; display:inline-block; min-width:8.5rem; }
+  canvas.graph { background:#fff; border:1px solid #ddd; border-radius:8px; max-width:100%; }
+  .tool input[type=number], .tool input[type=text], .tool textarea { border:1px solid #bbb; border-radius:6px; padding:0.4rem 0.6rem; font-size:1rem; }
+  .tool input[type=number] { width:5rem; }
+  .topic-card { background:#fff; border:1px solid #ddd; border-left:4px solid var(--accent); border-radius:8px; padding:1rem 1.3rem; margin-bottom:1.1rem; }
+  .topic-card h2 { border-top:none; padding-top:0; margin-top:0; }
+  .topic-card ol, .topic-card ul { margin:0.4rem 0 0.6rem; padding-left:1.3rem; }
+  .topic-card .example { background:var(--accent-tint); border-radius:6px; padding:0.6rem 0.9rem; margin-top:0.5rem; font-size:0.95rem; }
+  .topic-card .go-deeper { margin-top:0.6rem; font-size:0.9rem; }
+  .toc { display:flex; flex-wrap:wrap; gap:0.5rem; margin:1rem 0 1.5rem; }
+  .toc a { text-decoration:none; border:1px solid var(--accent); color:var(--accent-dark); border-radius:6px; padding:0.35rem 0.8rem; font-size:0.9rem; font-weight:600; }
+  .toc a:hover { background:var(--accent-tint); }
+  .progress-bar-wrap { background:#eee; border-radius:8px; height:10px; overflow:hidden; margin:0.5rem 0 1.25rem; }
+  .progress-bar-fill { background:var(--accent); height:100%; width:0%; transition:width 0.2s; }
+  .progress-label { font-weight:600; color:var(--accent-dark); }
+  .section-title { margin-top:2rem; }
+  .q-card { background:#fff; border:1px solid #ddd; border-left:4px solid #ddd; border-radius:10px; padding:1rem 1.2rem; margin-bottom:0.9rem; }
+  .q-card.marked-good { border-left-color:#1a7a3c; }
+  .q-card.marked-retry { border-left-color:#b3311d; }
+  .q-prompt { font-size:1.08rem; margin-bottom:0.5rem; }
+  .q-controls { display:flex; gap:0.6rem; flex-wrap:wrap; align-items:center; }
+  button.reveal-btn { border:2px solid var(--accent); background:#fff; color:var(--accent-dark); border-radius:6px; padding:0.35rem 0.8rem; cursor:pointer; font-weight:600; font-size:0.9rem; }
+  button.reveal-btn:hover { background:var(--accent-tint); }
+  button.mark-btn { border:1px solid #bbb; background:#fff; border-radius:6px; padding:0.35rem 0.7rem; cursor:pointer; font-size:0.9rem; }
+  button.mark-btn.good:hover, button.mark-btn.good.active { background:#e4f3e9; border-color:#1a7a3c; color:#1a7a3c; }
+  button.mark-btn.retry:hover, button.mark-btn.retry.active { background:#fbe9e6; border-color:#b3311d; color:#b3311d; }
+  .answer-box { display:none; background:var(--accent-tint); border-radius:6px; padding:0.7rem 0.9rem; margin-top:0.6rem; line-height:1.8; }
+  .answer-box.shown { display:block; }
+  .reset-row { margin-top:2rem; }
+  button.reset-btn { background:none; border:none; color:#999; text-decoration:underline; cursor:pointer; font-size:0.85rem; padding:0; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../../../index.html">&larr; All courses</a>
+    <a href="../index.html">MCR3U1 — Functions</a>
+    <span class="crumb-current">Simplifying Rational Expressions</span>
+  </div>
+  <div class="wrap">
+    <h1>Simplifying Rational Expressions</h1>
+    <p class="subtitle">MCR3U1 &middot; Unit 2 &middot; Section 2.1</p>
+
+    <div class="callout">A <strong>rational expression</strong> is a quotient of two polynomials, like <span class="frac"><span>y − 8</span><span>y − 4</span></span>. Simplifying means dividing out common <em>factors</em>. It is not defined when the denominator is 0.</div>
+    <div class="panel"><h2>The method</h2><ol class="procedure-list"><li><strong>Factor</strong> the numerator and the denominator completely (common factor first, then difference of squares, trinomial, or grouping).</li><li><strong>Divide out</strong> factors that appear in both. Only whole factors can cancel, never single terms.</li><li><strong>State the restrictions</strong> from the <em>original</em> denominator: set each factor equal to 0 and exclude those values.</li><li><strong>Check</strong> with a convenient value of the variable: the original and the simplified expression should agree.</li></ol></div>
+    
+    <div class="panel tool">
+      <h2>Restriction finder</h2>
+      <p>For a denominator <strong>ax² + bx + c</strong>, find the values the variable can't be. (Set a = 0 for a linear denominator bx + c.)</p>
+      <label>a <input type="number" id="ra" value="1"></label>
+      <label>b <input type="number" id="rb" value="-6"></label>
+      <label>c <input type="number" id="rc" value="-7"></label>
+      <div class="readout" id="rOut"></div>
+    </div>
+    <div class="panel">
+      <h2>Worked examples</h2>
+      <p>Pick an example, then step through it one line at a time.</p>
+      <div class="choice-row" id="exChoices"></div>
+      <div id="problemBox" class="problem-box">Pick an example above.</div>
+      <div id="stepsArea"></div>
+      <button class="choice-btn" id="nextBtn" disabled>Show next step</button>
+    </div>
+    <div class="callout"><strong>Try this:</strong> Simplify <span class="frac"><span>x² − 9</span><span>x² + x − 6</span></span> and state restrictions, then use the restriction finder (a = 1, b = 1, c = −6) to confirm your excluded values before you check the answer in the practice set.</div>
+    <div class="panel"><h2>More practice elsewhere</h2><ul><li><a href="https://www.jensenmath.ca/math10-unit-3" target="_blank" rel="noopener">Jensen Math — Grade 10 Unit 3: Factoring</a> (factoring review with videos; you need this for every rational expression)</li><li><a href="https://www.jensenmath.ca/s/Exam-Review-Part-2a-Rational-Expressions.pdf" target="_blank" rel="noopener">Jensen Math — Rational Expressions exam review (PDF)</a> (solutions: <a href="https://www.jensenmath.ca/s/Exam-Review-Part-2a-Rational-Expressions-SOLUTIONS.pdf" target="_blank" rel="noopener">PDF</a>)</li><li><a href="https://www.jensenmath.ca/s/Exam-Review-Part-2b-Transformations-of-Functions.pdf" target="_blank" rel="noopener">Jensen Math — Transformations of Functions exam review (PDF)</a> (solutions: <a href="https://www.jensenmath.ca/s/Exam-Review-Part-2b-Transformations-of-Functions-SOLUTIONS.pdf" target="_blank" rel="noopener">PDF</a>)</li><li><a href="https://www.jensenmath.ca/new-home-page-1-1-2" target="_blank" rel="noopener">Jensen Math — Grade 11 (MCR3U)</a></li></ul></div>
+  </div>
+<script>
+const groups = [{"name": "1a  monomials", "problem": "Reduce to lowest terms: <span class=\"frac\"><span>−25a²b³c</span><span>40a³bc²</span></span>", "steps": [["Reduce the numbers", "−25 and 40 share a factor of 5: −5/8"], ["Reduce each variable (subtract exponents)", "a²/a³ = 1/a, &nbsp; b³/b = b², &nbsp; c/c² = 1/c"], ["Answer", "<span class=\"frac\"><span>−5b²</span><span>8ac</span></span>", true], ["Restrictions", "From the <em>original</em> denominator 40a³bc²: a &ne; 0, b &ne; 0, c &ne; 0", true]]}, {"name": "1b  common factor", "problem": "Reduce to lowest terms: <span class=\"frac\"><span>6x² − 15xy</span><span>9x² + 12x</span></span>", "steps": [["Factor the numerator", "6x² − 15xy = 3x(2x − 5y)"], ["Factor the denominator", "9x² + 12x = 3x(3x + 4)"], ["Divide out the common factor 3x", "<span class=\"frac\"><span>3x(2x − 5y)</span><span>3x(3x + 4)</span></span>"], ["Answer", "<span class=\"frac\"><span>2x − 5y</span><span>3x + 4</span></span>", true], ["Restrictions (original denominator 3x(3x + 4) &ne; 0)", "x &ne; 0 and x &ne; −4/3", true]]}, {"name": "1c  trinomial and DOS", "problem": "Reduce to lowest terms: <span class=\"frac\"><span>x² + 5xy + 6y²</span><span>x² − 4y²</span></span>", "steps": [["Factor the numerator (simple trinomial)", "x² + 5xy + 6y² = (x + 2y)(x + 3y)"], ["Factor the denominator (difference of squares)", "x² − 4y² = (x − 2y)(x + 2y)"], ["Divide out (x + 2y)", "<span class=\"frac\"><span>(x + 2y)(x + 3y)</span><span>(x − 2y)(x + 2y)</span></span>"], ["Answer", "<span class=\"frac\"><span>x + 3y</span><span>x − 2y</span></span>", true], ["Restrictions", "x &ne; 2y and x &ne; −2y (<em>both</em> factors of the original denominator, even the one that cancelled)", true]]}, {"name": "2a  undefined values", "problem": "For what values is <span class=\"frac\"><span>m² − 25</span><span>2m + 10</span></span> undefined?", "steps": [["Set the denominator equal to 0", "2m + 10 = 0"], ["Solve", "2m = −10, so m = −5"], ["Answer", "Undefined when m = −5.", true]]}, {"name": "2b  perfect square denominator", "problem": "For what values is <span class=\"frac\"><span>y² − 16</span><span>y² − 8y + 16</span></span> undefined?", "steps": [["Set the denominator equal to 0", "y² − 8y + 16 = 0"], ["Factor", "(y − 4)² = 0"], ["Answer", "Undefined only when y = 4 (a double root, so just one value).", true]]}, {"name": "2c  two restrictions", "problem": "For what values is <span class=\"frac\"><span>x² + 7x + 6</span><span>x² − 6x − 7</span></span> undefined?", "steps": [["Set the denominator equal to 0", "x² − 6x − 7 = 0"], ["Factor", "(x − 7)(x + 1) = 0"], ["Answer", "Undefined when x = 7 or x = −1.", true]]}, {"name": "3a  simplify and restrict", "problem": "Simplify and state the restriction: <span class=\"frac\"><span>x² − 5x + 4</span><span>3x − 12</span></span>", "steps": [["Factor both", "x² − 5x + 4 = (x − 1)(x − 4), &nbsp; 3x − 12 = 3(x − 4)"], ["Divide out (x − 4)", "<span class=\"frac\"><span>(x − 1)(x − 4)</span><span>3(x − 4)</span></span>"], ["Answer", "<span class=\"frac\"><span>x − 1</span><span>3</span></span> &nbsp;with x &ne; 4", true], ["Check by substitution (x = 6)", "Original: <span class=\"frac\"><span>36 − 30 + 4</span><span>18 − 12</span></span> = <span class=\"frac\"><span>10</span><span>6</span></span> = <span class=\"frac\"><span>5</span><span>3</span></span>. Simplified: <span class=\"frac\"><span>6 − 1</span><span>3</span></span> = <span class=\"frac\"><span>5</span><span>3</span></span> ✓"]]}, {"name": "3b  difference of squares", "problem": "Simplify and state the restriction: <span class=\"frac\"><span>x + 5</span><span>x² − 25</span></span>", "steps": [["Factor the denominator", "x² − 25 = (x − 5)(x + 5)"], ["Divide out (x + 5)", "<span class=\"frac\"><span>x + 5</span><span>(x − 5)(x + 5)</span></span>"], ["Answer", "<span class=\"frac\"><span>1</span><span>x − 5</span></span> &nbsp;with x &ne; 5 and x &ne; −5", true], ["Remember", "When everything cancels from the numerator, a <strong>1</strong> is left behind, not 0."]]}];
+let current = null, idx = 0;
+const choices = document.getElementById('exChoices');
+const stepsArea = document.getElementById('stepsArea');
+const nextBtn = document.getElementById('nextBtn');
+const problemBox = document.getElementById('problemBox');
+groups.forEach((ex, i) => {
+  const b = document.createElement('button');
+  b.className = 'choice-btn'; b.textContent = ex.name;
+  b.addEventListener('click', () => {
+    document.querySelectorAll('#exChoices .choice-btn').forEach(x => x.classList.remove('active'));
+    b.classList.add('active'); load(i);
+  });
+  choices.appendChild(b);
+});
+function load(i) {
+  current = groups[i]; idx = 0;
+  problemBox.innerHTML = current.problem;
+  stepsArea.innerHTML = current.steps.map((s, n) =>
+    `<div class="step" id="st${n}"><span class="tag">${s[0]}</span><br><span class="${s[2] ? 'final' : ''}">${s[1]}</span></div>`).join('');
+  nextBtn.disabled = false; nextBtn.textContent = "Show next step";
+}
+nextBtn.addEventListener('click', () => {
+  if (!current) return;
+  if (idx < current.steps.length) { document.getElementById('st' + idx).classList.add('shown'); idx++; }
+  if (idx >= current.steps.length) { nextBtn.disabled = true; nextBtn.textContent = "All steps shown"; }
+});
+
+function poly(a, b, c) {
+  const t = (v, s) => { if (v === 0) return ''; const sg = v < 0 ? ' − ' : ' + '; const av = Math.abs(v);
+    return sg + ((av === 1 && s) ? '' : String(parseFloat(av.toFixed(2)))) + s; };
+  const r = (t(a, 'x²') + t(b, 'x') + t(c, '')).replace(/^ \+ /, '').replace(/^ − /, '−');
+  return r || '0';
+}
+
+function gcd(a, b) { return b ? gcd(b, a % b) : Math.abs(a); }
+function frac(n, d) { if (d < 0) { n = -n; d = -d; } const g = gcd(n, d) || 1; n /= g; d /= g; return d === 1 ? String(n) : `${n}/${d}`; }
+function restr() {
+  const a = +document.getElementById('ra').value, b = +document.getElementById('rb').value, c = +document.getElementById('rc').value;
+  const out = document.getElementById('rOut');
+  let html = `<div><span class="k">Denominator:</span> ${poly(a, b, c)} = 0</div>`;
+  if (a === 0 && b === 0) html += `<div>${c === 0 ? 'The denominator is 0, so the expression is never defined.' : 'The denominator is the constant ' + c + ', so there are no restrictions.'}</div>`;
+  else if (a === 0) html += `<div><span class="k">Restriction:</span> <strong>x ≠ ${frac(-c, b)}</strong></div>`;
+  else {
+    const d = b * b - 4 * a * c;
+    html += `<div><span class="k">Discriminant:</span> ${d}</div>`;
+    if (d < 0) html += '<div>No real roots, so <strong>no restrictions</strong>: the denominator is never 0.</div>';
+    else {
+      const s = Math.round(Math.sqrt(d));
+      if (s * s === d) {
+        const r1 = frac(-b - s, 2 * a), r2 = frac(-b + s, 2 * a);
+        html += r1 === r2 ? `<div><span class="k">Restriction:</span> <strong>x ≠ ${r1}</strong></div>` : `<div><span class="k">Restrictions:</span> <strong>x ≠ ${r1} and x ≠ ${r2}</strong></div>`;
+      } else {
+        const r1 = ((-b - Math.sqrt(d)) / (2 * a)).toFixed(3), r2 = ((-b + Math.sqrt(d)) / (2 * a)).toFixed(3);
+        html += `<div><span class="k">Restrictions:</span> <strong>x ≠ ${r1} and x ≠ ${r2}</strong> (irrational, so it will not factor over the integers)</div>`;
+      }
+    }
+  }
+  out.innerHTML = html;
+}
+['ra', 'rb', 'rc'].forEach(id => document.getElementById(id).addEventListener('input', restr));
+restr();
+</script>
+</body>
+</html>

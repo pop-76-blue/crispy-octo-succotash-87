@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Translations of Functions — MCR3U1</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  .panel > h2:first-child { border-top:none; margin-top:0; padding-top:0; }
+  :root { --accent:#3b4f94; --accent-dark:#2b3a70; --accent-tint:#e8ebf6; }
+  .frac { display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; margin:0 0.15em; line-height:1.25; }
+  .frac > span:first-child { border-bottom:1.5px solid currentColor; padding:0 0.25em 1px; }
+  .frac > span:last-child { padding:1px 0.25em 0; }
+  .procedure-list { background:#fff; border:1px solid #ddd; border-radius:8px; padding:1rem 1.3rem 1rem 2.3rem; margin:0.75rem 0; }
+  .procedure-list li { margin-bottom:0.4rem; }
+  .choice-row { display:flex; gap:0.5rem; flex-wrap:wrap; margin:0.75rem 0 1rem; }
+  .choice-btn { border:2px solid var(--accent); background:#fff; color:var(--accent-dark); border-radius:8px;
+    padding:0.45rem 0.9rem; font-size:0.92rem; font-weight:600; cursor:pointer; }
+  .choice-btn:hover { background:var(--accent-tint); }
+  .choice-btn.active { background:var(--accent); color:#fff; }
+  .choice-btn:disabled { opacity:0.4; cursor:not-allowed; }
+  .step { background:#fff; border:1px solid #ddd; border-radius:8px; padding:0.8rem 1.1rem; margin-bottom:0.55rem; opacity:0.3; transition:opacity 0.2s; }
+  .step.shown { opacity:1; }
+  .step .tag { font-size:0.78rem; text-transform:uppercase; letter-spacing:0.03em; color:var(--accent-dark); font-weight:700; }
+  .problem-box { background:var(--accent-tint); border-radius:8px; padding:0.8rem 1.1rem; margin-bottom:0.8rem; font-weight:600; }
+  .final { font-weight:700; color:var(--accent-dark); }
+  .demo-grid { display:flex; flex-wrap:wrap; gap:1.5rem; }
+  .controls-col { flex:1; min-width:270px; }
+  .canvas-col { flex:2; min-width:320px; text-align:center; }
+  .slider-row { margin-bottom:1rem; }
+  .slider-row label { display:flex; justify-content:space-between; font-weight:600; margin-bottom:0.25rem; }
+  .slider-row output { color:var(--accent-dark); font-variant-numeric:tabular-nums; }
+  .slider-row input[type=range] { width:100%; accent-color:var(--accent); }
+  .readout { background:#fff; border:1px solid #ddd; border-radius:8px; padding:0.9rem 1.1rem; margin-top:1rem; }
+  .readout div { padding:0.25rem 0; }
+  .readout .k { color:var(--accent-dark); font-weight:600; display:inline-block; min-width:8.5rem; }
+  canvas.graph { background:#fff; border:1px solid #ddd; border-radius:8px; max-width:100%; }
+  .tool input[type=number], .tool input[type=text], .tool textarea { border:1px solid #bbb; border-radius:6px; padding:0.4rem 0.6rem; font-size:1rem; }
+  .tool input[type=number] { width:5rem; }
+  .topic-card { background:#fff; border:1px solid #ddd; border-left:4px solid var(--accent); border-radius:8px; padding:1rem 1.3rem; margin-bottom:1.1rem; }
+  .topic-card h2 { border-top:none; padding-top:0; margin-top:0; }
+  .topic-card ol, .topic-card ul { margin:0.4rem 0 0.6rem; padding-left:1.3rem; }
+  .topic-card .example { background:var(--accent-tint); border-radius:6px; padding:0.6rem 0.9rem; margin-top:0.5rem; font-size:0.95rem; }
+  .topic-card .go-deeper { margin-top:0.6rem; font-size:0.9rem; }
+  .toc { display:flex; flex-wrap:wrap; gap:0.5rem; margin:1rem 0 1.5rem; }
+  .toc a { text-decoration:none; border:1px solid var(--accent); color:var(--accent-dark); border-radius:6px; padding:0.35rem 0.8rem; font-size:0.9rem; font-weight:600; }
+  .toc a:hover { background:var(--accent-tint); }
+  .progress-bar-wrap { background:#eee; border-radius:8px; height:10px; overflow:hidden; margin:0.5rem 0 1.25rem; }
+  .progress-bar-fill { background:var(--accent); height:100%; width:0%; transition:width 0.2s; }
+  .progress-label { font-weight:600; color:var(--accent-dark); }
+  .section-title { margin-top:2rem; }
+  .q-card { background:#fff; border:1px solid #ddd; border-left:4px solid #ddd; border-radius:10px; padding:1rem 1.2rem; margin-bottom:0.9rem; }
+  .q-card.marked-good { border-left-color:#1a7a3c; }
+  .q-card.marked-retry { border-left-color:#b3311d; }
+  .q-prompt { font-size:1.08rem; margin-bottom:0.5rem; }
+  .q-controls { display:flex; gap:0.6rem; flex-wrap:wrap; align-items:center; }
+  button.reveal-btn { border:2px solid var(--accent); background:#fff; color:var(--accent-dark); border-radius:6px; padding:0.35rem 0.8rem; cursor:pointer; font-weight:600; font-size:0.9rem; }
+  button.reveal-btn:hover { background:var(--accent-tint); }
+  button.mark-btn { border:1px solid #bbb; background:#fff; border-radius:6px; padding:0.35rem 0.7rem; cursor:pointer; font-size:0.9rem; }
+  button.mark-btn.good:hover, button.mark-btn.good.active { background:#e4f3e9; border-color:#1a7a3c; color:#1a7a3c; }
+  button.mark-btn.retry:hover, button.mark-btn.retry.active { background:#fbe9e6; border-color:#b3311d; color:#b3311d; }
+  .answer-box { display:none; background:var(--accent-tint); border-radius:6px; padding:0.7rem 0.9rem; margin-top:0.6rem; line-height:1.8; }
+  .answer-box.shown { display:block; }
+  .reset-row { margin-top:2rem; }
+  button.reset-btn { background:none; border:none; color:#999; text-decoration:underline; cursor:pointer; font-size:0.85rem; padding:0; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../../../index.html">&larr; All courses</a>
+    <a href="../index.html">MCR3U1 — Functions</a>
+    <span class="crumb-current">Translations: Procedure</span>
+  </div>
+  <div class="wrap">
+    <h1>Translations of Functions</h1>
+    <p class="subtitle">MCR3U1 &middot; Unit 2 &middot; Section 2.3</p>
+
+    <div class="callout">g(x) = f(x ± d) ± c is the parent f shifted without changing its shape. <strong>Inside the bracket</strong> moves it <em>horizontally</em> (and opposite to the sign); <strong>outside</strong> moves it <em>vertically</em> (and matches the sign).</div>
+    <div class="panel"><h2>The method</h2><ol class="procedure-list"><li>Identify the parent function (x, x², √x or 1/x) and write down a few of its key points.</li><li>Read the <strong>inside</strong> number: f(x − d) shifts right d, f(x + d) shifts left d.</li><li>Read the <strong>outside</strong> number: f(x) + c shifts up c, f(x) − c shifts down c.</li><li>Move each key point: (x, y) &rarr; (x + d, y + c). Plot the image points and draw the shape.</li><li>Domain and range: add d to the parent's domain restriction, and c to its range restriction. Asymptotes move too.</li></ol></div>
+    
+    <div class="panel">
+      <h2>Worked examples</h2>
+      <p>Pick an example, then step through it one line at a time.</p>
+      <div class="choice-row" id="exChoices"></div>
+      <div id="problemBox" class="problem-box">Pick an example above.</div>
+      <div id="stepsArea"></div>
+      <button class="choice-btn" id="nextBtn" disabled>Show next step</button>
+    </div>
+    <div class="callout"><strong>Try this:</strong> Without looking, describe how g(x) = √(x − 2) + 5 compares to √x, name its starting point, and state its domain and range. Then open the explorer page and set d = 2, c = 5 to check.</div>
+    <div class="panel"><h2>More practice elsewhere</h2><ul><li><a href="https://www.jensenmath.ca/s/Exam-Review-Part-2b-Transformations-of-Functions.pdf" target="_blank" rel="noopener">Jensen Math — Transformations of Functions exam review (PDF)</a> (solutions: <a href="https://www.jensenmath.ca/s/Exam-Review-Part-2b-Transformations-of-Functions-SOLUTIONS.pdf" target="_blank" rel="noopener">PDF</a>)</li><li><a href="https://www.jensenmath.ca/new-home-page-1-1-2" target="_blank" rel="noopener">Jensen Math — Grade 11 (MCR3U)</a></li><li><a href="https://courseware.cemc.uwaterloo.ca/43" target="_blank" rel="noopener">CEMC Courseware — Quadratic Relations</a></li></ul></div>
+  </div>
+<script>
+const groups = [{"name": "Ex 1  x² up and down", "problem": "Compare g(x) = x² + 2 and h(x) = x² − 3 with f(x) = x².", "steps": [["Table of values for x = −3 … 3", "f: 9, 4, 1, 0, 1, 4, 9 &nbsp;|&nbsp; g: 11, 6, 3, 2, 3, 6, 11 &nbsp;|&nbsp; h: 6, 1, −2, −3, −2, 1, 6"], ["Compare g to f", "Every output is 2 more. g is f shifted <strong>up 2</strong>.", true], ["Compare h to f", "Every output is 3 less. h is f shifted <strong>down 3</strong>.", true], ["Vertices", "(0, 0), (0, 2), (0, −3). The shape and the axis x = 0 do not change."]]}, {"name": "Ex 2  √x up and down", "problem": "Compare g(x) = √x + 2 and h(x) = √x − 3 with f(x) = √x.", "steps": [["Table for x = 0, 1, 4, 9, 16", "f: 0, 1, 2, 3, 4 &nbsp;|&nbsp; g: 2, 3, 4, 5, 6 &nbsp;|&nbsp; h: −3, −2, −1, 0, 1"], ["Compare", "g is f up 2 (starting point (0, 2)); h is f down 3 (starting point (0, −3)).", true], ["Domain and range", "g and h: D = {x &isin; &reals; | x &ge; 0}. R for g: {y | y &ge; 2}. R for h: {y | y &ge; −3}.", true]]}, {"name": "Ex 3  1/x up and down", "problem": "Compare g(x) = 1/x + 2 and h(x) = 1/x − 3 with f(x) = 1/x.", "steps": [["Compare", "g is f shifted up 2; h is f shifted down 3."], ["Asymptotes", "f: x = 0 and y = 0. g: x = 0 and <strong>y = 2</strong>. h: x = 0 and <strong>y = −3</strong>. Only the horizontal asymptote moves.", true], ["Domain and range", "g: D = {x | x &ne; 0}, R = {y | y &ne; 2}. h: D = {x | x &ne; 0}, R = {y | y &ne; −3}.", true]]}, {"name": "Ex 4  x² left and right", "problem": "Compare g(x) = (x + 3)² and h(x) = (x − 4)² with f(x) = x².", "steps": [["Table for x = −3 … 3", "f: 9, 4, 1, 0, 1, 4, 9 &nbsp;|&nbsp; g: 0, 1, 4, 9, 16, 25, 36 &nbsp;|&nbsp; h: 49, 36, 25, 16, 9, 4, 1"], ["g(x) = (x + 3)²", "The vertex is at x = −3: the parabola moved <strong>left 3</strong>.", true], ["h(x) = (x − 4)²", "The vertex is at x = 4: the parabola moved <strong>right 4</strong>.", true], ["Warning", "The sign is the opposite of what it looks like. A plus inside the bracket moves the graph left."]]}, {"name": "Ex 5  √x left and right", "problem": "Compare g(x) = √(x + 3) and h(x) = √(x − 4) with f(x) = √x.", "steps": [["Move the key points of f", "f: (0,0), (1,1), (4,2), (9,3), (16,4)"], ["g(x) = √(x + 3): left 3", "(−3,0), (−2,1), (1,2), (6,3), (13,4). D = {x | x &ge; −3}", true], ["h(x) = √(x − 4): right 4", "(4,0), (5,1), (8,2), (13,3), (20,4). D = {x | x &ge; 4}", true], ["Range", "Unchanged for both: R = {y | y &ge; 0}"]]}, {"name": "Ex 6  1/x left and right", "problem": "Compare g(x) = 1/(x + 3) and h(x) = 1/(x − 4) with f(x) = 1/x.", "steps": [["g(x) = 1/(x + 3)", "Left 3. The vertical asymptote moves to <strong>x = −3</strong>. D = {x | x &ne; −3}, R = {y | y &ne; 0}.", true], ["h(x) = 1/(x − 4)", "Right 4. The vertical asymptote moves to <strong>x = 4</strong>. D = {x | x &ne; 4}, R = {y | y &ne; 0}.", true], ["Note", "A horizontal shift changes the domain. A vertical shift changes the range."]]}, {"name": "Ex 7  image points", "problem": "Graph g(x) = (x + 3)² − 2 by finding image points of f(x) = x², then state its domain and range.", "steps": [["The rule", "g(x) = f(x + 3) − 2, so each point (x, y) on f moves to (x − 3, y − 2)."], ["Key points of f", "(−2, 4), (−1, 1), (0, 0), (1, 1), (2, 4)"], ["Image points on g", "(−5, 2), (−4, −1), (−3, −2), (−2, −1), (−1, 2)", true], ["Vertex", "(−3, −2), the image of (0, 0)."], ["Domain and range", "D = {x &isin; &reals;}, R = {y &isin; &reals; | y &ge; −2}", true]]}];
+let current = null, idx = 0;
+const choices = document.getElementById('exChoices');
+const stepsArea = document.getElementById('stepsArea');
+const nextBtn = document.getElementById('nextBtn');
+const problemBox = document.getElementById('problemBox');
+groups.forEach((ex, i) => {
+  const b = document.createElement('button');
+  b.className = 'choice-btn'; b.textContent = ex.name;
+  b.addEventListener('click', () => {
+    document.querySelectorAll('#exChoices .choice-btn').forEach(x => x.classList.remove('active'));
+    b.classList.add('active'); load(i);
+  });
+  choices.appendChild(b);
+});
+function load(i) {
+  current = groups[i]; idx = 0;
+  problemBox.innerHTML = current.problem;
+  stepsArea.innerHTML = current.steps.map((s, n) =>
+    `<div class="step" id="st${n}"><span class="tag">${s[0]}</span><br><span class="${s[2] ? 'final' : ''}">${s[1]}</span></div>`).join('');
+  nextBtn.disabled = false; nextBtn.textContent = "Show next step";
+}
+nextBtn.addEventListener('click', () => {
+  if (!current) return;
+  if (idx < current.steps.length) { document.getElementById('st' + idx).classList.add('shown'); idx++; }
+  if (idx >= current.steps.length) { nextBtn.disabled = true; nextBtn.textContent = "All steps shown"; }
+});
+</script>
+</body>
+</html>

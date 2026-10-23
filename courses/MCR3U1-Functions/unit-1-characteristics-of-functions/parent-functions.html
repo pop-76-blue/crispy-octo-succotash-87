@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Parent Functions Explorer — MCR3U1</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  .panel > h2:first-child { border-top:none; margin-top:0; padding-top:0; }
+  :root { --accent:#3b4f94; --accent-dark:#2b3a70; --accent-tint:#e8ebf6; }
+  .frac { display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; margin:0 0.15em; line-height:1.25; }
+  .frac > span:first-child { border-bottom:1.5px solid currentColor; padding:0 0.25em 1px; }
+  .frac > span:last-child { padding:1px 0.25em 0; }
+  .procedure-list { background:#fff; border:1px solid #ddd; border-radius:8px; padding:1rem 1.3rem 1rem 2.3rem; margin:0.75rem 0; }
+  .procedure-list li { margin-bottom:0.4rem; }
+  .choice-row { display:flex; gap:0.5rem; flex-wrap:wrap; margin:0.75rem 0 1rem; }
+  .choice-btn { border:2px solid var(--accent); background:#fff; color:var(--accent-dark); border-radius:8px;
+    padding:0.45rem 0.9rem; font-size:0.92rem; font-weight:600; cursor:pointer; }
+  .choice-btn:hover { background:var(--accent-tint); }
+  .choice-btn.active { background:var(--accent); color:#fff; }
+  .choice-btn:disabled { opacity:0.4; cursor:not-allowed; }
+  .step { background:#fff; border:1px solid #ddd; border-radius:8px; padding:0.8rem 1.1rem; margin-bottom:0.55rem; opacity:0.3; transition:opacity 0.2s; }
+  .step.shown { opacity:1; }
+  .step .tag { font-size:0.78rem; text-transform:uppercase; letter-spacing:0.03em; color:var(--accent-dark); font-weight:700; }
+  .problem-box { background:var(--accent-tint); border-radius:8px; padding:0.8rem 1.1rem; margin-bottom:0.8rem; font-weight:600; }
+  .final { font-weight:700; color:var(--accent-dark); }
+  .demo-grid { display:flex; flex-wrap:wrap; gap:1.5rem; }
+  .controls-col { flex:1; min-width:270px; }
+  .canvas-col { flex:2; min-width:320px; text-align:center; }
+  .slider-row { margin-bottom:1rem; }
+  .slider-row label { display:flex; justify-content:space-between; font-weight:600; margin-bottom:0.25rem; }
+  .slider-row output { color:var(--accent-dark); font-variant-numeric:tabular-nums; }
+  .slider-row input[type=range] { width:100%; accent-color:var(--accent); }
+  .readout { background:#fff; border:1px solid #ddd; border-radius:8px; padding:0.9rem 1.1rem; margin-top:1rem; }
+  .readout div { padding:0.25rem 0; }
+  .readout .k { color:var(--accent-dark); font-weight:600; display:inline-block; min-width:8.5rem; }
+  canvas.graph { background:#fff; border:1px solid #ddd; border-radius:8px; max-width:100%; }
+  .tool input[type=number], .tool input[type=text], .tool textarea { border:1px solid #bbb; border-radius:6px; padding:0.4rem 0.6rem; font-size:1rem; }
+  .tool input[type=number] { width:5rem; }
+  .topic-card { background:#fff; border:1px solid #ddd; border-left:4px solid var(--accent); border-radius:8px; padding:1rem 1.3rem; margin-bottom:1.1rem; }
+  .topic-card h2 { border-top:none; padding-top:0; margin-top:0; }
+  .topic-card ol, .topic-card ul { margin:0.4rem 0 0.6rem; padding-left:1.3rem; }
+  .topic-card .example { background:var(--accent-tint); border-radius:6px; padding:0.6rem 0.9rem; margin-top:0.5rem; font-size:0.95rem; }
+  .topic-card .go-deeper { margin-top:0.6rem; font-size:0.9rem; }
+  .toc { display:flex; flex-wrap:wrap; gap:0.5rem; margin:1rem 0 1.5rem; }
+  .toc a { text-decoration:none; border:1px solid var(--accent); color:var(--accent-dark); border-radius:6px; padding:0.35rem 0.8rem; font-size:0.9rem; font-weight:600; }
+  .toc a:hover { background:var(--accent-tint); }
+  .progress-bar-wrap { background:#eee; border-radius:8px; height:10px; overflow:hidden; margin:0.5rem 0 1.25rem; }
+  .progress-bar-fill { background:var(--accent); height:100%; width:0%; transition:width 0.2s; }
+  .progress-label { font-weight:600; color:var(--accent-dark); }
+  .section-title { margin-top:2rem; }
+  .q-card { background:#fff; border:1px solid #ddd; border-left:4px solid #ddd; border-radius:10px; padding:1rem 1.2rem; margin-bottom:0.9rem; }
+  .q-card.marked-good { border-left-color:#1a7a3c; }
+  .q-card.marked-retry { border-left-color:#b3311d; }
+  .q-prompt { font-size:1.08rem; margin-bottom:0.5rem; }
+  .q-controls { display:flex; gap:0.6rem; flex-wrap:wrap; align-items:center; }
+  button.reveal-btn { border:2px solid var(--accent); background:#fff; color:var(--accent-dark); border-radius:6px; padding:0.35rem 0.8rem; cursor:pointer; font-weight:600; font-size:0.9rem; }
+  button.reveal-btn:hover { background:var(--accent-tint); }
+  button.mark-btn { border:1px solid #bbb; background:#fff; border-radius:6px; padding:0.35rem 0.7rem; cursor:pointer; font-size:0.9rem; }
+  button.mark-btn.good:hover, button.mark-btn.good.active { background:#e4f3e9; border-color:#1a7a3c; color:#1a7a3c; }
+  button.mark-btn.retry:hover, button.mark-btn.retry.active { background:#fbe9e6; border-color:#b3311d; color:#b3311d; }
+  .answer-box { display:none; background:var(--accent-tint); border-radius:6px; padding:0.7rem 0.9rem; margin-top:0.6rem; line-height:1.8; }
+  .answer-box.shown { display:block; }
+  .reset-row { margin-top:2rem; }
+  button.reset-btn { background:none; border:none; color:#999; text-decoration:underline; cursor:pointer; font-size:0.85rem; padding:0; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../../../index.html">&larr; All courses</a>
+    <a href="../index.html">MCR3U1 — Functions</a>
+    <span class="crumb-current">Parent Functions</span>
+  </div>
+  <div class="wrap">
+    <h1>Parent Functions Explorer</h1>
+    <p class="subtitle">MCR3U1 &middot; Unit 1 &middot; Section 1.2</p>
+
+    <div class="callout">
+      A <strong>parent function</strong> is the simplest function in a family. Every other member of the family is a
+      transformation of it. Pick a parent to see its graph, a table of values, and its domain and range.
+    </div>
+    <div class="panel">
+      <div class="choice-row" id="parents"></div>
+      <div class="demo demo-grid">
+        <div class="controls-col">
+          <div class="readout" id="info"></div>
+          <div class="readout"><strong>Table of values</strong><div id="tbl"></div></div>
+        </div>
+        <div class="canvas-col"><canvas class="graph" id="cv" width="440" height="440"></canvas></div>
+      </div>
+    </div>
+    <div class="callout"><strong>Try this:</strong> Before you click each parent, sketch it from memory and write its domain and
+    range. Then check. Which two parents have a restricted <em>domain</em>? Which have a restricted <em>range</em> but all real x?</div>
+<div class="panel"><h2>More practice elsewhere</h2><ul><li><a href="https://www.jensenmath.ca/new-home-page-1-1-2" target="_blank" rel="noopener">Jensen Math — Grade 11 (MCR3U)</a></li><li><a href="https://cemc.uwaterloo.ca/resources/courseware/grade-9-10-11-mathematics" target="_blank" rel="noopener">CEMC Grade 9/10/11 Courseware</a></li></ul></div>
+  </div>
+<script>
+const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+const W = cv.width, H = cv.height, S = 18, ox = W / 2, oy = H / 2;
+const toPx = (x, y) => [ox + x * S, oy - y * S];
+const frac = (n, d) => (n < 0 ? '−' : '') + Math.abs(n) + '/' + d;
+const P = [
+  { name: "Linear", eq: "f(x) = x", f: x => x, xs: [-3, -2, -1, 0, 1, 2, 3], D: "{x ∈ ℝ}", R: "{y ∈ ℝ}", note: "A straight line through the origin with slope 1." },
+  { name: "Quadratic", eq: "f(x) = x²", f: x => x * x, xs: [-3, -2, -1, 0, 1, 2, 3], D: "{x ∈ ℝ}", R: "{y ∈ ℝ | y ≥ 0}", note: "A parabola with its vertex at (0, 0), opening up." },
+  { name: "Cubic", eq: "f(x) = x³", f: x => x * x * x, xs: [-3, -2, -1, 0, 1, 2, 3], D: "{x ∈ ℝ}", R: "{y ∈ ℝ}", note: "Passes through the origin and goes down on the left, up on the right." },
+  { name: "Square root", eq: "f(x) = √x", f: x => Math.sqrt(x), xs: [0, 1, 4, 9, 16], D: "{x ∈ ℝ | x ≥ 0}", R: "{y ∈ ℝ | y ≥ 0}", note: "Starts at (0, 0) and rises slowly. You can't take the square root of a negative." },
+  { name: "Reciprocal", eq: "f(x) = 1/x", f: x => 1 / x, xs: [-3, -2, -1, 0, 1, 2, 3], D: "{x ∈ ℝ | x ≠ 0}", R: "{y ∈ ℝ | y ≠ 0}", asym: { v: 0, h: 0 }, note: "Two branches. Vertical asymptote x = 0 and horizontal asymptote y = 0: the graph gets close but never touches them.",
+    label: x => x === 0 ? 'undefined' : (x === 1 ? '1' : x === -1 ? '−1' : frac(Math.sign(x), Math.abs(x))) },
+  { name: "Exponential", eq: "f(x) = 2ˣ", f: x => Math.pow(2, x), xs: [-3, -2, -1, 0, 1, 2, 3], D: "{x ∈ ℝ}", R: "{y ∈ ℝ | y > 0}", asym: { h: 0 }, note: "Grows quickly to the right and flattens toward the horizontal asymptote y = 0 on the left. Passes through (0, 1).",
+    label: x => x >= 0 ? String(Math.pow(2, x)) : '1/' + Math.pow(2, -x) }
+];
+let cur = 0;
+function draw() {
+  const p = P[cur];
+  ctx.clearRect(0, 0, W, H);
+  ctx.strokeStyle = '#eee'; ctx.lineWidth = 1;
+  for (let u = -12; u <= 12; u++) {
+    let [a] = toPx(u, 0); ctx.beginPath(); ctx.moveTo(a, 0); ctx.lineTo(a, H); ctx.stroke();
+    let [, b] = toPx(0, u); ctx.beginPath(); ctx.moveTo(0, b); ctx.lineTo(W, b); ctx.stroke();
+  }
+  ctx.strokeStyle = '#999'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(0, oy); ctx.lineTo(W, oy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(ox, 0); ctx.lineTo(ox, H); ctx.stroke();
+  ctx.strokeStyle = '#3b4f94'; ctx.lineWidth = 2.5;
+  let started = false; ctx.beginPath();
+  for (let px = 0; px <= W; px += 1) {
+    const x = (px - ox) / S, y = p.f(x), py = oy - y * S;
+    if (!isFinite(y) || isNaN(y) || Math.abs(py - oy) > 600 || (p.name === 'Reciprocal' && Math.abs(x) < 0.04)) { started = false; continue; }
+    if (p.name === 'Reciprocal' && started && Math.abs(y - lastY) > 8) { started = false; }
+    if (!started) { ctx.moveTo(px, py); started = true; } else ctx.lineTo(px, py);
+    var lastY = y;
+  }
+  ctx.stroke();
+  if (p.asym) {
+    ctx.strokeStyle = '#c0392b'; ctx.setLineDash([6, 4]); ctx.lineWidth = 1.5;
+    if (p.asym.v !== undefined) { const [a] = toPx(p.asym.v, 0); ctx.beginPath(); ctx.moveTo(a, 0); ctx.lineTo(a, H); ctx.stroke(); }
+    if (p.asym.h !== undefined) { const [, b] = toPx(0, p.asym.h); ctx.beginPath(); ctx.moveTo(0, b); ctx.lineTo(W, b); ctx.stroke(); }
+    ctx.setLineDash([]);
+  }
+  document.getElementById('info').innerHTML =
+    `<div><strong>${p.eq}</strong></div><div><span class="k">Domain:</span> ${p.D}</div><div><span class="k">Range:</span> ${p.R}</div>
+     <div><span class="k">Function?</span> Yes (passes the vertical line test)</div>` +
+    (p.asym ? `<div><span class="k">Asymptote(s):</span> ${p.asym.v !== undefined ? 'x = ' + p.asym.v + ' ' : ''}${p.asym.h !== undefined ? 'y = ' + p.asym.h : ''}</div>` : '') +
+    `<div style="margin-top:0.4rem;">${p.note}</div>`;
+  let t = '<table style="width:100%;border-collapse:collapse;"><tr><th style="text-align:left;">x</th><th style="text-align:left;">f(x)</th></tr>';
+  p.xs.forEach(x => { const v = p.f(x); const lab = p.label ? p.label(x) : String(Math.round(v * 1000) / 1000);
+    t += `<tr><td>${x}</td><td>${lab}</td></tr>`; });
+  document.getElementById('tbl').innerHTML = t + '</table>';
+}
+const row = document.getElementById('parents');
+P.forEach((p, i) => {
+  const b = document.createElement('button'); b.className = 'choice-btn' + (i === 0 ? ' active' : ''); b.textContent = p.name;
+  b.addEventListener('click', () => { cur = i; document.querySelectorAll('#parents .choice-btn').forEach(x => x.classList.remove('active')); b.classList.add('active'); draw(); });
+  row.appendChild(b);
+});
+draw();
+</script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Max and Min Word Problems — MCR3U1</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  .panel > h2:first-child { border-top:none; margin-top:0; padding-top:0; }
+  :root { --accent:#3b4f94; --accent-dark:#2b3a70; --accent-tint:#e8ebf6; }
+  .frac { display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; margin:0 0.15em; line-height:1.25; }
+  .frac > span:first-child { border-bottom:1.5px solid currentColor; padding:0 0.25em 1px; }
+  .frac > span:last-child { padding:1px 0.25em 0; }
+  .procedure-list { background:#fff; border:1px solid #ddd; border-radius:8px; padding:1rem 1.3rem 1rem 2.3rem; margin:0.75rem 0; }
+  .procedure-list li { margin-bottom:0.4rem; }
+  .choice-row { display:flex; gap:0.5rem; flex-wrap:wrap; margin:0.75rem 0 1rem; }
+  .choice-btn { border:2px solid var(--accent); background:#fff; color:var(--accent-dark); border-radius:8px;
+    padding:0.45rem 0.9rem; font-size:0.92rem; font-weight:600; cursor:pointer; }
+  .choice-btn:hover { background:var(--accent-tint); }
+  .choice-btn.active { background:var(--accent); color:#fff; }
+  .choice-btn:disabled { opacity:0.4; cursor:not-allowed; }
+  .step { background:#fff; border:1px solid #ddd; border-radius:8px; padding:0.8rem 1.1rem; margin-bottom:0.55rem; opacity:0.3; transition:opacity 0.2s; }
+  .step.shown { opacity:1; }
+  .step .tag { font-size:0.78rem; text-transform:uppercase; letter-spacing:0.03em; color:var(--accent-dark); font-weight:700; }
+  .problem-box { background:var(--accent-tint); border-radius:8px; padding:0.8rem 1.1rem; margin-bottom:0.8rem; font-weight:600; }
+  .final { font-weight:700; color:var(--accent-dark); }
+  .demo-grid { display:flex; flex-wrap:wrap; gap:1.5rem; }
+  .controls-col { flex:1; min-width:270px; }
+  .canvas-col { flex:2; min-width:320px; text-align:center; }
+  .slider-row { margin-bottom:1rem; }
+  .slider-row label { display:flex; justify-content:space-between; font-weight:600; margin-bottom:0.25rem; }
+  .slider-row output { color:var(--accent-dark); font-variant-numeric:tabular-nums; }
+  .slider-row input[type=range] { width:100%; accent-color:var(--accent); }
+  .readout { background:#fff; border:1px solid #ddd; border-radius:8px; padding:0.9rem 1.1rem; margin-top:1rem; }
+  .readout div { padding:0.25rem 0; }
+  .readout .k { color:var(--accent-dark); font-weight:600; display:inline-block; min-width:8.5rem; }
+  canvas.graph { background:#fff; border:1px solid #ddd; border-radius:8px; max-width:100%; }
+  .tool input[type=number], .tool input[type=text], .tool textarea { border:1px solid #bbb; border-radius:6px; padding:0.4rem 0.6rem; font-size:1rem; }
+  .tool input[type=number] { width:5rem; }
+  .topic-card { background:#fff; border:1px solid #ddd; border-left:4px solid var(--accent); border-radius:8px; padding:1rem 1.3rem; margin-bottom:1.1rem; }
+  .topic-card h2 { border-top:none; padding-top:0; margin-top:0; }
+  .topic-card ol, .topic-card ul { margin:0.4rem 0 0.6rem; padding-left:1.3rem; }
+  .topic-card .example { background:var(--accent-tint); border-radius:6px; padding:0.6rem 0.9rem; margin-top:0.5rem; font-size:0.95rem; }
+  .topic-card .go-deeper { margin-top:0.6rem; font-size:0.9rem; }
+  .toc { display:flex; flex-wrap:wrap; gap:0.5rem; margin:1rem 0 1.5rem; }
+  .toc a { text-decoration:none; border:1px solid var(--accent); color:var(--accent-dark); border-radius:6px; padding:0.35rem 0.8rem; font-size:0.9rem; font-weight:600; }
+  .toc a:hover { background:var(--accent-tint); }
+  .progress-bar-wrap { background:#eee; border-radius:8px; height:10px; overflow:hidden; margin:0.5rem 0 1.25rem; }
+  .progress-bar-fill { background:var(--accent); height:100%; width:0%; transition:width 0.2s; }
+  .progress-label { font-weight:600; color:var(--accent-dark); }
+  .section-title { margin-top:2rem; }
+  .q-card { background:#fff; border:1px solid #ddd; border-left:4px solid #ddd; border-radius:10px; padding:1rem 1.2rem; margin-bottom:0.9rem; }
+  .q-card.marked-good { border-left-color:#1a7a3c; }
+  .q-card.marked-retry { border-left-color:#b3311d; }
+  .q-prompt { font-size:1.08rem; margin-bottom:0.5rem; }
+  .q-controls { display:flex; gap:0.6rem; flex-wrap:wrap; align-items:center; }
+  button.reveal-btn { border:2px solid var(--accent); background:#fff; color:var(--accent-dark); border-radius:6px; padding:0.35rem 0.8rem; cursor:pointer; font-weight:600; font-size:0.9rem; }
+  button.reveal-btn:hover { background:var(--accent-tint); }
+  button.mark-btn { border:1px solid #bbb; background:#fff; border-radius:6px; padding:0.35rem 0.7rem; cursor:pointer; font-size:0.9rem; }
+  button.mark-btn.good:hover, button.mark-btn.good.active { background:#e4f3e9; border-color:#1a7a3c; color:#1a7a3c; }
+  button.mark-btn.retry:hover, button.mark-btn.retry.active { background:#fbe9e6; border-color:#b3311d; color:#b3311d; }
+  .answer-box { display:none; background:var(--accent-tint); border-radius:6px; padding:0.7rem 0.9rem; margin-top:0.6rem; line-height:1.8; }
+  .answer-box.shown { display:block; }
+  .reset-row { margin-top:2rem; }
+  button.reset-btn { background:none; border:none; color:#999; text-decoration:underline; cursor:pointer; font-size:0.85rem; padding:0; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../../../index.html">&larr; All courses</a>
+    <a href="../index.html">MCR3U1 — Functions</a>
+    <span class="crumb-current">Max/Min Word Problems</span>
+  </div>
+  <div class="wrap">
+    <h1>Max and Min Word Problems</h1>
+    <p class="subtitle">MCR3U1 &middot; Unit 1 &middot; Section 1.3</p>
+
+    <div class="callout">
+      <strong>Steps for word problems:</strong> (1) define your variables, (2) write an equation, (3) solve it, (4) answer the
+      question in a sentence. For a quadratic model, the vertex gives the maximum or minimum.
+    </div>
+    <div class="panel">
+      <div class="choice-row" id="probs"></div>
+      <div id="intro" class="problem-box"></div>
+      <div class="demo demo-grid">
+        <div class="controls-col">
+          <div class="slider-row"><label><span id="xName"></span> <output id="xOut"></output></label>
+            <input type="range" id="xs"></div>
+          <div class="readout" id="readout"></div>
+          <button class="choice-btn" id="reveal" style="margin-top:0.8rem;">Show the solution</button>
+          <div id="solution" style="display:none;margin-top:0.8rem;"></div>
+        </div>
+        <div class="canvas-col"><canvas class="graph" id="cv" width="440" height="360"></canvas></div>
+      </div>
+    </div>
+    <div class="callout"><strong>Try this:</strong> For each problem, slide to your best guess of the maximum <em>before</em> using
+    algebra, then find the exact vertex by completing the square and see how close you were. Also decide which form (standard,
+    factored or vertex) answers each part fastest.</div>
+<div class="panel"><h2>More practice elsewhere</h2><ul><li><a href="https://www.jensenmath.ca/new-home-page-1-1-2" target="_blank" rel="noopener">Jensen Math — Grade 11 (MCR3U)</a></li><li><a href="https://courseware.cemc.uwaterloo.ca/43" target="_blank" rel="noopener">CEMC Courseware — Quadratic Relations</a></li></ul></div>
+  </div>
+<script>
+const probs = [
+ { name: "Ball from a balcony",
+   intro: "A ball is thrown upward from a balcony and falls to the ground. Its height is h(t) = −5t² + 15t + 45 (metres, t in seconds).",
+   xName: "time t (s)", lo: 0, hi: 4.8, step: 0.05, f: t => -5*t*t + 15*t + 45, vx: 1.5, vy: 56.25,
+   read: t => `<div><span class="k">Time:</span> ${t.toFixed(2)} s</div><div><span class="k">Height:</span> ${(-5*t*t + 15*t + 45).toFixed(2)} m</div>`,
+   sol: `<p><strong>(a) Maximum height: use vertex form.</strong> h(t) = −5(t² − 3t) + 45 = −5[(t − 1.5)² − 2.25] + 45 = −5(t − 1.5)² + 11.25 + 45 = −5(t − 1.5)² + 56.25. The maximum is <strong>56.25 m</strong>.</p>
+         <p><strong>(b) When:</strong> at t = <strong>1.5 s</strong> (the h-value of the vertex).</p>
+         <p><strong>(c) Balcony height: use standard form.</strong> The balcony is where t = 0, and in ax² + bx + c the constant c is that value: h(0) = <strong>45 m</strong>.</p>` },
+ { name: "Rocket",
+   intro: "The path of a rocket is h(t) = −3t² + 30t + 73 (metres, t in seconds). Find its maximum height and when it happens.",
+   xName: "time t (s)", lo: 0, hi: 12, step: 0.1, f: t => -3*t*t + 30*t + 73, vx: 5, vy: 148,
+   read: t => `<div><span class="k">Time:</span> ${t.toFixed(1)} s</div><div><span class="k">Height:</span> ${(-3*t*t + 30*t + 73).toFixed(1)} m</div>`,
+   sol: `<p>Complete the square: h(t) = −3(t² − 10t) + 73 = −3[(t − 5)² − 25] + 73 = −3(t − 5)² + 75 + 73 = −3(t − 5)² + 148.</p>
+         <p>The maximum height is <strong>148 m</strong>, reached at <strong>t = 5 s</strong>.</p>` },
+ { name: "Motel revenue",
+   intro: "A motel has 30 rooms, all rented at $40. Every $2 increase in price means one fewer room rented. What price maximizes revenue?",
+   xName: "number of $2 increases x", lo: 0, hi: 30, step: 1, f: x => (40 + 2*x) * (30 - x), vx: 5, vy: 1250,
+   read: x => `<div><span class="k">Price:</span> $${40 + 2*x}</div><div><span class="k">Rooms rented:</span> ${30 - x}</div><div><span class="k">Revenue:</span> $${(40 + 2*x) * (30 - x)}</div>`,
+   sol: `<p><strong>Define:</strong> x = number of $2 increases. Price = 40 + 2x, rooms = 30 − x.</p>
+         <p><strong>Equation (factored form is natural here):</strong> R(x) = (40 + 2x)(30 − x). The zeros are x = −20 and x = 30, and the vertex is halfway between them: x = (−20 + 30)/2 = 5.</p>
+         <p>Or expand: R(x) = −2x² + 20x + 1200 = −2(x − 5)² + 1250.</p>
+         <p><strong>Answer:</strong> after 5 increases the price is <strong>$50</strong>, 25 rooms are rented, and the maximum revenue is <strong>$1250</strong>.</p>` }
+];
+const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+const W = cv.width, H = cv.height, L = 48, R = 16, T = 18, B = 34;
+const xs = document.getElementById('xs');
+let cur = 0, p = probs[0];
+function load(i) {
+  cur = i; p = probs[i];
+  document.getElementById('intro').textContent = p.intro;
+  document.getElementById('xName').textContent = p.xName;
+  xs.min = p.lo; xs.max = p.hi; xs.step = p.step; xs.value = p.lo;
+  document.getElementById('solution').style.display = 'none';
+  document.getElementById('reveal').textContent = 'Show the solution';
+  document.getElementById('solution').innerHTML = p.sol;
+  draw();
+}
+function draw() {
+  const x = parseFloat(xs.value);
+  document.getElementById('xOut').textContent = (Math.round(x * 100) / 100);
+  const N = 200; let ymax = -1e9, ymin = 1e9;
+  for (let i = 0; i <= N; i++) { const y = p.f(p.lo + (p.hi - p.lo) * i / N); ymax = Math.max(ymax, y); ymin = Math.min(ymin, y); }
+  ymin = Math.min(0, ymin); ymax = ymax * 1.08;
+  const X = v => L + (v - p.lo) / (p.hi - p.lo) * (W - L - R), Y = v => H - B - (v - ymin) / (ymax - ymin) * (H - B - T);
+  ctx.clearRect(0, 0, W, H);
+  ctx.strokeStyle = '#999'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(L, T); ctx.lineTo(L, H - B); ctx.lineTo(W - R, H - B); ctx.stroke();
+  ctx.fillStyle = '#555'; ctx.font = '12px sans-serif';
+  ctx.fillText(String(p.lo), L - 4, H - B + 16); ctx.fillText(String(p.hi), W - R - 16, H - B + 16);
+  ctx.fillText(String(Math.round(ymax)), 4, T + 10); ctx.fillText(String(Math.round(ymin)), 4, H - B);
+  ctx.strokeStyle = '#3b4f94'; ctx.lineWidth = 2.5; ctx.beginPath();
+  for (let i = 0; i <= N; i++) { const v = p.lo + (p.hi - p.lo) * i / N; const px = X(v), py = Y(p.f(v)); if (i) ctx.lineTo(px, py); else ctx.moveTo(px, py); }
+  ctx.stroke();
+  ctx.fillStyle = '#c0392b'; ctx.beginPath(); ctx.arc(X(p.vx), Y(p.vy), 4, 0, 7); ctx.fill();
+  ctx.fillText('max', X(p.vx) + 7, Y(p.vy) - 6);
+  ctx.fillStyle = '#1a7a3c'; ctx.beginPath(); ctx.arc(X(x), Y(p.f(x)), 6, 0, 7); ctx.fill();
+  document.getElementById('readout').innerHTML = p.read(x);
+}
+const row = document.getElementById('probs');
+probs.forEach((q, i) => {
+  const b = document.createElement('button'); b.className = 'choice-btn' + (i === 0 ? ' active' : ''); b.textContent = q.name;
+  b.addEventListener('click', () => { document.querySelectorAll('#probs .choice-btn').forEach(x => x.classList.remove('active')); b.classList.add('active'); load(i); });
+  row.appendChild(b);
+});
+document.getElementById('reveal').addEventListener('click', () => {
+  const s = document.getElementById('solution'); const open = s.style.display === 'none';
+  s.style.display = open ? 'block' : 'none'; document.getElementById('reveal').textContent = open ? 'Hide the solution' : 'Show the solution';
+});
+xs.addEventListener('input', draw); load(0);
+</script>
+</body>
+</html>

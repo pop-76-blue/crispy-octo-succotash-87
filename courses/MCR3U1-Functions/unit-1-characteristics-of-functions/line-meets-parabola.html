@@ -31,6 +31,7 @@
   }
   .choice-btn:hover { background:var(--accent-tint); }
   #graphCanvas { background:#fff; border:1px solid #ddd; border-radius:8px; max-width:100%; }
+  .panel > h2:first-child { border-top:none; margin-top:0; padding-top:0; }
 </style>
 </head>
 <body>
@@ -93,6 +94,13 @@ const aS = $('aS'), hS = $('hS'), kS = $('kS'), mS = $('mS'), bS = $('bS');
 const readout = $('readout');
 const toPx = (x, y) => [ox + x*scale, oy - y*scale];
 const fmt = n => String(parseFloat(n.toFixed(2)));
+function poly(a, b, c) {
+  const t = (v, s) => { if (v === 0) return ''; const sg = v < 0 ? ' − ' : ' + '; const av = Math.abs(v);
+    return sg + ((av === 1 && s) ? '' : String(parseFloat(av.toFixed(2)))) + s; };
+  const r = (t(a, 'x²') + t(b, 'x') + t(c, '')).replace(/^ \+ /, '').replace(/^ − /, '−');
+  return r || '0';
+}
+
 
 function grid() {
   ctx.clearRect(0, 0, W, H);
@@ -159,7 +167,7 @@ function draw() {
 
   readout.innerHTML = `
     <div><span class="verdict ${verdictClass}">${verdictText}</span></div>
-    <div><span class="k">Equation to solve:</span> ${fmt(A)}x² + ${fmt(B)}x + ${fmt(C)} = 0</div>
+    <div><span class="k">Equation to solve:</span> ${poly(A, B, C)} = 0</div>
     <div><span class="k">b² − 4ac:</span> ${fmt(disc)}</div>
     <div><span class="k">Points:</span> ${ptStrs.length ? ptStrs.join(' and ') : 'none'}</div>
   `;

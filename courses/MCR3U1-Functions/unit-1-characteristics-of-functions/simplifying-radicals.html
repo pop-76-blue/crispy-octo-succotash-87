@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Simplifying Radicals — MCR3U1</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  .panel > h2:first-child { border-top:none; margin-top:0; padding-top:0; }
+  :root { --accent:#3b4f94; --accent-dark:#2b3a70; --accent-tint:#e8ebf6; }
+  .frac { display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; margin:0 0.15em; line-height:1.25; }
+  .frac > span:first-child { border-bottom:1.5px solid currentColor; padding:0 0.25em 1px; }
+  .frac > span:last-child { padding:1px 0.25em 0; }
+  .procedure-list { background:#fff; border:1px solid #ddd; border-radius:8px; padding:1rem 1.3rem 1rem 2.3rem; margin:0.75rem 0; }
+  .procedure-list li { margin-bottom:0.4rem; }
+  .choice-row { display:flex; gap:0.5rem; flex-wrap:wrap; margin:0.75rem 0 1rem; }
+  .choice-btn { border:2px solid var(--accent); background:#fff; color:var(--accent-dark); border-radius:8px;
+    padding:0.45rem 0.9rem; font-size:0.92rem; font-weight:600; cursor:pointer; }
+  .choice-btn:hover { background:var(--accent-tint); }
+  .choice-btn.active { background:var(--accent); color:#fff; }
+  .choice-btn:disabled { opacity:0.4; cursor:not-allowed; }
+  .step { background:#fff; border:1px solid #ddd; border-radius:8px; padding:0.8rem 1.1rem; margin-bottom:0.55rem; opacity:0.3; transition:opacity 0.2s; }
+  .step.shown { opacity:1; }
+  .step .tag { font-size:0.78rem; text-transform:uppercase; letter-spacing:0.03em; color:var(--accent-dark); font-weight:700; }
+  .problem-box { background:var(--accent-tint); border-radius:8px; padding:0.8rem 1.1rem; margin-bottom:0.8rem; font-weight:600; }
+  .final { font-weight:700; color:var(--accent-dark); }
+  .demo-grid { display:flex; flex-wrap:wrap; gap:1.5rem; }
+  .controls-col { flex:1; min-width:270px; }
+  .canvas-col { flex:2; min-width:320px; text-align:center; }
+  .slider-row { margin-bottom:1rem; }
+  .slider-row label { display:flex; justify-content:space-between; font-weight:600; margin-bottom:0.25rem; }
+  .slider-row output { color:var(--accent-dark); font-variant-numeric:tabular-nums; }
+  .slider-row input[type=range] { width:100%; accent-color:var(--accent); }
+  .readout { background:#fff; border:1px solid #ddd; border-radius:8px; padding:0.9rem 1.1rem; margin-top:1rem; }
+  .readout div { padding:0.25rem 0; }
+  .readout .k { color:var(--accent-dark); font-weight:600; display:inline-block; min-width:8.5rem; }
+  canvas.graph { background:#fff; border:1px solid #ddd; border-radius:8px; max-width:100%; }
+  .tool input[type=number], .tool input[type=text], .tool textarea { border:1px solid #bbb; border-radius:6px; padding:0.4rem 0.6rem; font-size:1rem; }
+  .tool input[type=number] { width:5rem; }
+  .topic-card { background:#fff; border:1px solid #ddd; border-left:4px solid var(--accent); border-radius:8px; padding:1rem 1.3rem; margin-bottom:1.1rem; }
+  .topic-card h2 { border-top:none; padding-top:0; margin-top:0; }
+  .topic-card ol, .topic-card ul { margin:0.4rem 0 0.6rem; padding-left:1.3rem; }
+  .topic-card .example { background:var(--accent-tint); border-radius:6px; padding:0.6rem 0.9rem; margin-top:0.5rem; font-size:0.95rem; }
+  .topic-card .go-deeper { margin-top:0.6rem; font-size:0.9rem; }
+  .toc { display:flex; flex-wrap:wrap; gap:0.5rem; margin:1rem 0 1.5rem; }
+  .toc a { text-decoration:none; border:1px solid var(--accent); color:var(--accent-dark); border-radius:6px; padding:0.35rem 0.8rem; font-size:0.9rem; font-weight:600; }
+  .toc a:hover { background:var(--accent-tint); }
+  .progress-bar-wrap { background:#eee; border-radius:8px; height:10px; overflow:hidden; margin:0.5rem 0 1.25rem; }
+  .progress-bar-fill { background:var(--accent); height:100%; width:0%; transition:width 0.2s; }
+  .progress-label { font-weight:600; color:var(--accent-dark); }
+  .section-title { margin-top:2rem; }
+  .q-card { background:#fff; border:1px solid #ddd; border-left:4px solid #ddd; border-radius:10px; padding:1rem 1.2rem; margin-bottom:0.9rem; }
+  .q-card.marked-good { border-left-color:#1a7a3c; }
+  .q-card.marked-retry { border-left-color:#b3311d; }
+  .q-prompt { font-size:1.08rem; margin-bottom:0.5rem; }
+  .q-controls { display:flex; gap:0.6rem; flex-wrap:wrap; align-items:center; }
+  button.reveal-btn { border:2px solid var(--accent); background:#fff; color:var(--accent-dark); border-radius:6px; padding:0.35rem 0.8rem; cursor:pointer; font-weight:600; font-size:0.9rem; }
+  button.reveal-btn:hover { background:var(--accent-tint); }
+  button.mark-btn { border:1px solid #bbb; background:#fff; border-radius:6px; padding:0.35rem 0.7rem; cursor:pointer; font-size:0.9rem; }
+  button.mark-btn.good:hover, button.mark-btn.good.active { background:#e4f3e9; border-color:#1a7a3c; color:#1a7a3c; }
+  button.mark-btn.retry:hover, button.mark-btn.retry.active { background:#fbe9e6; border-color:#b3311d; color:#b3311d; }
+  .answer-box { display:none; background:var(--accent-tint); border-radius:6px; padding:0.7rem 0.9rem; margin-top:0.6rem; line-height:1.8; }
+  .answer-box.shown { display:block; }
+  .reset-row { margin-top:2rem; }
+  button.reset-btn { background:none; border:none; color:#999; text-decoration:underline; cursor:pointer; font-size:0.85rem; padding:0; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../../../index.html">&larr; All courses</a>
+    <a href="../index.html">MCR3U1 — Functions</a>
+    <span class="crumb-current">Simplifying Radicals</span>
+  </div>
+  <div class="wrap">
+    <h1>Simplifying Radicals</h1>
+    <p class="subtitle">MCR3U1 &middot; Unit 1 &middot; Section 1.4</p>
+
+    <div class="callout">A radical is in <strong>simplest form</strong> when the number under the root has no perfect-square factor left (other than 1).</div>
+    <div class="panel"><h2>The procedure</h2><ol class="procedure-list"><li>Find the <strong>largest</strong> perfect square that divides the number (4, 9, 16, 25, 36, 49, ...).</li><li>Split: √(k² &times; m) = √(k²) &times; √m.</li><li>Take the root of the perfect square: k√m.</li><li>If there is a coefficient out front, multiply it by the number you pulled out.</li></ol></div>
+    
+    <div class="panel tool">
+      <h2>Radical simplifier</h2>
+      <p>Type a whole number under the radical and see the perfect-square factor pulled out.</p>
+      <label>Number under the radical &nbsp;<input type="number" id="radN" value="72" min="1" step="1"></label>
+      <div class="readout" id="radOut"></div>
+    </div>
+    <div class="panel">
+      <h2>Worked examples</h2>
+      <p>Pick an example, then step through it one line at a time.</p>
+      <div class="choice-row" id="exChoices"></div>
+      <div id="problemBox" class="problem-box">Pick an example above.</div>
+      <div id="stepsArea"></div>
+      <button class="choice-btn" id="nextBtn" disabled>Show next step</button>
+    </div>
+    <div class="callout"><strong>Try this:</strong> Predict √72, √200 and √180 on paper first (look for 36, 100 and 36). Then type them into the simplifier and check, and try one that is already simplest, such as 30.</div>
+    <div class="panel"><h2>More practice elsewhere</h2><ul><li><a href="https://www.jensenmath.ca/new-home-page-1-1-2" target="_blank" rel="noopener">Jensen Math — Grade 11 (MCR3U)</a></li><li><a href="https://courseware.cemc.uwaterloo.ca/41" target="_blank" rel="noopener">CEMC Courseware — Number Sense and Algebraic Expressions</a></li></ul></div>
+  </div>
+<script>
+const groups = [{"name": "√18", "problem": "Simplify √18.", "steps": [["Find the largest perfect square factor", "18 = 9 &times; 2, and 9 is a perfect square."], ["Split the radical", "√18 = √9 &times; √2"], ["Take the root", "√18 = 3√2", true]]}, {"name": "√147", "problem": "Simplify √147.", "steps": [["Largest perfect square factor", "147 = 49 &times; 3"], ["Split", "√147 = √49 &times; √3"], ["Take the root", "√147 = 7√3", true]]}, {"name": "√108", "problem": "Simplify √108.", "steps": [["Largest perfect square factor", "108 = 36 &times; 3 (not 4 &times; 27 or 9 &times; 12, which would leave more to do)"], ["Split", "√108 = √36 &times; √3"], ["Take the root", "√108 = 6√3", true], ["If you picked a smaller square", "√108 = √4 &times; √27 = 2√27, and √27 = 3√3, so you finish with 2 &times; 3√3 = 6√3. Same answer, one more step."]]}, {"name": "With a coefficient: 3√20", "problem": "Simplify 3√20.", "steps": [["Simplify the radical", "√20 = √4 &times; √5 = 2√5"], ["Multiply the outside numbers", "3 &times; 2√5 = 6√5", true]]}];
+let current = null, idx = 0;
+const choices = document.getElementById('exChoices');
+const stepsArea = document.getElementById('stepsArea');
+const nextBtn = document.getElementById('nextBtn');
+const problemBox = document.getElementById('problemBox');
+groups.forEach((ex, i) => {
+  const b = document.createElement('button');
+  b.className = 'choice-btn'; b.textContent = ex.name;
+  b.addEventListener('click', () => {
+    document.querySelectorAll('#exChoices .choice-btn').forEach(x => x.classList.remove('active'));
+    b.classList.add('active'); load(i);
+  });
+  choices.appendChild(b);
+});
+function load(i) {
+  current = groups[i]; idx = 0;
+  problemBox.innerHTML = current.problem;
+  stepsArea.innerHTML = current.steps.map((s, n) =>
+    `<div class="step" id="st${n}"><span class="tag">${s[0]}</span><br><span class="${s[2] ? 'final' : ''}">${s[1]}</span></div>`).join('');
+  nextBtn.disabled = false; nextBtn.textContent = "Show next step";
+}
+nextBtn.addEventListener('click', () => {
+  if (!current) return;
+  if (idx < current.steps.length) { document.getElementById('st' + idx).classList.add('shown'); idx++; }
+  if (idx >= current.steps.length) { nextBtn.disabled = true; nextBtn.textContent = "All steps shown"; }
+});
+
+function simp() {
+  const n = parseInt(document.getElementById('radN').value);
+  const out = document.getElementById('radOut');
+  if (!n || n < 1) { out.innerHTML = "<div>Enter a whole number of 1 or more.</div>"; return; }
+  let k = 1;
+  for (let j = Math.floor(Math.sqrt(n)); j >= 1; j--) { if (n % (j * j) === 0) { k = j; break; } }
+  const m = n / (k * k);
+  let simplest;
+  if (m === 1) simplest = String(k);
+  else if (k === 1) simplest = `√${m}`;
+  else simplest = `${k}√${m}`;
+  out.innerHTML = `
+    <div><span class="k">Largest square factor:</span> ${k * k} (since ${k}² = ${k * k})</div>
+    <div><span class="k">Split:</span> √${n} = √${k * k} &times; √${m}</div>
+    <div><span class="k">Simplest form:</span> <strong>${simplest}</strong>${k === 1 && m !== 1 ? " &nbsp;(already simplest: no square factor)" : ""}</div>`;
+}
+document.getElementById('radN').addEventListener('input', simp);
+simp();
+</script>
+</body>
+</html>
