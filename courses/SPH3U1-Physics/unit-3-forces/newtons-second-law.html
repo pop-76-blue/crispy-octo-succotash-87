@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Newton's Second Law - SPH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root {
+    --accent: #1a5f8a;
+    --accent-dark: #123f5c;
+    --accent-tint: #e6f0f6;
+  }
+  .solver-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px,1fr)); gap: 12px; margin: 16px 0; }
+  .solver-field label { display:block; font-size:13px; color: var(--ink-soft); margin-bottom: 4px; }
+  .solver-field input { width: 100%; padding: 8px 10px; font-family: var(--mono); font-size: 15px; border: 1px solid var(--line); border-radius: 6px; }
+  .solve-results { margin-top: 16px; }
+  .solve-results .res-line { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 10px 14px; margin-bottom: 8px; font-family: var(--mono); font-size: 15px; }
+  .solve-error { color: #a83232; font-size: 14px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Home</a>
+  <a href="../index.html">SPH3U</a>
+  <span class="crumb-current">Newton's Second Law</span>
+</div>
+
+<div class="wrap">
+  <h1>3.3 Newton's Second Law</h1>
+  <p class="subtitle">F<sub>net</sub> = ma &mdash; the relationship between net force, mass, and acceleration.</p>
+
+  <div class="panel">
+    <p><strong>Newton's Second Law:</strong> the acceleration of an object is directly proportional
+    to the net force acting on it, and inversely proportional to its mass.</p>
+    <p style="text-align:center; font-family: var(--mono); font-size:19px;">F<sub>net</sub> = ma</p>
+    <p>Units: force in <strong>newtons (N)</strong>, mass in <strong>kilograms (kg)</strong>,
+    acceleration in <strong>m/s&sup2;</strong>. One newton is defined as the force needed to
+    accelerate a 1 kg mass at 1 m/s&sup2; (1 N = 1 kg&middot;m/s&sup2;).</p>
+    <p>Rearranged: a = F<sub>net</sub> / m, or m = F<sub>net</sub> / a.</p>
+  </div>
+
+  <h2>Try it: F = ma Solver</h2>
+  <div class="demo">
+    <p>Fill in any two of the three fields and leave the third blank to solve for it.</p>
+
+    <div class="solver-grid">
+      <div class="solver-field"><label>F<sub>net</sub> (N)</label><input type="text" id="fIn" placeholder="e.g. 60"></div>
+      <div class="solver-field"><label>m (kg)</label><input type="text" id="mIn" placeholder="e.g. 12"></div>
+      <div class="solver-field"><label>a (m/s&sup2;)</label><input type="text" id="aIn" placeholder=""></div>
+    </div>
+
+    <button class="op-btn" id="solveBtn" data-active="true">Solve</button>
+    <div class="solve-results" id="solveResults"></div>
+  </div>
+
+  <div class="callout">
+    <strong>Try this:</strong> A 12 kg object has a net force of 60 N applied to it. Before clicking
+    Solve, calculate the acceleration by hand. Then try it the other way: if you wanted that same
+    object to accelerate at 10 m/s&sup2; instead, what net force would you need?
+  </div>
+
+  <p class="page-foot">SPH3U Study Hub</p>
+</div>
+
+<script>
+function num(id) {
+  const v = document.getElementById(id).value.trim();
+  return v === "" ? null : Number(v);
+}
+
+document.getElementById('solveBtn').addEventListener('click', function() {
+  const F = num('fIn'), m = num('mIn'), a = num('aIn');
+  const resultsEl = document.getElementById('solveResults');
+  const blanks = ['fIn','mIn','aIn'].filter(id => num(id) === null);
+
+  if (blanks.length !== 1) {
+    resultsEl.innerHTML = '<div class="solve-error">Leave exactly one field blank (the one you want to solve for).</div>';
+    return;
+  }
+
+  let line;
+  if (F === null) {
+    const val = m * a;
+    line = 'F_net = ma = ' + m + ' \u00d7 ' + a + ' = <strong>' + val.toFixed(2) + ' N</strong>';
+  } else if (m === null) {
+    if (a === 0) { resultsEl.innerHTML = '<div class="solve-error">Can\'t divide by an acceleration of 0.</div>'; return; }
+    const val = F / a;
+    line = 'm = F_net / a = ' + F + ' / ' + a + ' = <strong>' + val.toFixed(2) + ' kg</strong>';
+  } else {
+    if (m === 0) { resultsEl.innerHTML = '<div class="solve-error">Mass can\'t be 0.</div>'; return; }
+    const val = F / m;
+    line = 'a = F_net / m = ' + F + ' / ' + m + ' = <strong>' + val.toFixed(2) + ' m/s\u00b2</strong>';
+  }
+  resultsEl.innerHTML = '<div class="res-line">' + line + '</div>';
+});
+</script>
+
+</body>
+</html>

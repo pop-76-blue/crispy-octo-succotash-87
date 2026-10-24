@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forces Practice Quiz - SPH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root {
+    --accent: #1a5f8a;
+    --accent-dark: #123f5c;
+    --accent-tint: #e6f0f6;
+  }
+  .qcard {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 16px 20px; margin-bottom: 14px;
+  }
+  .qcard.correct { border-left: 4px solid #1a6b3a; }
+  .qcard.incorrect { border-left: 4px solid #a83232; }
+  .qnum {
+    display: inline-block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em;
+    background: var(--accent-tint); color: var(--accent-dark); padding: 2px 8px; border-radius: 10px;
+    margin-bottom: 8px;
+  }
+  .qprompt { font-size: 15px; margin-bottom: 10px; }
+  .qoptions { display: flex; flex-direction: column; gap: 6px; }
+  .qoptions label { display: flex; gap: 8px; align-items: center; font-size: 14.5px; cursor: pointer; }
+  .qnumeric input {
+    font-family: var(--mono); font-size: 15px; padding: 6px 10px; border: 1px solid var(--line);
+    border-radius: 6px; width: 140px;
+  }
+  .qfeedback { margin-top: 10px; font-size: 14px; padding-top: 10px; border-top: 1px dashed var(--line); display: none; }
+  .qfeedback.show { display: block; }
+  .qfeedback.correct-text { color: #1a6b3a; }
+  .qfeedback.incorrect-text { color: #a83232; }
+  #scoreBox {
+    text-align: center; padding: 20px; background: var(--accent-tint); border-radius: var(--radius);
+    margin: 20px 0; display: none;
+  }
+  #scoreBox.show { display: block; }
+  #scoreBox .score-num { font-size: 32px; font-weight: 700; color: var(--accent-dark); font-family: var(--mono); }
+  #submitBtn { display: block; margin: 20px auto; }
+  .retry-note { text-align: center; font-size: 13px; color: var(--ink-soft); margin-top: -10px; margin-bottom: 20px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Home</a>
+  <a href="../index.html">SPH3U</a>
+  <span class="crumb-current">Forces Practice Quiz</span>
+</div>
+
+<div class="wrap">
+  <h1>Forces Practice Quiz</h1>
+  <p class="subtitle">10 questions covering free-body diagrams and Newton's three laws.</p>
+
+  <div class="callout">
+    Try this under test conditions, then hit <strong>Submit</strong> to grade yourself and see explanations.
+  </div>
+
+  <div id="quizContainer"></div>
+
+  <button class="op-btn" id="submitBtn" data-active="true">Submit Quiz</button>
+
+  <div id="scoreBox">
+    <div class="score-num" id="scoreNum">0 / 10</div>
+    <div id="scoreMsg" style="margin-top: 6px; font-size: 14px; color: var(--ink-soft);"></div>
+  </div>
+  <p class="retry-note" id="retryNote"></p>
+
+  <p class="page-foot">SPH3U Study Hub</p>
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    type: "mc",
+    tag: "Free-Body Diagrams",
+    prompt: "Which force always points straight down, toward the centre of the Earth?",
+    options: ["Normal force", "Tension", "Gravity (weight)", "Applied force"],
+    correct: 2,
+    explain: "Gravity (F_g = mg) always acts straight down. The others depend on the situation."
+  },
+  {
+    type: "numeric",
+    tag: "Free-Body Diagrams",
+    prompt: "An object has a mass of 8 kg. What is its weight, F_g, in N? (use g = 9.8 N/kg)",
+    correct: 78.4,
+    tolerance: 1,
+    explain: "F_g = mg = 8 \u00d7 9.8 = 78.4 N."
+  },
+  {
+    type: "mc",
+    tag: "Free-Body Diagrams",
+    prompt: "A box sits on a flat, level table with no vertical acceleration. The normal force equals:",
+    options: ["F_net", "F_g (its weight)", "F_applied", "Zero"],
+    correct: 1,
+    explain: "With no vertical acceleration, the upward normal force must exactly balance the downward weight: F_N = F_g."
+  },
+  {
+    type: "mc",
+    tag: "Newton's First Law",
+    prompt: "An object moves at a constant velocity. What is F_net acting on it?",
+    options: ["Equal to its mass", "Equal to ma", "Zero", "Undefined"],
+    correct: 2,
+    explain: "Constant velocity (zero acceleration) means the net force is zero \u2014 this is Newton's First Law."
+  },
+  {
+    type: "numeric",
+    tag: "Newton's Second Law",
+    prompt: "F_net = 36 N acts on a 9 kg object. Find its acceleration, in m/s\u00b2.",
+    correct: 4,
+    tolerance: 0.2,
+    explain: "a = F_net / m = 36 / 9 = 4 m/s\u00b2."
+  },
+  {
+    type: "numeric",
+    tag: "Newton's Second Law",
+    prompt: "A 5 kg object accelerates at 3 m/s\u00b2. What net force, in N, is acting on it?",
+    correct: 15,
+    tolerance: 0.5,
+    explain: "F_net = ma = 5 \u00d7 3 = 15 N."
+  },
+  {
+    type: "numeric",
+    tag: "Applying F = ma",
+    prompt: "A 20 kg crate is pushed with 100 N of applied force, opposed by 40 N of friction. Find its acceleration, in m/s\u00b2.",
+    correct: 3,
+    tolerance: 0.2,
+    explain: "F_net = 100 \u2212 40 = 60 N. a = F_net/m = 60/20 = 3 m/s\u00b2."
+  },
+  {
+    type: "mc",
+    tag: "Newton's Third Law",
+    prompt: "A rocket pushes exhaust gas backward; the gas pushes the rocket forward. These two forces act on:",
+    options: ["The same object", "Two different objects"],
+    correct: 1,
+    explain: "Action-reaction pairs always act on two different objects \u2014 here, the rocket and the gas."
+  },
+  {
+    type: "mc",
+    tag: "Newton's Third Law",
+    prompt: "A parked car has gravity pulling it down and the normal force pushing it up, both acting on the car itself. Is this a Newton's Third Law pair?",
+    options: ["Yes", "No"],
+    correct: 1,
+    explain: "No \u2014 both forces act on the same object (the car), so this is just two balanced forces, not an action-reaction pair."
+  },
+  {
+    type: "mc",
+    tag: "Newton's Second Law",
+    prompt: "What is the SI unit of force, and what is it equivalent to?",
+    options: ["kg", "m/s\u00b2", "N, equivalent to kg\u00b7m/s\u00b2", "N/kg"],
+    correct: 2,
+    explain: "A newton (N) is defined through F = ma, so 1 N = 1 kg\u00b7m/s\u00b2."
+  },
+];
+
+const container = document.getElementById('quizContainer');
+
+QUESTIONS.forEach((q, i) => {
+  const card = document.createElement('div');
+  card.className = 'qcard';
+  card.dataset.index = i;
+
+  let inner = '<div class="qnum">Q' + (i+1) + ' \u00b7 ' + q.tag + '</div>';
+  inner += '<div class="qprompt">' + q.prompt + '</div>';
+
+  if (q.type === 'mc') {
+    inner += '<div class="qoptions">';
+    q.options.forEach((opt, oi) => {
+      inner += '<label><input type="radio" name="q' + i + '" value="' + oi + '"> ' + opt + '</label>';
+    });
+    inner += '</div>';
+  } else {
+    inner += '<div class="qnumeric"><input type="text" id="q' + i + 'input" placeholder="your answer"></div>';
+  }
+
+  inner += '<div class="qfeedback" id="q' + i + 'feedback"></div>';
+  card.innerHTML = inner;
+  container.appendChild(card);
+});
+
+document.getElementById('submitBtn').addEventListener('click', function() {
+  let score = 0;
+  QUESTIONS.forEach((q, i) => {
+    const card = document.querySelector('.qcard[data-index="' + i + '"]');
+    const fb = document.getElementById('q' + i + 'feedback');
+    let isCorrect = false;
+
+    if (q.type === 'mc') {
+      const checked = document.querySelector('input[name="q' + i + '"]:checked');
+      if (checked) isCorrect = Number(checked.value) === q.correct;
+    } else {
+      const val = document.getElementById('q' + i + 'input').value.trim();
+      const num = Number(val);
+      if (val !== "" && !isNaN(num)) isCorrect = Math.abs(num - q.correct) <= q.tolerance;
+    }
+
+    if (isCorrect) score++;
+    card.classList.remove('correct', 'incorrect');
+    card.classList.add(isCorrect ? 'correct' : 'incorrect');
+
+    fb.classList.add('show');
+    fb.classList.add(isCorrect ? 'correct-text' : 'incorrect-text');
+    let correctText = q.type === 'mc' ? q.options[q.correct] : q.correct;
+    fb.innerHTML = (isCorrect ? '<strong>Correct!</strong> ' : ('<strong>Not quite.</strong> Correct answer: ' + correctText + '. ')) + q.explain;
+  });
+
+  const scoreBox = document.getElementById('scoreBox');
+  scoreBox.classList.add('show');
+  document.getElementById('scoreNum').textContent = score + " / " + QUESTIONS.length;
+  let msg;
+  if (score >= 9) msg = "Excellent \u2014 you're ready for the quiz.";
+  else if (score >= 7) msg = "Solid! Review the ones you missed, then you're set.";
+  else if (score >= 5) msg = "Getting there \u2014 revisit the quick-reference boxes for anything you missed.";
+  else msg = "Worth another pass through the unit pages before the quiz.";
+  document.getElementById('scoreMsg').textContent = msg;
+  document.getElementById('retryNote').textContent = "Reload this page for a fresh attempt.";
+
+  scoreBox.scrollIntoView({behavior: 'smooth', block: 'center'});
+});
+</script>
+
+</body>
+</html>

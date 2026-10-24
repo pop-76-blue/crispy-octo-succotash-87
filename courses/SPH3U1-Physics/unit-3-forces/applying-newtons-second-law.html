@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Applying Newton's Second Law - SPH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root {
+    --accent: #1a5f8a;
+    --accent-dark: #123f5c;
+    --accent-tint: #e6f0f6;
+  }
+  .slider-block { margin: 14px 0; }
+  .slider-block label { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 4px; }
+  .slider-block input[type=range] { width: 100%; }
+  table.calc-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+  table.calc-table th, table.calc-table td { border: 1px solid var(--line); padding: 8px 10px; text-align: center; }
+  table.calc-table th { background: var(--accent-tint); color: var(--accent-dark); }
+  table.calc-table tr:last-child td { font-weight: 700; border-top: 2px solid var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Home</a>
+  <a href="../index.html">SPH3U</a>
+  <span class="crumb-current">Applying Newton's Second Law</span>
+</div>
+
+<div class="wrap">
+  <h1>3.4 Applying Newton's Second Law</h1>
+  <p class="subtitle">Putting weight, normal force, applied force, and friction together in one problem.</p>
+
+  <div class="panel">
+    <p>Most real problems have more than one force acting at once. The process is always the same:</p>
+    <ol>
+      <li>Draw the free-body diagram and identify every force.</li>
+      <li>Find any forces you can calculate directly (e.g. weight: F<sub>g</sub> = mg).</li>
+      <li>On a flat surface with no vertical acceleration, the normal force balances gravity:
+      F<sub>N</sub> = F<sub>g</sub>.</li>
+      <li>Add up the forces along the direction of motion to get F<sub>net</sub>.</li>
+      <li>Solve a = F<sub>net</sub> / m.</li>
+    </ol>
+    <p>g = 9.8 N/kg (same number as 9.8 m/s&sup2; from Unit 1 &mdash; it's both the acceleration due to
+    gravity <em>and</em> the number of newtons of weight per kilogram of mass).</p>
+  </div>
+
+  <h2>Try it: Box on a Flat Surface</h2>
+  <div class="demo">
+    <p>A box is pushed horizontally across a flat, level surface with some friction opposing it.
+    Adjust the sliders and watch every quantity update.</p>
+
+    <div class="slider-block">
+      <label><span>Mass (m)</span> <span id="massLabel">10 kg</span></label>
+      <input type="range" id="massSlider" min="1" max="60" value="10" step="1">
+    </div>
+    <div class="slider-block">
+      <label><span>Applied force (F<sub>a</sub>), horizontal</span> <span id="appliedLabel">40 N</span></label>
+      <input type="range" id="appliedSlider" min="0" max="200" value="40" step="1">
+    </div>
+    <div class="slider-block">
+      <label><span>Friction force (F<sub>f</sub>), opposing motion</span> <span id="frictionLabel">15 N</span></label>
+      <input type="range" id="frictionSlider" min="0" max="200" value="15" step="1">
+    </div>
+
+    <table class="calc-table">
+      <tbody id="resultsBody"></tbody>
+    </table>
+  </div>
+
+  <div class="callout">
+    <strong>Try this:</strong> Set mass to 10 kg, applied force to 40 N, and friction to 15 N.
+    Before reading the table, calculate F<sub>g</sub>, F<sub>N</sub>, F<sub>net</sub> (horizontal),
+    and the resulting acceleration by hand. Then push the friction slider up until the box stops
+    accelerating altogether &mdash; what friction value does that happen at, and why does that make sense?
+  </div>
+
+  <p class="page-foot">SPH3U Study Hub</p>
+</div>
+
+<script>
+const G = 9.8;
+function render() {
+  const m = Number(document.getElementById('massSlider').value);
+  const Fa = Number(document.getElementById('appliedSlider').value);
+  const Ff = Number(document.getElementById('frictionSlider').value);
+
+  document.getElementById('massLabel').textContent = m + " kg";
+  document.getElementById('appliedLabel').textContent = Fa + " N";
+  document.getElementById('frictionLabel').textContent = Ff + " N";
+
+  const Fg = m * G;
+  const FN = Fg;
+  const Fnet = Fa - Ff;
+  const a = Fnet / m;
+
+  let state;
+  if (Math.abs(Fnet) < 0.05) state = "constant velocity (or at rest) \u2014 balanced horizontal forces";
+  else if (Fnet > 0) state = "speeding up in the direction of the push";
+  else state = "slowing down / accelerating backward \u2014 friction exceeds the push";
+
+  document.getElementById('resultsBody').innerHTML =
+    "<tr><th>Quantity</th><th>Value</th></tr>" +
+    "<tr><td>Weight, F<sub>g</sub> = mg</td><td>" + Fg.toFixed(1) + " N</td></tr>" +
+    "<tr><td>Normal force, F<sub>N</sub></td><td>" + FN.toFixed(1) + " N</td></tr>" +
+    "<tr><td>Net horizontal force, F<sub>net</sub> = F<sub>a</sub> &minus; F<sub>f</sub></td><td>" + Fnet.toFixed(1) + " N</td></tr>" +
+    "<tr><td>Acceleration, a = F<sub>net</sub>/m</td><td>" + a.toFixed(2) + " m/s\u00b2</td></tr>" +
+    "<tr><td colspan='2'>" + state + "</td></tr>";
+}
+['massSlider','appliedSlider','frictionSlider'].forEach(id => document.getElementById(id).addEventListener('input', render));
+render();
+</script>
+
+</body>
+</html>

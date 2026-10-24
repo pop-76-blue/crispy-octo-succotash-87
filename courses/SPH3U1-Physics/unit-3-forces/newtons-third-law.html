@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Newton's Third Law - SPH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root {
+    --accent: #1a5f8a;
+    --accent-dark: #123f5c;
+    --accent-tint: #e6f0f6;
+  }
+  .pair-wrap { max-width: 480px; margin: 10px auto; }
+  svg { width: 100%; height: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+  .obj-box { fill: var(--accent-tint); stroke: var(--accent); stroke-width: 1.5; }
+  .pair-label { font-size: 12.5px; fill: var(--ink); font-family: var(--sans); text-anchor: middle; }
+  .arrow-a { stroke: #1a6b3a; color: #1a6b3a; stroke-width: 3; }
+  .arrow-b { stroke: #b5452e; color: #b5452e; stroke-width: 3; }
+  .scenario-row { display: flex; gap: 8px; justify-content: center; margin: 14px 0; flex-wrap: wrap; }
+  .qbtns { display: flex; gap: 8px; justify-content: center; margin: 14px 0; flex-wrap: wrap; }
+  .feedback { text-align: center; font-size: 14.5px; margin-top: 10px; min-height: 40px; }
+  .feedback.correct { color: #1a6b3a; }
+  .feedback.incorrect { color: #a83232; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Home</a>
+  <a href="../index.html">SPH3U</a>
+  <span class="crumb-current">Newton's Third Law</span>
+</div>
+
+<div class="wrap">
+  <h1>3.5 Newton's Third Law</h1>
+  <p class="subtitle">For every action, an equal and opposite reaction &mdash; but on a different object.</p>
+
+  <div class="panel">
+    <p><strong>Newton's Third Law:</strong> whenever object A exerts a force on object B, object B
+    exerts an equal and opposite force back on object A.</p>
+    <p>The most common mix-up: action-reaction pairs <strong>never act on the same object</strong>,
+    so they never cancel each other out. (What <em>can</em> cancel on a single object are two
+    <em>different, unrelated</em> balanced forces &mdash; like gravity and the normal force on a box
+    sitting on a table. Those are not a Newton's Third Law pair, even though they're also equal and
+    opposite.)</p>
+  </div>
+
+  <h2>Action-Reaction Examples</h2>
+  <div class="demo">
+    <div class="scenario-row">
+      <button class="op-btn" data-s="0" data-active="true">Swimmer pushes off wall</button>
+      <button class="op-btn" data-s="1">Rocket expels gas</button>
+      <button class="op-btn" data-s="2">Book resting on a table</button>
+    </div>
+    <div class="pair-wrap">
+      <svg id="pairSvg" viewBox="0 0 420 220"></svg>
+    </div>
+    <p id="scenarioExplain" style="text-align:center; font-size:14px; color:var(--ink-soft);"></p>
+  </div>
+
+  <h2>Try it: Spot the Real Pair</h2>
+  <div class="demo">
+    <p>Each question describes two forces. Decide whether they're a genuine Newton's Third Law
+    action-reaction pair, or just two balanced forces acting on the same object.</p>
+    <div id="pairPrompt" style="text-align:center; font-size:15px; margin: 14px 0;"></div>
+    <div class="qbtns">
+      <button class="op-btn" data-ans="pair">Action-Reaction Pair</button>
+      <button class="op-btn" data-ans="balanced">Balanced Forces, Same Object</button>
+    </div>
+    <div class="feedback" id="feedback"></div>
+    <div style="text-align:center;"><button class="op-btn" id="nextBtn">New Question</button></div>
+  </div>
+
+  <div class="callout">
+    <strong>Try this:</strong> Before picking an answer in the quiz above, say out loud (or write
+    down) which <em>two different objects</em> each force acts on. If you can't name two separate
+    objects, it's not a Newton's Third Law pair.
+  </div>
+
+  <p class="page-foot">SPH3U Study Hub</p>
+</div>
+
+<script>
+const svgNS = "http://www.w3.org/2000/svg";
+const svg = document.getElementById('pairSvg');
+function el(tag, attrs) {
+  const e = document.createElementNS(svgNS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  return e;
+}
+function drawArrow(x1, y1, x2, y2, cls) {
+  svg.appendChild(el('line', { class: cls, x1, y1, x2, y2 }));
+  const ang = Math.atan2(y2 - y1, x2 - x1);
+  const headLen = 9;
+  const p1x = x2 - headLen * Math.cos(ang - Math.PI / 6);
+  const p1y = y2 - headLen * Math.sin(ang - Math.PI / 6);
+  const p2x = x2 - headLen * Math.cos(ang + Math.PI / 6);
+  const p2y = y2 - headLen * Math.sin(ang + Math.PI / 6);
+  svg.appendChild(el('polygon', { class: cls, points: x2+","+y2+" "+p1x+","+p1y+" "+p2x+","+p2y, fill: 'currentColor' }));
+}
+
+const scenarios = [
+  {
+    objA: "Swimmer", objB: "Wall",
+    text: "The swimmer pushes the wall backward. The wall pushes the swimmer forward \u2014 that's what launches them off the wall.",
+    arrowDir: 1
+  },
+  {
+    objA: "Rocket", objB: "Exhaust gas",
+    text: "The rocket pushes exhaust gas downward and backward. The gas pushes the rocket forward and upward \u2014 that's thrust.",
+    arrowDir: 1
+  },
+  {
+    objA: "Book", objB: "Table",
+    text: "The book pushes down on the table (its weight, transmitted through contact). The table pushes up on the book (the normal force). Note: this looks similar to the gravity/normal-force pair on the book alone, but this version specifically involves the force the book exerts on the table, and the table's force back on the book \u2014 a true third-law pair.",
+    arrowDir: 1
+  }
+];
+
+function drawScenario(i) {
+  const s = scenarios[i];
+  svg.innerHTML = "";
+  svg.appendChild(el('rect', {class:'obj-box', x:40, y:80, width:90, height:60, rx:6}));
+  svg.appendChild(el('rect', {class:'obj-box', x:290, y:80, width:90, height:60, rx:6}));
+  const la = el('text', {class:'pair-label', x:85, y:160}); la.textContent = s.objA; svg.appendChild(la);
+  const lb = el('text', {class:'pair-label', x:335, y:160}); lb.textContent = s.objB; svg.appendChild(lb);
+
+  drawArrow(130, 100, 230, 100, 'arrow-a');
+  drawArrow(290, 130, 190, 130, 'arrow-b');
+  const alab = el('text', {class:'pair-label', x:180, y:92}); alab.textContent = s.objA + " on " + s.objB; svg.appendChild(alab);
+  const blab = el('text', {class:'pair-label', x:240, y:148}); blab.textContent = s.objB + " on " + s.objA; svg.appendChild(blab);
+
+  document.getElementById('scenarioExplain').textContent = s.text;
+}
+
+document.querySelectorAll('.scenario-row .op-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.scenario-row .op-btn').forEach(b => b.dataset.active = "false");
+    this.dataset.active = "true";
+    drawScenario(Number(this.dataset.s));
+  });
+});
+drawScenario(0);
+
+const pairQuestions = [
+  { text: "A hammer hits a nail (force on the nail). The nail pushes back on the hammer, stopping it.", ans: "pair" },
+  { text: "A hanging lamp: gravity pulls the lamp down, and the cord's tension pulls the lamp up, keeping it still.", ans: "balanced" },
+  { text: "A person jumps: their feet push down on the ground, and the ground pushes up on their feet, launching them.", ans: "pair" },
+  { text: "A car engine pushes the car forward (net force), while air resistance and friction push backward, and the car still speeds up.", ans: "balanced" },
+  { text: "Two magnets repel each other: magnet A pushes magnet B away, and magnet B pushes magnet A away with equal force.", ans: "pair" },
+  { text: "A box sits on a ramp: gravity pulls it down the slope's vertical direction, and the normal force pushes it away from the ramp surface, on the very same box.", ans: "balanced" },
+];
+let currentQ = null;
+
+function newQuestion() {
+  currentQ = pairQuestions[Math.floor(Math.random()*pairQuestions.length)];
+  document.getElementById('pairPrompt').textContent = currentQ.text;
+  document.getElementById('feedback').textContent = "";
+  document.getElementById('feedback').className = "feedback";
+}
+document.querySelectorAll('.qbtns .op-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    const fb = document.getElementById('feedback');
+    const correct = this.dataset.ans === currentQ.ans;
+    fb.className = "feedback " + (correct ? "correct" : "incorrect");
+    fb.textContent = (correct ? "Correct! " : "Not quite \u2014 ") +
+      (currentQ.ans === 'pair'
+        ? "This is a genuine action-reaction pair: the two forces act on two different objects."
+        : "This is two different, unrelated forces balancing out on the same single object, not a Newton's Third Law pair.");
+  });
+});
+document.getElementById('nextBtn').addEventListener('click', newQuestion);
+newQuestion();
+</script>
+
+</body>
+</html>

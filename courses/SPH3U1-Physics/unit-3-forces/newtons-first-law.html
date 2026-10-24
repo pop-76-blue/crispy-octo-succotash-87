@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Newton's First Law - SPH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root {
+    --accent: #1a5f8a;
+    --accent-dark: #123f5c;
+    --accent-tint: #e6f0f6;
+  }
+  .bar-wrap { max-width: 420px; margin: 16px auto; }
+  .bar-row { display: flex; align-items: center; gap: 10px; margin: 8px 0; }
+  .bar-label { width: 90px; font-size: 13px; text-align: right; color: var(--ink-soft); }
+  .bar-track { flex: 1; height: 26px; background: var(--bg); border: 1px solid var(--line); border-radius: 4px; position: relative; overflow: hidden; }
+  .bar-fill { position: absolute; top: 0; bottom: 0; background: var(--accent); }
+  .bar-fill.left { right: 50%; background: #b5452e; }
+  .bar-fill.right { left: 50%; background: #1a6b3a; }
+  .bar-mid { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: var(--ink-soft); }
+  .qbtns { display: flex; gap: 8px; justify-content: center; margin: 16px 0; }
+  .feedback { text-align: center; font-size: 14.5px; margin-top: 10px; min-height: 40px; }
+  .feedback.correct { color: #1a6b3a; }
+  .feedback.incorrect { color: #a83232; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Home</a>
+  <a href="../index.html">SPH3U</a>
+  <span class="crumb-current">Newton's First Law</span>
+</div>
+
+<div class="wrap">
+  <h1>3.2 Newton's First Law</h1>
+  <p class="subtitle">The Law of Inertia.</p>
+
+  <div class="panel">
+    <p><strong>Newton's First Law:</strong> an object at rest stays at rest, and an object in motion
+    stays in motion at a constant velocity, <em>unless</em> acted on by an unbalanced (net) force.</p>
+    <p>This tendency to resist a change in motion is called <strong>inertia</strong>, and it depends
+    on <strong>mass</strong> &mdash; more massive objects are harder to speed up, slow down, or
+    change direction.</p>
+    <p>The key test: find the <strong>net force</strong>. If F<sub>net</sub> = 0, the object is in
+    <strong>equilibrium</strong> (constant velocity, including being at rest). If F<sub>net</sub> &ne; 0,
+    the object's velocity is changing.</p>
+  </div>
+
+  <h2>Try it: Balanced or Unbalanced?</h2>
+  <div class="demo">
+    <p>Two horizontal forces act on an object. Decide whether they're balanced (equilibrium) or
+    unbalanced (object accelerates), then check.</p>
+
+    <div class="bar-wrap" id="barWrap">
+      <div class="bar-row">
+        <div class="bar-label" id="leftLabel">30 N [left]</div>
+        <div class="bar-track"><div class="bar-mid"></div><div class="bar-fill left" id="leftBar"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-label" id="rightLabel">30 N [right]</div>
+        <div class="bar-track"><div class="bar-mid"></div><div class="bar-fill right" id="rightBar"></div></div>
+      </div>
+    </div>
+
+    <div class="qbtns">
+      <button class="op-btn" data-ans="balanced">Balanced</button>
+      <button class="op-btn" data-ans="unbalanced">Unbalanced</button>
+    </div>
+    <div class="feedback" id="feedback"></div>
+    <div style="text-align:center;"><button class="op-btn" id="nextBtn">New Scenario</button></div>
+  </div>
+
+  <div class="callout">
+    <strong>Try this:</strong> Before clicking "New Scenario" the first time, predict what would
+    happen if the two forces shown were exactly equal in size but you doubled the object's mass.
+    Would the equilibrium answer change? (Hint: think about what mass has to do with F<sub>net</sub>
+    itself, versus what it does once there <em>is</em> a net force.)
+  </div>
+
+  <p class="page-foot">SPH3U Study Hub</p>
+</div>
+
+<script>
+let current = null;
+
+function newScenario() {
+  const left = Math.round((5 + Math.random()*55));
+  let right;
+  if (Math.random() < 0.5) {
+    right = left; // balanced
+  } else {
+    right = Math.round(left + (Math.random() < 0.5 ? -1 : 1) * (5 + Math.random()*30));
+    right = Math.max(5, right);
+  }
+  current = { left, right, ans: left === right ? 'balanced' : 'unbalanced' };
+
+  document.getElementById('leftLabel').textContent = left + " N [left]";
+  document.getElementById('rightLabel').textContent = right + " N [right]";
+  const maxVal = Math.max(left, right, 60);
+  document.getElementById('leftBar').style.width = (left / maxVal * 50) + "%";
+  document.getElementById('rightBar').style.width = (right / maxVal * 50) + "%";
+  document.getElementById('feedback').textContent = "";
+  document.getElementById('feedback').className = "feedback";
+}
+
+document.querySelectorAll('.qbtns .op-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    const fb = document.getElementById('feedback');
+    const correct = this.dataset.ans === current.ans;
+    fb.className = "feedback " + (correct ? "correct" : "incorrect");
+    if (current.ans === 'balanced') {
+      fb.textContent = (correct ? "Correct! " : "Not quite. ") + "Both forces are " + current.left + " N, so they cancel out \u2014 F_net = 0, equilibrium.";
+    } else {
+      const net = Math.abs(current.left - current.right);
+      const dir = current.right > current.left ? "right" : "left";
+      fb.textContent = (correct ? "Correct! " : "Not quite. ") + "The forces don't cancel \u2014 F_net = " + net + " N [" + dir + "], so the object accelerates.";
+    }
+  });
+});
+document.getElementById('nextBtn').addEventListener('click', newScenario);
+newScenario();
+</script>
+
+</body>
+</html>

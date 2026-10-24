@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Free-Body Diagrams - SPH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root {
+    --accent: #1a5f8a;
+    --accent-dark: #123f5c;
+    --accent-tint: #e6f0f6;
+  }
+  table.force-table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 14px 0; }
+  table.force-table th, table.force-table td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; }
+  table.force-table th { background: var(--accent-tint); color: var(--accent-dark); }
+  .graph-wrap { max-width: 440px; margin: 10px auto; }
+  svg { width: 100%; height: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+  .axis-line { stroke: var(--line); stroke-width: 1; }
+  .force-1 { stroke: #1a6b3a; color: #1a6b3a; }
+  .force-2 { stroke: #b5452e; color: #b5452e; }
+  .force-3 { stroke: #8a6d1a; color: #8a6d1a; }
+  .force-net { stroke: var(--accent-dark); color: var(--accent-dark); stroke-width: 3.5; stroke-dasharray: 6 4; }
+  .tick-label { font-size: 10.5px; fill: var(--ink-soft); font-family: var(--sans); }
+  .force-group { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin: 10px 0; }
+  @media (max-width: 700px) { .force-group { grid-template-columns: 1fr; } }
+  .force-col h4 { margin: 0 0 6px; font-size: 13px; }
+  .force-col.f1 h4 { color: #1a6b3a; }
+  .force-col.f2 h4 { color: #b5452e; }
+  .force-col.f3 h4 { color: #8a6d1a; }
+  .slider-block { margin: 10px 0; }
+  .slider-block label { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
+  .slider-block input[type=range] { width: 100%; }
+  .status-box {
+    text-align: center; padding: 14px; border-radius: 8px; margin-top: 16px; font-weight: 600;
+  }
+  .status-box.balanced { background: #e3f3e8; color: #1a6b3a; }
+  .status-box.unbalanced { background: #fbe9e6; color: #a83232; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Home</a>
+  <a href="../index.html">SPH3U</a>
+  <span class="crumb-current">Free-Body Diagrams</span>
+</div>
+
+<div class="wrap">
+  <h1>3.1 Free-Body Diagrams</h1>
+  <p class="subtitle">Drawing every force acting on an object &mdash; and finding the net force.</p>
+
+  <div class="panel">
+    <p>A <strong>free-body diagram</strong> shows every force acting <em>on</em> one object, drawn as
+    arrows from a single point representing that object. The length of each arrow shows the relative
+    magnitude, and the direction shows which way the force pulls or pushes.</p>
+  </div>
+
+  <h2>Common Forces</h2>
+  <table class="force-table">
+    <thead><tr><th>Force</th><th>Symbol</th><th>Direction</th></tr></thead>
+    <tbody>
+      <tr><td>Gravity (weight)</td><td>F<sub>g</sub></td><td>Straight down, toward Earth's centre. F<sub>g</sub> = mg</td></tr>
+      <tr><td>Normal force</td><td>F<sub>N</sub></td><td>Perpendicular (90&deg;), away from the surface the object rests on</td></tr>
+      <tr><td>Applied force</td><td>F<sub>a</sub></td><td>Whichever way something is pushing or pulling the object</td></tr>
+      <tr><td>Tension</td><td>F<sub>T</sub></td><td>Along a rope or string, pulling away from the object</td></tr>
+      <tr><td>Friction</td><td>F<sub>f</sub></td><td>Along the surface, opposing the direction of motion (or attempted motion)</td></tr>
+      <tr><td>Air resistance</td><td>F<sub>air</sub></td><td>Opposing the direction of motion through the air</td></tr>
+    </tbody>
+  </table>
+
+  <div class="panel">
+    <p>Once every force is drawn, you find the <strong>net force</strong> (F<sub>net</sub>) by adding
+    all the forces as vectors &mdash; same method as Unit 2 (tip-to-tail, or components). If
+    F<sub>net</sub> = 0, the object is in <strong>equilibrium</strong>: at rest, or moving at constant
+    velocity. If F<sub>net</sub> &ne; 0, the object <strong>accelerates</strong> in the direction of
+    the net force.</p>
+  </div>
+
+  <h2>Try it: Force Vector Sandbox</h2>
+  <div class="demo">
+    <p>Set up to three forces acting on an object (magnitude and direction, measured counterclockwise
+    from East) and see the net force calculated and drawn.</p>
+
+    <div class="graph-wrap">
+      <svg id="forceSvg" viewBox="0 0 360 360"></svg>
+    </div>
+
+    <div class="force-group">
+      <div class="force-col f1">
+        <h4>Force 1</h4>
+        <div class="slider-block"><label><span>Mag.</span> <span id="mag1Label">40 N</span></label><input type="range" id="mag1" min="0" max="80" value="40" step="1"></div>
+        <div class="slider-block"><label><span>Angle</span> <span id="ang1Label">90&deg;</span></label><input type="range" id="ang1" min="0" max="359" value="90" step="1"></div>
+      </div>
+      <div class="force-col f2">
+        <h4>Force 2</h4>
+        <div class="slider-block"><label><span>Mag.</span> <span id="mag2Label">40 N</span></label><input type="range" id="mag2" min="0" max="80" value="40" step="1"></div>
+        <div class="slider-block"><label><span>Angle</span> <span id="ang2Label">270&deg;</span></label><input type="range" id="ang2" min="0" max="359" value="270" step="1"></div>
+      </div>
+      <div class="force-col f3">
+        <h4>Force 3</h4>
+        <div class="slider-block"><label><span>Mag.</span> <span id="mag3Label">20 N</span></label><input type="range" id="mag3" min="0" max="80" value="20" step="1"></div>
+        <div class="slider-block"><label><span>Angle</span> <span id="ang3Label">0&deg;</span></label><input type="range" id="ang3" min="0" max="359" value="0" step="1"></div>
+      </div>
+    </div>
+
+    <div class="status-box" id="statusBox"></div>
+  </div>
+
+  <div class="callout">
+    <strong>Try this:</strong> Set Force 1 to 40 N at 90&deg; (up) and Force 2 to 40 N at 270&deg;
+    (down), with Force 3 at 0 N. Before looking at the status box, predict whether this object is in
+    equilibrium. Then try changing Force 3's magnitude away from 0 and see how little it takes to
+    unbalance things.
+  </div>
+
+  <p class="page-foot">SPH3U Study Hub</p>
+</div>
+
+<script>
+const svgNS = "http://www.w3.org/2000/svg";
+const svg = document.getElementById('forceSvg');
+const CX = 180, CY = 180;
+const SCALE = 1.5;
+
+function el(tag, attrs) {
+  const e = document.createElementNS(svgNS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  return e;
+}
+function toXY(mag, angDeg) {
+  const rad = angDeg * Math.PI / 180;
+  return { x: mag * SCALE * Math.cos(rad), y: -mag * SCALE * Math.sin(rad) };
+}
+function drawArrow(x1, y1, x2, y2, cls) {
+  if (Math.hypot(x2-x1, y2-y1) < 1) return;
+  svg.appendChild(el('line', { class: cls, x1, y1, x2, y2 }));
+  const ang = Math.atan2(y2 - y1, x2 - x1);
+  const headLen = 9;
+  const p1x = x2 - headLen * Math.cos(ang - Math.PI / 6);
+  const p1y = y2 - headLen * Math.sin(ang - Math.PI / 6);
+  const p2x = x2 - headLen * Math.cos(ang + Math.PI / 6);
+  const p2y = y2 - headLen * Math.sin(ang + Math.PI / 6);
+  svg.appendChild(el('polygon', { class: cls, points: x2+","+y2+" "+p1x+","+p1y+" "+p2x+","+p2y, fill: 'currentColor' }));
+}
+
+function render() {
+  const forces = [1,2,3].map(i => ({
+    mag: Number(document.getElementById('mag'+i).value),
+    ang: Number(document.getElementById('ang'+i).value),
+    cls: 'force-'+i
+  }));
+  forces.forEach((f,i) => {
+    document.getElementById('mag'+(i+1)+'Label').textContent = f.mag + " N";
+    document.getElementById('ang'+(i+1)+'Label').textContent = f.ang + "\u00b0";
+  });
+
+  svg.innerHTML = "";
+  svg.appendChild(el('line', {class:'axis-line', x1:0, y1:CY, x2:360, y2:CY}));
+  svg.appendChild(el('line', {class:'axis-line', x1:CX, y1:0, x2:CX, y2:360}));
+  svg.appendChild(el('circle', {cx:CX, cy:CY, r:4, fill:'var(--ink)'}));
+
+  let sx = 0, sy = 0;
+  forces.forEach(f => {
+    const v = toXY(f.mag, f.ang);
+    drawArrow(CX, CY, CX+v.x, CY+v.y, f.cls);
+    sx += v.x; sy += v.y;
+  });
+  drawArrow(CX, CY, CX+sx, CY+sy, 'force-net');
+
+  const netMag = Math.sqrt(sx*sx + sy*sy) / SCALE;
+  const statusBox = document.getElementById('statusBox');
+  if (netMag < 0.5) {
+    statusBox.className = "status-box balanced";
+    statusBox.textContent = "F_net \u2248 0 N \u2014 balanced forces (equilibrium): at rest or constant velocity.";
+  } else {
+    let angDeg = Math.atan2(-sy, sx) * 180 / Math.PI;
+    if (angDeg < 0) angDeg += 360;
+    statusBox.className = "status-box unbalanced";
+    statusBox.textContent = "F_net \u2248 " + netMag.toFixed(1) + " N at " + angDeg.toFixed(0) + "\u00b0 \u2014 unbalanced: the object accelerates.";
+  }
+}
+
+[1,2,3].forEach(i => {
+  document.getElementById('mag'+i).addEventListener('input', render);
+  document.getElementById('ang'+i).addEventListener('input', render);
+});
+render();
+</script>
+
+</body>
+</html>

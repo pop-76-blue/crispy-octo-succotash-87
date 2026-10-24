@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forces Quiz Prep - SPH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root {
+    --accent: #1a5f8a;
+    --accent-dark: #123f5c;
+    --accent-tint: #e6f0f6;
+  }
+  .quickref-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0; }
+  @media (max-width: 650px) { .quickref-grid { grid-template-columns: 1fr; } }
+  .quickref-box {
+    background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--accent);
+    border-radius: var(--radius); padding: 14px 18px;
+  }
+  .quickref-box h3 { margin-top: 0; }
+  details.practice {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 12px 18px; margin-bottom: 12px;
+  }
+  details.practice summary { cursor: pointer; font-weight: 600; color: var(--accent-dark); padding: 4px 0; }
+  details.practice .ans { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line); }
+  .topic-tag {
+    display: inline-block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em;
+    background: var(--accent-tint); color: var(--accent-dark); padding: 2px 8px; border-radius: 10px;
+    margin-bottom: 6px;
+  }
+  .checklist-box {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 16px 20px; margin: 16px 0;
+  }
+  .checklist-box ul { margin: 8px 0; padding-left: 20px; }
+  .checklist-box li { margin-bottom: 6px; font-family: var(--mono); font-size: 14px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Home</a>
+  <a href="../index.html">SPH3U</a>
+  <span class="crumb-current">Forces Quiz Prep</span>
+</div>
+
+<div class="wrap">
+  <h1>Forces Quiz Prep &mdash; Chapter 3</h1>
+  <p class="subtitle">Free-body diagrams, Newton's three laws, and applying F = ma with multiple forces.</p>
+
+  <div class="callout">
+    There's also a separate "Concept Builder" assignment with a customized question for each
+    student &mdash; that one's on Google Classroom directly and isn't reproduced here, so make sure
+    to complete it there too.
+  </div>
+
+  <h2>Quick Reference</h2>
+  <div class="quickref-grid">
+    <div class="quickref-box">
+      <h3>Free-Body Diagrams</h3>
+      <p>Every force on one object, drawn as arrows from a single point: gravity, normal, applied,
+      tension, friction, air resistance. Net force = vector sum of all of them.</p>
+      <a href="free-body-diagrams.html">&rarr; Full review</a>
+    </div>
+    <div class="quickref-box">
+      <h3>Newton's First Law</h3>
+      <p>Objects resist changes in motion (inertia). F<sub>net</sub> = 0 means constant velocity
+      (including rest); otherwise the object accelerates.</p>
+      <a href="newtons-first-law.html">&rarr; Full review</a>
+    </div>
+    <div class="quickref-box">
+      <h3>Newton's Second Law</h3>
+      <p>F<sub>net</sub> = ma. Units: N = kg&middot;m/s&sup2;. Rearrange for a or m as needed.</p>
+      <a href="newtons-second-law.html">&rarr; Full review</a>
+    </div>
+    <div class="quickref-box">
+      <h3>Applying F = ma</h3>
+      <p>F<sub>g</sub> = mg. On a flat surface, F<sub>N</sub> = F<sub>g</sub>. Combine applied force
+      and friction to get F<sub>net</sub>, then a = F<sub>net</sub>/m.</p>
+      <a href="applying-newtons-second-law.html">&rarr; Full review</a>
+    </div>
+    <div class="quickref-box">
+      <h3>Newton's Third Law</h3>
+      <p>Every action force has an equal, opposite reaction force &mdash; on a <em>different</em>
+      object. They never cancel each other.</p>
+      <a href="newtons-third-law.html">&rarr; Full review</a>
+    </div>
+  </div>
+
+  <h2>Mixed Practice</h2>
+  <p>Try each on paper first, then reveal the answer.</p>
+
+  <details class="practice">
+    <summary><span class="topic-tag">Free-Body Diagrams</span><br>A 5 kg box sits still on a flat table. What two forces act on it, and how do their magnitudes compare?</summary>
+    <div class="ans">
+      Gravity (F<sub>g</sub> = mg = 5 &times; 9.8 = 49 N, down) and the normal force (F<sub>N</sub>,
+      up). Since the box isn't accelerating vertically, F<sub>N</sub> = F<sub>g</sub> = <strong>49 N</strong>.
+    </div>
+  </details>
+
+  <details class="practice">
+    <summary><span class="topic-tag">Newton's First Law</span><br>A puck slides across frictionless ice at constant velocity. Is there a net force acting on it?</summary>
+    <div class="ans">
+      No. Constant velocity (even though it's moving) means F<sub>net</sub> = 0 &mdash; that's
+      exactly what Newton's First Law predicts in the absence of friction or other horizontal forces.
+    </div>
+  </details>
+
+  <details class="practice">
+    <summary><span class="topic-tag">Newton's Second Law</span><br>A net force of 24 N acts on a 6 kg object. Find its acceleration.</summary>
+    <div class="ans">a = F<sub>net</sub>/m = 24/6 = <strong>4 m/s&sup2;</strong></div>
+  </details>
+
+  <details class="practice">
+    <summary><span class="topic-tag">Applying F = ma</span><br>A 20 kg crate is pushed with 80 N of applied force across a floor with 30 N of friction opposing it. Find the acceleration.</summary>
+    <div class="ans">
+      F<sub>net</sub> = F<sub>a</sub> &minus; F<sub>f</sub> = 80 &minus; 30 = 50 N<br>
+      a = F<sub>net</sub>/m = 50/20 = <strong>2.5 m/s&sup2;</strong>
+    </div>
+  </details>
+
+  <details class="practice">
+    <summary><span class="topic-tag">Newton's Third Law</span><br>A person stands on the ground. Is the pair (gravity pulling the person down) and (the ground pushing the person up) a Newton's Third Law pair?</summary>
+    <div class="ans">
+      No. Both of those forces act on the <strong>same object</strong> (the person), so they're just
+      two balanced forces, not an action-reaction pair. The actual Third Law partner of "the ground
+      pushes up on the person" is "the person pushes down on the ground" &mdash; two different forces
+      on two different objects.
+    </div>
+  </details>
+
+  <h2>Textbook Practice (Nelson Physics 11)</h2>
+  <div class="checklist-box">
+    <ul>
+      <li>Section 3.1&ndash;3.3 practice: p. 141 #1&ndash;7</li>
+      <li>Section 3.5 practice: p. 147 #1&ndash;4, 8</li>
+      <li>Chapter Self-Quiz: p. 153</li>
+      <li>Chapter Review: p. 154</li>
+    </ul>
+    <p style="font-family: var(--sans); font-size: 13.5px; color: var(--ink-soft);">
+      As before, this is just a checklist of problem numbers &mdash; work them in your textbook or its PDF.</p>
+  </div>
+
+  <div class="callout">
+    <strong>Try this:</strong> Take the <a href="forces-practice-quiz.html">10-question practice
+    quiz</a> for this unit, then revisit whichever quick-reference box matches anything you missed.
+  </div>
+
+  <p class="page-foot">SPH3U Study Hub</p>
+</div>
+
+</body>
+</html>
