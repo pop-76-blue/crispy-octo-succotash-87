@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Unlimited Practice: Rational Expressions — MCR3U1</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  .panel > h2:first-child { border-top:none; margin-top:0; padding-top:0; }
+  :root { --accent:#3b4f94; --accent-dark:#2b3a70; --accent-tint:#e8ebf6; }
+  .frac { display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; margin:0 0.15em; line-height:1.25; }
+  .frac > span:first-child { border-bottom:1.5px solid currentColor; padding:0 0.25em 1px; }
+  .frac > span:last-child { padding:1px 0.25em 0; }
+  .procedure-list { background:#fff; border:1px solid #ddd; border-radius:8px; padding:1rem 1.3rem 1rem 2.3rem; margin:0.75rem 0; }
+  .procedure-list li { margin-bottom:0.4rem; }
+  .choice-row { display:flex; gap:0.5rem; flex-wrap:wrap; margin:0.75rem 0 1rem; }
+  .choice-btn { border:2px solid var(--accent); background:#fff; color:var(--accent-dark); border-radius:8px;
+    padding:0.45rem 0.9rem; font-size:0.92rem; font-weight:600; cursor:pointer; }
+  .choice-btn:hover { background:var(--accent-tint); }
+  .choice-btn.active { background:var(--accent); color:#fff; }
+  .choice-btn:disabled { opacity:0.4; cursor:not-allowed; }
+  .step { background:#fff; border:1px solid #ddd; border-radius:8px; padding:0.8rem 1.1rem; margin-bottom:0.55rem; opacity:0.3; transition:opacity 0.2s; }
+  .step.shown { opacity:1; }
+  .step .tag { font-size:0.78rem; text-transform:uppercase; letter-spacing:0.03em; color:var(--accent-dark); font-weight:700; }
+  .problem-box { background:var(--accent-tint); border-radius:8px; padding:0.8rem 1.1rem; margin-bottom:0.8rem; font-weight:600; }
+  .final { font-weight:700; color:var(--accent-dark); }
+  .demo-grid { display:flex; flex-wrap:wrap; gap:1.5rem; }
+  .controls-col { flex:1; min-width:270px; }
+  .canvas-col { flex:2; min-width:320px; text-align:center; }
+  .slider-row { margin-bottom:1rem; }
+  .slider-row label { display:flex; justify-content:space-between; font-weight:600; margin-bottom:0.25rem; }
+  .slider-row output { color:var(--accent-dark); font-variant-numeric:tabular-nums; }
+  .slider-row input[type=range] { width:100%; accent-color:var(--accent); }
+  .readout { background:#fff; border:1px solid #ddd; border-radius:8px; padding:0.9rem 1.1rem; margin-top:1rem; }
+  .readout div { padding:0.25rem 0; }
+  .readout .k { color:var(--accent-dark); font-weight:600; display:inline-block; min-width:8.5rem; }
+  canvas.graph { background:#fff; border:1px solid #ddd; border-radius:8px; max-width:100%; }
+  .tool input[type=number], .tool input[type=text], .tool textarea { border:1px solid #bbb; border-radius:6px; padding:0.4rem 0.6rem; font-size:1rem; }
+  .tool input[type=number] { width:5rem; }
+  .topic-card { background:#fff; border:1px solid #ddd; border-left:4px solid var(--accent); border-radius:8px; padding:1rem 1.3rem; margin-bottom:1.1rem; }
+  .topic-card h2 { border-top:none; padding-top:0; margin-top:0; }
+  .topic-card ol, .topic-card ul { margin:0.4rem 0 0.6rem; padding-left:1.3rem; }
+  .topic-card .example { background:var(--accent-tint); border-radius:6px; padding:0.6rem 0.9rem; margin-top:0.5rem; font-size:0.95rem; }
+  .topic-card .go-deeper { margin-top:0.6rem; font-size:0.9rem; }
+  .toc { display:flex; flex-wrap:wrap; gap:0.5rem; margin:1rem 0 1.5rem; }
+  .toc a { text-decoration:none; border:1px solid var(--accent); color:var(--accent-dark); border-radius:6px; padding:0.35rem 0.8rem; font-size:0.9rem; font-weight:600; }
+  .toc a:hover { background:var(--accent-tint); }
+  .progress-bar-wrap { background:#eee; border-radius:8px; height:10px; overflow:hidden; margin:0.5rem 0 1.25rem; }
+  .progress-bar-fill { background:var(--accent); height:100%; width:0%; transition:width 0.2s; }
+  .progress-label { font-weight:600; color:var(--accent-dark); }
+  .section-title { margin-top:2rem; }
+  .q-card { background:#fff; border:1px solid #ddd; border-left:4px solid #ddd; border-radius:10px; padding:1rem 1.2rem; margin-bottom:0.9rem; }
+  .q-card.marked-good { border-left-color:#1a7a3c; }
+  .q-card.marked-retry { border-left-color:#b3311d; }
+  .q-prompt { font-size:1.08rem; margin-bottom:0.5rem; }
+  .q-controls { display:flex; gap:0.6rem; flex-wrap:wrap; align-items:center; }
+  button.reveal-btn { border:2px solid var(--accent); background:#fff; color:var(--accent-dark); border-radius:6px; padding:0.35rem 0.8rem; cursor:pointer; font-weight:600; font-size:0.9rem; }
+  button.reveal-btn:hover { background:var(--accent-tint); }
+  button.mark-btn { border:1px solid #bbb; background:#fff; border-radius:6px; padding:0.35rem 0.7rem; cursor:pointer; font-size:0.9rem; }
+  button.mark-btn.good:hover, button.mark-btn.good.active { background:#e4f3e9; border-color:#1a7a3c; color:#1a7a3c; }
+  button.mark-btn.retry:hover, button.mark-btn.retry.active { background:#fbe9e6; border-color:#b3311d; color:#b3311d; }
+  .answer-box { display:none; background:var(--accent-tint); border-radius:6px; padding:0.7rem 0.9rem; margin-top:0.6rem; line-height:1.8; }
+  .answer-box.shown { display:block; }
+  .reset-row { margin-top:2rem; }
+  button.reset-btn { background:none; border:none; color:#999; text-decoration:underline; cursor:pointer; font-size:0.85rem; padding:0; }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <a href="../../../index.html">&larr; All courses</a>
+    <a href="../index.html">MCR3U1 — Functions</a>
+    <span class="crumb-current">Unlimited Practice</span>
+  </div>
+  <div class="wrap">
+    <h1>Unlimited Practice: Rational Expressions</h1>
+    <p class="subtitle">MCR3U1 &middot; Unit 2 &middot; Upcoming quiz (lessons 2.1 and 2.2)</p>
+
+    <div class="callout">Unlimited practice on lessons 2.1 and 2.2. Choose a type, work the problem on paper, then reveal the
+    solution one step at a time. Every problem is built with real factors, so it always simplifies cleanly.</div>
+    <div class="panel">
+      <div class="choice-row" id="types"></div>
+      <div class="problem-box" id="prob">Choose a type above.</div>
+      <div id="stepsArea"></div>
+      <button class="choice-btn" id="nextBtn" disabled>Show next step</button>
+      <button class="choice-btn" id="newBtn" disabled>New problem</button>
+      <p class="progress-label" id="count" style="margin-top:0.8rem;"></p>
+    </div>
+    <div class="callout"><strong>Try this:</strong> For each type, do three problems in a row <em>without revealing anything</em>,
+    state the restrictions every time, then reveal to check. Then do five mixed problems as a timed round.</div>
+<div class="panel"><h2>More practice elsewhere</h2><ul><li><a href="https://www.jensenmath.ca/math10-unit-3" target="_blank" rel="noopener">Jensen Math — Grade 10 Unit 3: Factoring</a> (factoring review with videos; you need this for every rational expression)</li><li><a href="https://www.jensenmath.ca/s/Exam-Review-Part-2a-Rational-Expressions.pdf" target="_blank" rel="noopener">Jensen Math — Rational Expressions exam review (PDF)</a> (solutions: <a href="https://www.jensenmath.ca/s/Exam-Review-Part-2a-Rational-Expressions-SOLUTIONS.pdf" target="_blank" rel="noopener">PDF</a>)</li><li><a href="https://www.jensenmath.ca/new-home-page-1-1-2" target="_blank" rel="noopener">Jensen Math — Grade 11 (MCR3U)</a></li></ul></div>
+  </div>
+<script>
+const frac = (n, d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+const num = v => v < 0 ? '−' + (-v) : String(v);
+const gcd = (a, b) => b ? gcd(b, a % b) : Math.abs(a);
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const distinct = n => { const p = []; for (let v = -8; v <= 8; v++) if (v) p.push(v); return shuffle(p).slice(0, n); };
+const lin = a => a > 0 ? `(x + ${a})` : `(x − ${-a})`;
+const facts = (as, k) => (k && k !== 1 ? k : '') + as.map(lin).join('');
+function mul(p, q) { const r = Array(p.length + q.length - 1).fill(0); p.forEach((a, i) => q.forEach((b, j) => r[i + j] += a * b)); return r; }
+function expand(as, k) { return mul(as.map(a => [1, a]).reduce((p, q) => mul(p, q)), [k || 1]); }
+function polyStr(c) {
+  let s = ''; const n = c.length - 1;
+  c.forEach((v, i) => { const p = n - i; if (v === 0) return; const av = Math.abs(v);
+    const t = p === 0 ? String(av) : (av === 1 ? '' : av) + (p === 1 ? 'x' : 'x²');
+    s += s === '' ? (v < 0 ? '−' : '') + t : (v < 0 ? ' − ' : ' + ') + t; });
+  return s || '0';
+}
+const restr = roots => { const u = [...new Set(roots)].sort((a, b) => a - b); return 'x ≠ ' + u.map(num).join(', '); };
+const f = (as, k) => x => (k || 1) * as.reduce((p, a) => p * (x + a), 1);
+
+function mkSimplify() {
+  const [a, b, c] = distinct(3), m1 = pick([1, 2, 3]), m2 = pick([1, 2, 3]), g = gcd(m1, m2), c1 = m1 / g, c2 = m2 / g;
+  return { type: 'Simplify',
+    prob: 'Simplify and state the restrictions: ' + frac(polyStr(expand([a, b], m1)), polyStr(expand([a, c], m2))),
+    steps: [['Factor the numerator and denominator', frac(facts([a, b], m1), facts([a, c], m2))],
+            ['Divide out the common factor' + (g > 1 ? 's' : ''), 'Cancel ' + lin(a) + (g > 1 ? ' and the common number ' + g : '')],
+            ['Answer', frac((c1 === 1 ? '' : c1) + lin(b), (c2 === 1 ? '' : c2) + lin(c)), true],
+            ['Restrictions (from the original denominator)', restr([-a, -c]), true]],
+    orig: x => f([a, b], m1)(x) / f([a, c], m2)(x), ans: x => (c1 * (x + b)) / (c2 * (x + c)), bad: [-a, -c] };
+}
+function mkMultiply() {
+  const [a, b, c, d, e, g] = distinct(6);
+  return { type: 'Multiply',
+    prob: 'Simplify and state the restrictions: ' + frac(polyStr(expand([a, b])), polyStr(expand([c, d]))) + ' &middot; ' + frac(polyStr(expand([c, e])), polyStr(expand([a, g]))),
+    steps: [['Factor every numerator and denominator', frac(facts([a, b]), facts([c, d])) + ' &middot; ' + frac(facts([c, e]), facts([a, g]))],
+            ['Divide out factors across the fractions', 'Cancel ' + lin(a) + ' and ' + lin(c)],
+            ['Answer', frac(facts([b, e]), facts([d, g])), true],
+            ['Restrictions (every original denominator)', restr([-c, -d, -a, -g]), true]],
+    orig: x => f([a, b])(x) / f([c, d])(x) * f([c, e])(x) / f([a, g])(x), ans: x => f([b, e])(x) / f([d, g])(x), bad: [-a, -c, -d, -g] };
+}
+function mkDivide() {
+  const [a, b, c, d, e, g] = distinct(6);
+  return { type: 'Divide',
+    prob: 'Simplify and state the restrictions: ' + frac(polyStr(expand([a, b])), polyStr(expand([c, d]))) + ' &divide; ' + frac(polyStr(expand([a, e])), polyStr(expand([c, g]))),
+    steps: [['Flip the second fraction and multiply', frac(polyStr(expand([a, b])), polyStr(expand([c, d]))) + ' &middot; ' + frac(polyStr(expand([c, g])), polyStr(expand([a, e])))],
+            ['Factor everything', frac(facts([a, b]), facts([c, d])) + ' &middot; ' + frac(facts([c, g]), facts([a, e]))],
+            ['Divide out factors', 'Cancel ' + lin(a) + ' and ' + lin(c)],
+            ['Answer', frac(facts([b, g]), facts([d, e])), true],
+            ['Restrictions (denominators <em>and</em> the divisor&rsquo;s numerator)', restr([-c, -d, -g, -a, -e]), true]],
+    orig: x => f([a, b])(x) / f([c, d])(x) / (f([a, e])(x) / f([c, g])(x)), ans: x => f([b, g])(x) / f([d, e])(x), bad: [-a, -c, -d, -e, -g] };
+}
+function mkAddSub() {
+  for (;;) {
+    const [a, b] = distinct(2), k = 1 + Math.floor(Math.random() * 5), m = 1 + Math.floor(Math.random() * 5), s = pick([1, -1]);
+    const A = k + s * m, B = k * b + s * m * a;
+    if (B === 0 || (A !== 0 && (-B / A === -a || -B / A === -b))) continue;
+    const op = s > 0 ? '+' : '−';
+    return { type: 'Add / subtract',
+      prob: 'Simplify and state the restrictions: ' + frac(k, lin(a)) + ` ${op} ` + frac(m, lin(b)),
+      steps: [['Common denominator', 'The LCD is ' + lin(a) + lin(b)],
+              ['Rewrite each fraction over the LCD', frac(`${k}${lin(b)}`, lin(a) + lin(b)) + ` ${op} ` + frac(`${m}${lin(a)}`, lin(a) + lin(b))],
+              ['Combine the numerators' + (s < 0 ? ' (bracket the second one)' : ''), s < 0 ? `${k}${lin(b)} − ${m}${lin(a)} = ${polyStr([A, B])}` : `${k}${lin(b)} + ${m}${lin(a)} = ${polyStr([A, B])}`],
+              ['Answer', frac(polyStr([A, B]), lin(a) + lin(b)), true],
+              ['Restrictions', restr([-a, -b]), true]],
+      orig: x => k / (x + a) + s * m / (x + b), ans: x => (A * x + B) / ((x + a) * (x + b)), bad: [-a, -b] };
+  }
+}
+function mkRestrict() {
+  const [a, b] = distinct(2), n = pick([-5, -3, -2, 2, 3, 4, 6]);
+  return { type: 'Restrictions',
+    prob: 'For what values of x is ' + frac(polyStr([1, n]), polyStr(expand([a, b]))) + ' undefined?',
+    steps: [['Set the denominator equal to 0', polyStr(expand([a, b])) + ' = 0'], ['Factor', facts([a, b]) + ' = 0'],
+            ['Answer', restr([-a, -b]), true], ['Note', 'The numerator never creates a restriction.']],
+    orig: null, ans: null, bad: [] };
+}
+const makers = { 'Simplify': mkSimplify, 'Multiply': mkMultiply, 'Divide': mkDivide, 'Add / subtract': mkAddSub, 'Restrictions': mkRestrict };
+function make(t) { return t === 'Mixed' ? pick(Object.values(makers))() : makers[t](); }
+
+let cur = null, idx = 0, kind = null, seen = 0;
+const types = ['Simplify', 'Multiply', 'Divide', 'Add / subtract', 'Restrictions', 'Mixed'];
+const row = document.getElementById('types'), nextBtn = document.getElementById('nextBtn'), newBtn = document.getElementById('newBtn');
+function load() {
+  cur = make(kind); idx = 0; seen++;
+  document.getElementById('prob').innerHTML = `<span style="font-weight:400">${cur.type}:</span> ` + cur.prob.replace('Simplify and state the restrictions: ', '');
+  document.getElementById('stepsArea').innerHTML = cur.steps.map((s, n) => `<div class="step" id="st${n}"><span class="tag">${s[0]}</span><br><span class="${s[2] ? 'final' : ''}">${s[1]}</span></div>`).join('');
+  nextBtn.disabled = false; nextBtn.textContent = 'Show next step'; newBtn.disabled = false;
+  document.getElementById('count').textContent = `Problems this session: ${seen}`;
+}
+types.forEach(t => {
+  const b = document.createElement('button'); b.className = 'choice-btn'; b.textContent = t;
+  b.addEventListener('click', () => { document.querySelectorAll('#types .choice-btn').forEach(x => x.classList.remove('active')); b.classList.add('active'); kind = t; load(); });
+  row.appendChild(b);
+});
+nextBtn.addEventListener('click', () => {
+  if (!cur) return;
+  if (idx < cur.steps.length) { document.getElementById('st' + idx).classList.add('shown'); idx++; }
+  if (idx >= cur.steps.length) { nextBtn.disabled = true; nextBtn.textContent = 'All steps shown'; }
+});
+newBtn.addEventListener('click', () => { if (kind) load(); });
+
+// self-test: the answer must equal the original expression at points that are not restricted
+function selfTest(n) {
+  let bad = 0;
+  for (let i = 0; i < n; i++) {
+    for (const k of ['Simplify', 'Multiply', 'Divide', 'Add / subtract']) {
+      const p = make(k);
+      for (const x of [0.37, 1.91, -2.43, 5.2]) {
+        if (p.bad.some(r => Math.abs(r - x) < 1e-6)) continue;
+        const o = p.orig(x), a = p.ans(x);
+        if (!isFinite(o) || Math.abs(o - a) > 1e-7 * Math.max(1, Math.abs(o))) { bad++; console.log('MISMATCH', k, x, o, a); }
+      }
+    }
+  }
+  return bad;
+}
+window.rationalSelfTest = selfTest;
+</script>
+</body>
+</html>
