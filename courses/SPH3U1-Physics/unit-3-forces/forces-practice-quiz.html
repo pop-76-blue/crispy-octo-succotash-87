@@ -53,7 +53,7 @@
 
 <div class="wrap">
   <h1>Forces Practice Quiz</h1>
-  <p class="subtitle">10 questions covering free-body diagrams and Newton's three laws.</p>
+  <p class="subtitle">10 questions covering types of forces, free-body diagrams, and Newton's three laws, including tension.</p>
 
   <div class="callout">
     Try this under test conditions, then hit <strong>Submit</strong> to grade yourself and see explanations.
@@ -124,11 +124,11 @@ const QUESTIONS = [
   },
   {
     type: "numeric",
-    tag: "Applying F = ma",
-    prompt: "A 20 kg crate is pushed with 100 N of applied force, opposed by 40 N of friction. Find its acceleration, in m/s\u00b2.",
+    tag: "Using Newton's Laws",
+    prompt: "A 10 kg object (front) and a 5 kg object (back) are tied together with a string on a frictionless surface. A horizontal force of 45 N pulls the front object forward. Find the acceleration of the system, in m/s\u00b2.",
     correct: 3,
     tolerance: 0.2,
-    explain: "F_net = 100 \u2212 40 = 60 N. a = F_net/m = 60/20 = 3 m/s\u00b2."
+    explain: "Treat both as one 15 kg object: a = F_net/m_total = 45/15 = 3 m/s\u00b2."
   },
   {
     type: "mc",

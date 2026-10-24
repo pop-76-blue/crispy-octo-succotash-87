@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Using Newton's Laws - SPH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root {
+    --accent: #1a5f8a;
+    --accent-dark: #123f5c;
+    --accent-tint: #e6f0f6;
+  }
+  .train-wrap { max-width: 540px; margin: 10px auto; }
+  svg { width: 100%; height: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+  .obj-box { stroke-width: 1.5; }
+  .obj-1 { fill: #e6f0f6; stroke: #1a5f8a; }
+  .obj-2 { fill: #fbe9e6; stroke: #b5452e; }
+  .obj-3 { fill: #eef3e4; stroke: #6b8a2e; }
+  .rope-line { stroke: var(--ink-soft); stroke-width: 2; }
+  .force-arrow { stroke: var(--accent-dark); stroke-width: 3; color: var(--accent-dark); }
+  .svg-label { font-size: 12px; fill: var(--ink); font-family: var(--sans); text-anchor: middle; }
+  .slider-group { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px; margin: 14px 0; }
+  @media (max-width: 700px) { .slider-group { grid-template-columns: 1fr 1fr; } }
+  .slider-block label { display: block; font-size: 13px; color: var(--ink-soft); margin-bottom: 4px; }
+  .slider-block input[type=range] { width: 100%; }
+  table.calc-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+  table.calc-table th, table.calc-table td { border: 1px solid var(--line); padding: 8px 10px; text-align: center; }
+  table.calc-table th { background: var(--accent-tint); color: var(--accent-dark); }
+  .pulley-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 14px 0; }
+  @media (max-width: 650px) { .pulley-grid { grid-template-columns: 1fr; } }
+  .pulley-case { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px; text-align: center; font-size: 13.5px; }
+  .pulley-case strong { color: var(--accent-dark); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Home</a>
+  <a href="../index.html">SPH3U</a>
+  <span class="crumb-current">Using Newton's Laws</span>
+</div>
+
+<div class="wrap">
+  <h1>3.5 Using Newton's Laws</h1>
+  <p class="subtitle">Putting all three laws together: tension, connected objects, and combining forces with kinematics.</p>
+
+  <h2>Tension and Connected Objects</h2>
+  <div class="panel">
+    <p>In this course, ropes and strings are assumed to be <strong>massless and non-stretching</strong>.
+    Two useful consequences follow:</p>
+    <ul>
+      <li>The <strong>tension is the same throughout</strong> a single rope or string &mdash; it pulls
+      equally hard at both ends.</li>
+      <li>A <strong>pulley only changes the direction</strong> of a force. It never changes the
+      magnitude of the tension.</li>
+      <li>Objects connected by a taut string <strong>move together</strong>, sharing the exact same
+      acceleration.</li>
+    </ul>
+    <p>This lets you solve connected-object problems in two steps: treat everything as <strong>one
+    combined object</strong> to find the shared acceleration, then look at just <strong>one piece</strong>
+    at a time to find the tension in a particular rope.</p>
+  </div>
+
+  <h2>Try it: Train of Connected Objects</h2>
+  <div class="demo">
+    <p>Three objects are tied in a line with ropes and pulled by a single applied force at the front
+    (frictionless surface, matching the textbook's simplifying assumption).</p>
+
+    <div class="train-wrap">
+      <svg id="trainSvg" viewBox="0 0 520 160"></svg>
+    </div>
+
+    <div class="slider-group">
+      <div class="slider-block"><label>Mass 1 (front): <span id="m1Label">12 kg</span></label><input type="range" id="m1Slider" min="1" max="30" value="12" step="1"></div>
+      <div class="slider-block"><label>Mass 2 (middle): <span id="m2Label">11 kg</span></label><input type="range" id="m2Slider" min="1" max="30" value="11" step="1"></div>
+      <div class="slider-block"><label>Mass 3 (back): <span id="m3Label">7 kg</span></label><input type="range" id="m3Slider" min="1" max="30" value="7" step="1"></div>
+      <div class="slider-block"><label>Applied force: <span id="faLabel">120 N</span></label><input type="range" id="faSlider" min="10" max="300" value="120" step="1"></div>
+    </div>
+
+    <table class="calc-table">
+      <tbody id="resultsBody"></tbody>
+    </table>
+  </div>
+
+  <div class="callout">
+    <strong>Try this:</strong> Match the sliders to the textbook example: 12 kg, 11 kg, 7 kg, and
+    120 N applied. Before reading the table, calculate the shared acceleration by hand (treat all
+    three as one 30.0 kg object), then find the tension in Rope B (between masses 1 and 2, isolating
+    the combined 18.0 kg of masses 2+3) and Rope A (between masses 2 and 3, isolating mass 3 alone).
+    You should get 72 N and 28 N.
+  </div>
+
+  <h2>Tension Doesn't Double (or Cancel)</h2>
+  <div class="panel">
+    <p>A common mistake: assuming that splitting a weight across two strings, or redirecting it with
+    a pulley, changes the tension. It doesn't &mdash; as long as the system is in equilibrium, the
+    string(s) only ever need to supply enough tension to support the actual weight.</p>
+    <div class="pulley-grid">
+      <div class="pulley-case">A 120 N object hangs from <strong>one string</strong>.<br>Tension = <strong>120 N</strong></div>
+      <div class="pulley-case">The same object hangs from <strong>one string over a pulley</strong> (just redirected).<br>Tension = <strong>120 N</strong></div>
+      <div class="pulley-case">The same object is held by a string that passes over a pulley to a <strong>second, identical hanging object</strong> acting as a counterweight.<br>Tension = <strong>120 N</strong> (the second object is just doing the job the wall or your hand used to do)</div>
+    </div>
+  </div>
+
+  <h2>Combining Kinematics with Newton's Laws</h2>
+  <div class="panel">
+    <p>The Big Five equations from Unit 1 only work while <strong>acceleration is constant</strong>.
+    Since F<sub>net</sub> = ma, that means they only work while the <strong>net force stays constant</strong>
+    too. If a problem has several phases (e.g. pushing off, then coasting, then braking), you need to
+    treat each phase separately &mdash; find the acceleration for that phase using Newton's second
+    law, then apply a kinematics equation just within that phase.</p>
+    <p>Need to solve one of those phases? Use the <a href="../unit-1-motion/kinematics-equations-gravity.html">Big Five solver</a> from Unit 1 once you know that phase's acceleration.</p>
+  </div>
+
+  <p class="page-foot">SPH3U Study Hub</p>
+</div>
+
+<script>
+const svgNS = "http://www.w3.org/2000/svg";
+const svg = document.getElementById('trainSvg');
+function el(tag, attrs) {
+  const e = document.createElementNS(svgNS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  return e;
+}
+function drawArrow(x1, y1, x2, y2, cls) {
+  svg.appendChild(el('line', { class: cls, x1, y1, x2, y2 }));
+  const ang = Math.atan2(y2 - y1, x2 - x1);
+  const headLen = 8;
+  const p1x = x2 - headLen * Math.cos(ang - Math.PI / 6);
+  const p1y = y2 - headLen * Math.sin(ang - Math.PI / 6);
+  const p2x = x2 - headLen * Math.cos(ang + Math.PI / 6);
+  const p2y = y2 - headLen * Math.sin(ang + Math.PI / 6);
+  svg.appendChild(el('polygon', { class: cls, points: x2+","+y2+" "+p1x+","+p1y+" "+p2x+","+p2y, fill: 'currentColor' }));
+}
+
+function drawTrain() {
+  svg.innerHTML = "";
+  // object 3 (back), object 2 (middle), object 1 (front) -- drawn left (back) to right (front), force pulls right
+  const boxW = 70, boxH = 50, y = 55;
+  const x3 = 20, x2 = 150, x1 = 280;
+  svg.appendChild(el('rect', {class:'obj-box obj-3', x:x3, y, width:boxW, height:boxH, rx:6}));
+  svg.appendChild(el('rect', {class:'obj-box obj-2', x:x2, y, width:boxW, height:boxH, rx:6}));
+  svg.appendChild(el('rect', {class:'obj-box obj-1', x:x1, y, width:boxW, height:boxH, rx:6}));
+
+  svg.appendChild(el('line', {class:'rope-line', x1:x3+boxW, y1:y+boxH/2, x2:x2, y2:y+boxH/2}));
+  svg.appendChild(el('line', {class:'rope-line', x1:x2+boxW, y1:y+boxH/2, x2:x1, y2:y+boxH/2}));
+
+  drawArrow(x1+boxW, y+boxH/2, x1+boxW+60, y+boxH/2, 'force-arrow');
+
+  const l3 = el('text', {class:'svg-label', x:x3+boxW/2, y:y+boxH+16}); l3.textContent = "Mass 3"; svg.appendChild(l3);
+  const l2 = el('text', {class:'svg-label', x:x2+boxW/2, y:y+boxH+16}); l2.textContent = "Mass 2"; svg.appendChild(l2);
+  const l1 = el('text', {class:'svg-label', x:x1+boxW/2, y:y+boxH+16}); l1.textContent = "Mass 1"; svg.appendChild(l1);
+  const lA = el('text', {class:'svg-label', x:(x2+boxW+x3+boxW)/2 + 15, y:y-8}); lA.textContent = "Rope A"; svg.appendChild(lA);
+  const lB = el('text', {class:'svg-label', x:(x1+x2+boxW)/2, y:y-8}); lB.textContent = "Rope B"; svg.appendChild(lB);
+  const lF = el('text', {class:'svg-label', x:x1+boxW+30, y:y+boxH/2-10}); lF.textContent = "F_a"; svg.appendChild(lF);
+}
+
+function render() {
+  const m1 = Number(document.getElementById('m1Slider').value);
+  const m2 = Number(document.getElementById('m2Slider').value);
+  const m3 = Number(document.getElementById('m3Slider').value);
+  const Fa = Number(document.getElementById('faSlider').value);
+
+  document.getElementById('m1Label').textContent = m1 + " kg";
+  document.getElementById('m2Label').textContent = m2 + " kg";
+  document.getElementById('m3Label').textContent = m3 + " kg";
+  document.getElementById('faLabel').textContent = Fa + " N";
+
+  drawTrain();
+
+  const totalMass = m1 + m2 + m3;
+  const a = Fa / totalMass;
+  const tensionB = (m2 + m3) * a; // rope between mass 1 (front) and mass 2
+  const tensionA = m3 * a;        // rope between mass 2 and mass 3 (back)
+
+  document.getElementById('resultsBody').innerHTML =
+    "<tr><th>Quantity</th><th>Value</th></tr>" +
+    "<tr><td>Total mass (all three)</td><td>" + totalMass.toFixed(1) + " kg</td></tr>" +
+    "<tr><td>Shared acceleration, a = F<sub>a</sub>/m<sub>total</sub></td><td>" + a.toFixed(2) + " m/s\u00b2</td></tr>" +
+    "<tr><td>Tension in Rope B (between mass 1 and mass 2 \u2014 pulls mass 2 + mass 3)</td><td>" + tensionB.toFixed(1) + " N</td></tr>" +
+    "<tr><td>Tension in Rope A (between mass 2 and mass 3 \u2014 pulls mass 3 alone)</td><td>" + tensionA.toFixed(1) + " N</td></tr>";
+}
+
+['m1Slider','m2Slider','m3Slider','faSlider'].forEach(id => document.getElementById(id).addEventListener('input', render));
+render();
+</script>
+
+</body>
+</html>
