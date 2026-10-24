@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chem Diagnostic — SCH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent: #1c6e5e; --accent-dark: #124a3f; --accent-tint: #e3f2ee; }
+
+  table.ref-table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13.5px; }
+  table.ref-table th, table.ref-table td { border: 1px solid var(--line); padding: 7px 9px; text-align: left; }
+  table.ref-table th { background: var(--accent-tint); color: var(--accent-dark); }
+
+  .q-section { margin: 26px 0; }
+  .q-section-title { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid var(--accent); padding-bottom: 4px; margin-bottom: 10px; }
+  .q-section-title h3 { margin: 0; color: var(--accent-dark); font-size: 16px; }
+
+  .el-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 14px 0; }
+  .el-row select { font-family: var(--mono); font-size: 16px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; }
+  .el-out { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-top: 14px; }
+  .el-box { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; text-align: center; }
+  .el-box .num { font-weight: 700; color: var(--accent-dark); font-family: var(--mono); font-size: 16px; }
+  .el-box .lbl { font-size: 11.5px; color: var(--ink-soft); }
+
+  .classify-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .classify-item:last-child { border-bottom: none; }
+  .classify-item .formula { font-family: var(--mono); font-size: 16px; min-width: 70px; }
+  .classify-item label { font-size: 13px; margin-right: 10px; white-space: nowrap; }
+  .classify-item input[type="checkbox"] { accent-color: var(--accent); margin-right: 4px; }
+  .classify-item.correct { background: #eaf6f1; }
+  .classify-item.wrong { background: #fbeaea; }
+
+  .iq-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  .iq-item:last-child { border-bottom: none; }
+  .iq-item select { font-family: var(--mono); font-size: 14px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; }
+
+  .practice-item { border-bottom: 1px solid var(--line); padding: 10px 0; }
+  .practice-item:last-child { border-bottom: none; }
+  .answer { display: none; margin-top: 6px; color: var(--accent-dark); font-weight: 600; }
+  .answer.shown { display: block; }
+
+  .drill-eq { font-family: var(--mono); font-size: 16px; text-align: center; margin: 10px 0; }
+  .drill-select { text-align: center; margin: 10px 0; }
+  .drill-select select { font-family: var(--mono); font-size: 15px; padding: 7px 10px; border: 1px solid var(--line); border-radius: 6px; }
+  .drill-feedback { text-align: center; min-height: 20px; font-weight: 600; margin-top: 6px; }
+  .drill-feedback.ok { color: var(--accent-dark); }
+  .drill-feedback.bad { color: #a03030; }
+  .drill-nav { text-align: center; margin-top: 10px; }
+
+  .score-bar { position: sticky; bottom: 0; background: var(--surface); border-top: 2px solid var(--accent); padding: 14px 18px; margin: 30px -24px 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+  .score-total { font-weight: 700; font-size: 16px; color: var(--accent-dark); }
+
+  .slider-wrap { max-width: 440px; margin: 16px auto; }
+  .slider-wrap input[type="range"] { width: 100%; accent-color: var(--accent); }
+  .slider-labels { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--ink-soft); margin-top: 4px; }
+  textarea { width: 100%; max-width: 500px; min-height: 60px; font-family: var(--sans); font-size: 14.5px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; display: block; margin: 10px auto; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Study Hub</a>
+  <a href="../index.html">SCH3U — Chemistry</a>
+  <span class="crumb-current">Chem Diagnostic</span>
+</div>
+
+<div class="wrap">
+  <h1>Are You Ready for Grade 11 Chemistry?</h1>
+  <p class="subtitle">Reference · A Grade 9/10 recall check before Unit 1 starts. Use a periodic table and your old notes as needed.</p>
+
+  <div class="callout">
+    This isn't graded by your teacher — it's just to show you (and future-you) where your Gr9/10 chemistry
+    stands before diving into Unit 1. Work through it, then be honest in the reflection at the end.
+  </div>
+
+  <div class="q-section">
+    <div class="q-section-title"><h3>A. Subatomic Particles</h3></div>
+    <table class="ref-table">
+      <tr><th></th><th>Proton</th><th>Neutron</th><th>Electron</th></tr>
+      <tr><td>Relative mass</td><td>1</td><td>1</td><td>negligible (~1/1840)</td></tr>
+      <tr><td>Relative charge</td><td>+1</td><td>0</td><td>−1</td></tr>
+      <tr><td>Location</td><td>Nucleus</td><td>Nucleus</td><td>Surrounding shells</td></tr>
+    </table>
+  </div>
+
+  <div class="q-section">
+    <div class="q-section-title"><h3>B. Element Profile</h3></div>
+    <div class="demo">
+      <div class="el-row">
+        <select id="elSelect"></select>
+      </div>
+      <div class="el-out" id="elOut"></div>
+    </div>
+  </div>
+
+  <div class="q-section">
+    <div class="q-section-title"><h3>C. Periodic Table Families</h3></div>
+    <table class="ref-table">
+      <tr><th>Region</th><th>Where on the table</th></tr>
+      <tr><td>Alkali metals</td><td>Group 1 (not H)</td></tr>
+      <tr><td>Alkaline earth metals</td><td>Group 2</td></tr>
+      <tr><td>Transition metals</td><td>Groups 3–12</td></tr>
+      <tr><td>Metalloids</td><td>Border the staircase line (e.g. Si, As)</td></tr>
+      <tr><td>Halogens</td><td>Group 17</td></tr>
+      <tr><td>Noble gases</td><td>Group 18</td></tr>
+      <tr><td>Rare earth metals (lanthanides/actinides)</td><td>The two detached rows below the main table</td></tr>
+    </table>
+  </div>
+
+  <div class="q-section">
+    <div class="q-section-title"><h3>D. Atom, Molecule, Compound, or Element?</h3></div>
+    <p>Check every label that applies — more than one can be correct.</p>
+    <div id="classifyList"></div>
+    <div style="text-align:center; margin-top:10px;"><button class="op-btn" id="classifyCheck" type="button">Check</button></div>
+  </div>
+
+  <div class="q-section">
+    <div class="q-section-title"><h3>E. Ionic or Covalent?</h3></div>
+    <div class="callout">
+      <strong>Ionic:</strong> metal + nonmetal, electrons transferred. <strong>Covalent (molecular):</strong>
+      nonmetal + nonmetal, electrons shared.
+    </div>
+    <div id="ionicList"></div>
+    <div style="text-align:center; margin-top:10px;"><button class="op-btn" id="ionicCheck" type="button">Check</button></div>
+  </div>
+
+  <div class="q-section">
+    <div class="q-section-title"><h3>F. Spot the Error</h3></div>
+    <p>Each equation below has a mistake. Figure out what's wrong before revealing.</p>
+    <div class="panel" id="errorList"></div>
+  </div>
+
+  <div class="q-section">
+    <div class="q-section-title"><h3>G. Name the Reaction Type</h3></div>
+    <div class="demo">
+      <div class="drill-eq" id="drillEq"></div>
+      <div class="drill-select">
+        <select id="drillAnswer">
+          <option value="">— choose a type —</option>
+          <option value="synthesis">Synthesis</option>
+          <option value="decomposition">Decomposition</option>
+          <option value="single displacement">Single displacement</option>
+          <option value="double displacement">Double displacement</option>
+        </select>
+        <button class="op-btn" id="drillCheck" type="button">Check</button>
+      </div>
+      <div class="drill-feedback" id="drillFeedback"></div>
+      <div class="drill-nav"><button class="op-btn" id="drillNext" type="button">Next equation</button></div>
+    </div>
+  </div>
+
+  <div class="q-section">
+    <div class="q-section-title"><h3>H. Reflection</h3></div>
+    <div class="slider-wrap">
+      <input type="range" id="readySlider" min="0" max="100" value="50">
+      <div class="slider-labels"><span>Not ready at all</span><span>Somewhat ready</span><span>Very ready</span></div>
+    </div>
+    <p style="text-align:center; font-size:13.5px; color:var(--ink-soft);">What topics do you feel you need to revisit before Unit 1 starts?</p>
+    <textarea placeholder="Jot a note to yourself here..."></textarea>
+    <p style="text-align:center; font-size:12px; color:var(--ink-soft);">(This page doesn't save anything — it's just for your own reflection right now.)</p>
+  </div>
+</div>
+
+<div class="page-foot">SCH3U · Reference — Diagnostic</div>
+
+<script>
+  // B. Element profile
+  const elements = {
+    Na: { metal: 'Metal', group: 'Alkali metal', z: 11, a: 23, valence: 1, shells: 3, capacity: '1+' },
+    F:  { metal: 'Nonmetal', group: 'Halogen', z: 9, a: 19, valence: 7, shells: 2, capacity: '1−' },
+    Ar: { metal: 'Nonmetal', group: 'Noble gas', z: 18, a: 40, valence: 8, shells: 3, capacity: '0 (stable)' },
+    Mg: { metal: 'Metal', group: 'Alkaline earth metal', z: 12, a: 24, valence: 2, shells: 3, capacity: '2+' },
+    O:  { metal: 'Nonmetal', group: 'Chalcogen', z: 8, a: 16, valence: 6, shells: 2, capacity: '2−' },
+    Cl: { metal: 'Nonmetal', group: 'Halogen', z: 17, a: 35, valence: 7, shells: 3, capacity: '1−' },
+  };
+  const elSelect = document.getElementById('elSelect');
+  Object.keys(elements).forEach(sym => {
+    const opt = document.createElement('option'); opt.value = sym; opt.textContent = sym;
+    elSelect.appendChild(opt);
+  });
+  const elOut = document.getElementById('elOut');
+  function updateEl() {
+    const d = elements[elSelect.value];
+    const n = d.a - d.z;
+    elOut.innerHTML = `
+      <div class="el-box"><div class="num">${d.metal}</div><div class="lbl">Metal or nonmetal</div></div>
+      <div class="el-box"><div class="num">${d.group}</div><div class="lbl">Group name</div></div>
+      <div class="el-box"><div class="num">${d.a}<sub></sub> / ${d.z}</div><div class="lbl">Mass # / atomic #</div></div>
+      <div class="el-box"><div class="num">${d.z} / ${d.z} / ${n}</div><div class="lbl">Protons / electrons / neutrons</div></div>
+      <div class="el-box"><div class="num">${d.shells}</div><div class="lbl"># of electron shells</div></div>
+      <div class="el-box"><div class="num">${d.valence}</div><div class="lbl"># of valence electrons</div></div>
+      <div class="el-box"><div class="num">${d.capacity}</div><div class="lbl">Combining capacity</div></div>
+    `;
+  }
+  elSelect.addEventListener('change', updateEl);
+  elSelect.value = 'Na';
+  updateEl();
+
+  // D. Classify
+  const classifyData = [
+    { formula: 'Ne', correct: ['atom', 'element'] },
+    { formula: 'O₂', correct: ['molecule', 'element'] },
+    { formula: 'CO₂', correct: ['molecule', 'compound'] },
+    { formula: 'NaCl', correct: ['compound'] },
+    { formula: 'Au', correct: ['atom', 'element'] },
+  ];
+  const classifyList = document.getElementById('classifyList');
+  classifyData.forEach((item, i) => {
+    const div = document.createElement('div');
+    div.className = 'classify-item';
+    div.dataset.correct = item.correct.join(',');
+    div.innerHTML = `
+      <span class="formula">${item.formula}</span>
+      <span>
+        <label><input type="checkbox" value="atom"> atom</label>
+        <label><input type="checkbox" value="molecule"> molecule</label>
+        <label><input type="checkbox" value="compound"> compound</label>
+        <label><input type="checkbox" value="element"> element</label>
+      </span>
+    `;
+    classifyList.appendChild(div);
+  });
+  document.getElementById('classifyCheck').addEventListener('click', () => {
+    classifyList.querySelectorAll('.classify-item').forEach(div => {
+      const correct = div.dataset.correct.split(',');
+      const checked = Array.from(div.querySelectorAll('input:checked')).map(c => c.value);
+      const isCorrect = correct.length === checked.length && correct.every(c => checked.includes(c));
+      div.classList.remove('correct', 'wrong');
+      div.classList.add(isCorrect ? 'correct' : 'wrong');
+    });
+  });
+
+  // E. Ionic or covalent
+  const ionicData = [
+    { formula: 'MgO', answer: 'ionic' },
+    { formula: 'CO₂', answer: 'covalent' },
+    { formula: 'K₂SO₄', answer: 'ionic' },
+    { formula: 'N₂O₅', answer: 'covalent' },
+    { formula: 'CaBr₂', answer: 'ionic' },
+  ];
+  const ionicList = document.getElementById('ionicList');
+  ionicData.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'iq-item';
+    div.dataset.answer = item.answer;
+    div.innerHTML = `
+      <span class="formula" style="font-family:var(--mono);">${item.formula}</span>
+      <select>
+        <option value="">— choose —</option>
+        <option value="ionic">Ionic</option>
+        <option value="covalent">Covalent</option>
+      </select>
+    `;
+    ionicList.appendChild(div);
+  });
+  document.getElementById('ionicCheck').addEventListener('click', () => {
+    ionicList.querySelectorAll('.iq-item').forEach(div => {
+      const sel = div.querySelector('select');
+      sel.style.borderColor = sel.value === div.dataset.answer ? '#1c6e5e' : '#a03030';
+      sel.style.background = sel.value === div.dataset.answer ? '#eaf6f1' : '#fbeaea';
+    });
+  });
+
+  // F. Spot the error
+  const errors = [
+    { eq: 'Mg + O₂ → MgO', a: 'Not balanced — there are 2 O atoms on the left but only 1 on the right. Correct: 2Mg + O₂ → 2MgO' },
+    { eq: '2Na + Cl₂ → NaCl', a: 'Not balanced — 2 Na and 2 Cl on the left, but only 1 of each on the right. Correct: 2Na + Cl₂ → 2NaCl' },
+    { eq: 'H₂(g) + O₂(g) → H₂O(g)', a: 'Not balanced — 2 O on the left, only 1 O on the right, and H is off too. Correct: 2H₂ + O₂ → 2H₂O' },
+  ];
+  const errorList = document.getElementById('errorList');
+  errors.forEach((e, i) => {
+    const div = document.createElement('div');
+    div.className = 'practice-item';
+    div.innerHTML = `<div style="font-family:var(--mono); text-align:center; font-size:16px;">${e.eq}</div>
+      <div style="text-align:center;"><button class="op-btn reveal-btn" type="button" style="margin-top:8px;">Reveal</button></div>
+      <div class="answer" style="text-align:center;">${e.a}</div>`;
+    const btn = div.querySelector('button');
+    const ans = div.querySelector('.answer');
+    btn.addEventListener('click', () => {
+      ans.classList.toggle('shown');
+      btn.textContent = ans.classList.contains('shown') ? 'Hide' : 'Reveal';
+    });
+    errorList.appendChild(div);
+  });
+
+  // G. Reaction type drill
+  const drillData = [
+    { eq: 'Zn + 2HCl \u2192 ZnCl\u2082 + H\u2082', type: 'single displacement' },
+    { eq: 'CaCO\u2083 \u2192 CaO + CO\u2082', type: 'decomposition' },
+    { eq: '2Mg + O\u2082 \u2192 2MgO', type: 'synthesis' },
+    { eq: 'AgNO\u2083 + NaCl \u2192 AgCl + NaNO\u2083', type: 'double displacement' },
+  ];
+  let drillIdx = 0;
+  const drillEq = document.getElementById('drillEq');
+  const drillAnswer = document.getElementById('drillAnswer');
+  const drillFeedback = document.getElementById('drillFeedback');
+  function showDrill() {
+    drillEq.textContent = drillData[drillIdx].eq;
+    drillAnswer.value = '';
+    drillFeedback.textContent = '';
+    drillFeedback.className = 'drill-feedback';
+  }
+  showDrill();
+  document.getElementById('drillCheck').addEventListener('click', () => {
+    if (drillAnswer.value === drillData[drillIdx].type) {
+      drillFeedback.textContent = 'Correct!';
+      drillFeedback.className = 'drill-feedback ok';
+    } else {
+      drillFeedback.textContent = `Not quite — this is ${drillData[drillIdx].type}.`;
+      drillFeedback.className = 'drill-feedback bad';
+    }
+  });
+  document.getElementById('drillNext').addEventListener('click', () => {
+    drillIdx = (drillIdx + 1) % drillData.length;
+    showDrill();
+  });
+</script>
+</body>
+</html>
