@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lewis Structures — SCH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent: #1c6e5e; --accent-dark: #124a3f; --accent-tint: #e3f2ee; }
+
+  .rule-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin: 16px 0; }
+  .rule-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; }
+  .rule-card h3 { margin-bottom: 6px; font-size: 15px; }
+
+  .dot-wrap { display: flex; flex-wrap: wrap; gap: 24px; align-items: center; justify-content: center; }
+  .dot-controls { display: flex; flex-direction: column; gap: 10px; align-items: center; }
+  .dot-controls select, .dot-controls input {
+    font-family: var(--mono); font-size: 16px; padding: 8px 10px;
+    border: 1px solid var(--line); border-radius: 6px; width: 180px; text-align: center;
+  }
+  #dotSvg { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+
+  .fc-row { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; margin: 14px 0; }
+  .fc-row label { font-size: 13px; color: var(--ink-soft); display: block; margin-bottom: 4px; }
+  .fc-row input { width: 100px; font-family: var(--mono); font-size: 16px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; text-align: center; }
+  .fc-out { text-align: center; margin-top: 12px; font-size: 16px; }
+  .fc-out .final { font-size: 24px; font-weight: 700; color: var(--accent-dark); font-family: var(--mono); }
+
+  .example-svg { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px; }
+
+  .practice-item { border-bottom: 1px solid var(--line); padding: 10px 0; }
+  .practice-item:last-child { border-bottom: none; }
+  .answer { display: none; margin-top: 6px; color: var(--accent-dark); font-weight: 600; }
+  .answer.shown { display: block; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Study Hub</a>
+  <a href="../index.html">SCH3U — Chemistry</a>
+  <span class="crumb-current">Lewis Structures</span>
+</div>
+
+<div class="wrap">
+  <h1>Lewis Structures</h1>
+  <p class="subtitle">Unit 4: Bonding &amp; Molecular Shape · Dot diagrams, ionic and covalent bonding, formal charge, resonance.</p>
+
+  <h2>Dot diagrams for atoms</h2>
+  <div class="rule-grid">
+    <div class="rule-card"><h3>Group number = valence electrons</h3><p>For main-group elements, the group number tells you how many valence (outer shell) electrons an atom has.</p></div>
+    <div class="rule-card"><h3>Symbol = nucleus + inner shells</h3><p>The element symbol stands in for everything except the valence electrons.</p></div>
+    <div class="rule-card"><h3>One per side, then pair up</h3><p>Place one dot on each of the four sides of the symbol before doubling any of them up.</p></div>
+  </div>
+
+  <div class="demo">
+    <h3 style="text-align:center;">Try it: Dot Diagram Generator</h3>
+    <div class="dot-wrap">
+      <div class="dot-controls">
+        <div>
+          <label style="font-size:13px; color:var(--ink-soft);">Element symbol</label><br>
+          <input type="text" id="dotSymbol" value="O" maxlength="2">
+        </div>
+        <div>
+          <label style="font-size:13px; color:var(--ink-soft);">Valence electrons</label><br>
+          <select id="dotCount">
+            <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+            <option value="4">4</option><option value="5">5</option><option value="6" selected>6</option>
+            <option value="7">7</option><option value="8">8</option>
+          </select>
+        </div>
+      </div>
+      <svg id="dotSvg" width="160" height="160" viewBox="0 0 160 160"></svg>
+    </div>
+  </div>
+
+  <h2>Ionic bonding</h2>
+  <div class="callout">
+    <strong>Octet rule:</strong> atoms lose or gain electrons to reach a full outer shell (8 electrons — stable,
+    like the nearest noble gas). Ions get square brackets and a charge; curved arrows show the electron transfer.
+  </div>
+  <p>Example: sodium (1 valence e⁻, EN 0.9) + fluorine (7 valence e⁻, EN 4.0) → sodium transfers its one electron
+  to fluorine. Both end up with full shells: Na⁺ and F⁻, giving the formula NaF.</p>
+
+  <h2>Covalent bonding</h2>
+  <div class="callout">
+    <strong>"Sharing is caring" rule:</strong> however many electrons an atom needs to complete its octet, it
+    shares that many. A shared pair = one bond (one line). Single bond = 1 line, double = 2 lines, triple = 3 lines.
+    Unshared pairs on an atom are called lone pairs.
+  </div>
+
+  <h2>Drawing complex Lewis structures</h2>
+  <div class="panel">
+    <ol style="margin:0; padding-left:20px; line-height:1.9;">
+      <li>Calculate <strong>TVE</strong> (total valence electrons) — add each atom's valence electrons; subtract electrons for a positive charge, add for a negative charge. TVE must come out even.</li>
+      <li>Put the atom with the <em>lowest electronegativity</em> (usually first in the formula, or with the most unpaired electrons) in the <strong>centre</strong>. Place a single bond from it to every other atom.</li>
+      <li>Give every outer atom a full octet using lone pairs.</li>
+      <li>Count the electrons used. If you've used exactly TVE, you're done (push lone pairs in to fill the central atom if it's short). If you have leftover electrons, add them to the central atom.</li>
+      <li>If it's an ion, add square brackets and the charge.</li>
+    </ol>
+  </div>
+
+  <div class="callout">
+    <strong>Exceptions:</strong> Be and B can be stable with fewer than 8 electrons around them.
+    Any atom from period 3 or lower can hold an <em>expanded</em> octet (more than 8).
+  </div>
+
+  <h2>Formal charge</h2>
+  <div class="callout" style="font-family:var(--mono); text-align:center;">
+    FC = (valence electrons of free atom) − (lone pair electrons) − (bonding electrons)
+  </div>
+  <p>Formal charge helps pick between multiple valid-looking Lewis structures. The best structure has formal
+  charges as close to zero as possible, with any negative charge on the most electronegative atom.</p>
+
+  <div class="demo">
+    <h3 style="text-align:center;">Try it: Formal Charge Calculator</h3>
+    <div class="fc-row">
+      <div><label>Valence e⁻ (free atom)</label><input type="text" id="fcValence" value="6"></div>
+      <div><label>Lone pair electrons</label><input type="text" id="fcLone" value="4"></div>
+      <div><label>Bonding electrons</label><input type="text" id="fcBond" value="4"></div>
+    </div>
+    <div class="fc-out" id="fcOut"></div>
+  </div>
+
+  <h2>Resonance</h2>
+  <div class="callout">
+    Some molecules (like the nitrate ion, NO₃⁻) can be drawn with more than one valid Lewis structure that only
+    differ in <em>where</em> the double bond sits — these are <strong>resonance structures</strong>, not different
+    molecules. In reality, the extra pair of electrons is delocalized (spread across the whole structure), so all
+    the bonds end up the same length — in between a single and a double bond. We connect resonance structures
+    with a double-headed arrow (↔) to show this.
+  </div>
+
+  <h2>Practice</h2>
+  <div class="panel" id="practiceList"></div>
+
+  <div class="callout" style="margin-top:32px;">
+    <strong>Try this:</strong> before checking the tool, calculate the TVE for the phosphate ion (PO₄³⁻) by
+    hand — remember to account for the charge — then check your total makes sense (it should be even).
+  </div>
+</div>
+
+<div class="page-foot">SCH3U · Unit 4 — Bonding &amp; Molecular Shape</div>
+
+<script>
+  // Dot diagram generator
+  const svgNS = "http://www.w3.org/2000/svg";
+  const dotSvg = document.getElementById('dotSvg');
+  const dotSymbol = document.getElementById('dotSymbol');
+  const dotCount = document.getElementById('dotCount');
+
+  // Positions for up to 8 dots, in pairs around 4 sides (top, right, bottom, left)
+  const cx = 80, cy = 80, r = 34, offset = 10;
+  const sidePositions = [
+    [[cx, cy - r - offset], [cx, cy - r]],       // top pair
+    [[cx + r + offset, cy], [cx + r, cy]],       // right pair
+    [[cx, cy + r + offset], [cx, cy + r]],       // bottom pair
+    [[cx - r - offset, cy], [cx - r, cy]],       // left pair
+  ];
+
+  function drawDots() {
+    dotSvg.innerHTML = '';
+    const sym = (dotSymbol.value || '?').trim();
+    const n = parseInt(dotCount.value, 10);
+
+    const text = document.createElementNS(svgNS, 'text');
+    text.setAttribute('x', cx);
+    text.setAttribute('y', cy + 8);
+    text.setAttribute('text-anchor', 'middle');
+    text.setAttribute('font-size', '26');
+    text.setAttribute('font-weight', '700');
+    text.setAttribute('font-family', 'var(--mono)');
+    text.setAttribute('fill', '#1e2430');
+    text.textContent = sym;
+    dotSvg.appendChild(text);
+
+    // Place one electron per side first (up to 4), then pair up
+    let placed = 0;
+    for (let side = 0; side < 4 && placed < n; side++) {
+      const [outer] = sidePositions[side];
+      const dot = document.createElementNS(svgNS, 'circle');
+      dot.setAttribute('cx', outer[0]);
+      dot.setAttribute('cy', outer[1]);
+      dot.setAttribute('r', 4);
+      dot.setAttribute('fill', '#1c6e5e');
+      dotSvg.appendChild(dot);
+      placed++;
+    }
+    for (let side = 0; side < 4 && placed < n; side++) {
+      const [, inner] = sidePositions[side];
+      const dot = document.createElementNS(svgNS, 'circle');
+      dot.setAttribute('cx', inner[0]);
+      dot.setAttribute('cy', inner[1]);
+      dot.setAttribute('r', 4);
+      dot.setAttribute('fill', '#124a3f');
+      dotSvg.appendChild(dot);
+      placed++;
+    }
+  }
+  [dotSymbol, dotCount].forEach(el => el.addEventListener('input', drawDots));
+  drawDots();
+
+  // Formal charge calculator
+  const fcValence = document.getElementById('fcValence');
+  const fcLone = document.getElementById('fcLone');
+  const fcBond = document.getElementById('fcBond');
+  const fcOut = document.getElementById('fcOut');
+  function updateFC() {
+    const v = parseFloat(fcValence.value), l = parseFloat(fcLone.value), b = parseFloat(fcBond.value);
+    if (isNaN(v) || isNaN(l) || isNaN(b)) { fcOut.textContent = 'Enter all three values.'; return; }
+    const fc = v - l - b;
+    fcOut.innerHTML = `Formal charge = <span class="final">${fc > 0 ? '+' + fc : fc}</span>`;
+  }
+  [fcValence, fcLone, fcBond].forEach(el => el.addEventListener('input', updateFC));
+  updateFC();
+
+  // Practice
+  const practice = [
+    { q: 'What is the TVE for CO₂?', a: '4 (C) + 6×2 (O) = 16 electrons' },
+    { q: 'In a Lewis structure, which atom usually goes in the centre: the one with higher or lower electronegativity?', a: 'Lower electronegativity (with some exceptions, like H never being central)' },
+    { q: 'Draw out (in words) the structure of HCN. Which atom is central, and what bonds does it form?', a: 'Carbon is central: single bond to H, triple bond to N, with one lone pair on N' },
+    { q: 'A Lewis structure has an oxygen atom with 2 lone pairs and 1 single bond. What is its formal charge? (O has 6 valence e⁻)', a: 'FC = 6 − (2×2) − 1 = 6 − 4 − 1 = +1' },
+    { q: 'Why does the nitrate ion (NO₃⁻) have resonance structures instead of one fixed structure?', a: 'The double bond could form with any of the three oxygens equally well — the real structure is a blend (delocalized) of all three possibilities, not one fixed arrangement.' },
+  ];
+  const list = document.getElementById('practiceList');
+  practice.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'practice-item';
+    div.innerHTML = `<span>${i + 1}. ${p.q}</span><button class="op-btn reveal-btn" type="button" style="margin-left:10px;">Reveal</button><div class="answer">${p.a}</div>`;
+    const btn = div.querySelector('button');
+    const ans = div.querySelector('.answer');
+    btn.addEventListener('click', () => {
+      ans.classList.toggle('shown');
+      btn.textContent = ans.classList.contains('shown') ? 'Hide' : 'Reveal';
+    });
+    list.appendChild(div);
+  });
+</script>
+</body>
+</html>

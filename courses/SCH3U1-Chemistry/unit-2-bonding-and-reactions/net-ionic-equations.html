@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Net Ionic Equations — SCH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent: #1c6e5e; --accent-dark: #124a3f; --accent-tint: #e3f2ee; }
+
+  table.ref-table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13.5px; }
+  table.ref-table th, table.ref-table td { border: 1px solid var(--line); padding: 7px 9px; text-align: left; }
+  table.ref-table th { background: var(--accent-tint); color: var(--accent-dark); }
+
+  .eq-stage { font-family: var(--mono); font-size: 15px; margin: 8px 0; text-align: center; }
+  .eq-stage .lbl { display: block; font-family: var(--sans); font-weight: 600; font-size: 13px; color: var(--ink-soft); margin-bottom: 2px; }
+  .spectator { color: #a0a0a0; text-decoration: line-through; }
+
+  .practice-item { border-bottom: 1px solid var(--line); padding: 14px 0; }
+  .practice-item:last-child { border-bottom: none; }
+  .answer { display: none; margin-top: 8px; }
+  .answer.shown { display: block; }
+  .answer .eq-stage { text-align: left; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Study Hub</a>
+  <a href="../index.html">SCH3U — Chemistry</a>
+  <span class="crumb-current">Net Ionic Equations</span>
+</div>
+
+<div class="wrap">
+  <h1>Molecular, Complete Ionic &amp; Net Ionic Equations</h1>
+  <p class="subtitle">Unit 5: Chemical Reactions · Three ways to write the same precipitation reaction.</p>
+
+  <div class="callout">
+    When two ionic solutions are mixed and an insoluble solid forms, that's a <strong>precipitation reaction</strong>
+    and the solid is the <strong>precipitate</strong>. Whether a combination is soluble or not comes from a set of
+    solubility rules (reference table below).
+  </div>
+
+  <h2>Solubility rules (reference)</h2>
+  <table class="ref-table">
+    <tr><th>Ion combination</th><th>Generally...</th><th>Exceptions</th></tr>
+    <tr><td>Group 1 (Li⁺, Na⁺, K⁺...) and NH₄⁺ compounds</td><td>Soluble</td><td>—</td></tr>
+    <tr><td>Nitrates (NO₃⁻), acetates (CH₃COO⁻)</td><td>Soluble</td><td>—</td></tr>
+    <tr><td>Chlorides, bromides, iodides</td><td>Soluble</td><td>Ag⁺, Pb²⁺, Hg₂²⁺ are insoluble</td></tr>
+    <tr><td>Sulfates (SO₄²⁻)</td><td>Soluble</td><td>Ba²⁺, Pb²⁺, Ca²⁺, Sr²⁺ are insoluble</td></tr>
+    <tr><td>Carbonates, phosphates, sulfides, hydroxides</td><td>Insoluble</td><td>Group 1 and NH₄⁺ versions are soluble</td></tr>
+  </table>
+
+  <h2>The three equations</h2>
+  <p>Example: mixing potassium chloride and lead(II) nitrate solutions.</p>
+
+  <div class="panel">
+    <div class="eq-stage"><span class="lbl">1. Molecular equation</span>— every substance written as a whole compound, with states:</div>
+    <div class="eq-stage">2 KCl (aq) + Pb(NO₃)₂ (aq) → 2 KNO₃ (aq) + PbCl₂ (s)</div>
+
+    <div class="eq-stage" style="margin-top:16px;"><span class="lbl">2. Complete ionic equation</span>— split every <em>aqueous</em> compound into its ions. Leave solids and liquids (like water) whole:</div>
+    <div class="eq-stage">2 K⁺(aq) + 2 Cl⁻(aq) + Pb²⁺(aq) + 2 NO₃⁻(aq) → <span class="spectator">2 K⁺(aq) + 2 NO₃⁻(aq)</span> + PbCl₂ (s)</div>
+
+    <div class="eq-stage" style="margin-top:16px;"><span class="lbl">3. Net ionic equation</span>— cross out <strong>spectator ions</strong> (ions unchanged on both sides) and keep what's left:</div>
+    <div class="eq-stage">2 Cl⁻(aq) + Pb²⁺(aq) → PbCl₂ (s)</div>
+  </div>
+
+  <div class="callout">
+    <strong>Spectator ions</strong> are the ions that appear in the same form on both sides of the complete ionic
+    equation — they don't actually participate in forming the precipitate, so the net ionic equation leaves them out.
+  </div>
+
+  <h2>Practice</h2>
+  <p>For each pair of reactants, write out all three equations (balanced, with states), then reveal to check.</p>
+
+  <div class="panel" id="practiceList"></div>
+
+  <div class="callout" style="margin-top:32px;">
+    <strong>Try this:</strong> before revealing the first practice problem, predict which ions will be spectators —
+    the ones that stay dissolved and don't end up in the precipitate.
+  </div>
+</div>
+
+<div class="page-foot">SCH3U · Unit 5 — Chemical Reactions</div>
+
+<script>
+  const practice = [
+    {
+      q: 'Potassium iodide + lead(II) nitrate',
+      a: `
+        <div class="eq-stage"><span class="lbl">Molecular</span>2 KI (aq) + Pb(NO₃)₂ (aq) → 2 KNO₃ (aq) + PbI₂ (s)</div>
+        <div class="eq-stage"><span class="lbl">Complete ionic</span>2 K⁺(aq) + 2 I⁻(aq) + Pb²⁺(aq) + 2 NO₃⁻(aq) → 2 K⁺(aq) + 2 NO₃⁻(aq) + PbI₂ (s)</div>
+        <div class="eq-stage"><span class="lbl">Net ionic</span>2 I⁻(aq) + Pb²⁺(aq) → PbI₂ (s)</div>
+      `
+    },
+    {
+      q: 'Sodium sulfate + barium chloride',
+      a: `
+        <div class="eq-stage"><span class="lbl">Molecular</span>Na₂SO₄ (aq) + BaCl₂ (aq) → 2 NaCl (aq) + BaSO₄ (s)</div>
+        <div class="eq-stage"><span class="lbl">Complete ionic</span>2 Na⁺(aq) + SO₄²⁻(aq) + Ba²⁺(aq) + 2 Cl⁻(aq) → 2 Na⁺(aq) + 2 Cl⁻(aq) + BaSO₄ (s)</div>
+        <div class="eq-stage"><span class="lbl">Net ionic</span>SO₄²⁻(aq) + Ba²⁺(aq) → BaSO₄ (s)</div>
+      `
+    },
+    {
+      q: 'Ammonium phosphate + calcium chloride',
+      a: `
+        <div class="eq-stage"><span class="lbl">Molecular</span>2 (NH₄)₃PO₄ (aq) + 3 CaCl₂ (aq) → 6 NH₄Cl (aq) + Ca₃(PO₄)₂ (s)</div>
+        <div class="eq-stage"><span class="lbl">Complete ionic</span>6 NH₄⁺(aq) + 2 PO₄³⁻(aq) + 3 Ca²⁺(aq) + 6 Cl⁻(aq) → 6 NH₄⁺(aq) + 6 Cl⁻(aq) + Ca₃(PO₄)₂ (s)</div>
+        <div class="eq-stage"><span class="lbl">Net ionic</span>2 PO₄³⁻(aq) + 3 Ca²⁺(aq) → Ca₃(PO₄)₂ (s)</div>
+      `
+    },
+  ];
+  const list = document.getElementById('practiceList');
+  practice.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'practice-item';
+    div.innerHTML = `
+      <div><strong>${i + 1}.</strong> ${p.q}</div>
+      <button class="op-btn reveal-btn" type="button" style="margin-top:8px;">Reveal</button>
+      <div class="answer">${p.a}</div>
+    `;
+    const btn = div.querySelector('button');
+    const ans = div.querySelector('.answer');
+    btn.addEventListener('click', () => {
+      ans.classList.toggle('shown');
+      btn.textContent = ans.classList.contains('shown') ? 'Hide' : 'Reveal';
+    });
+    list.appendChild(div);
+  });
+</script>
+</body>
+</html>

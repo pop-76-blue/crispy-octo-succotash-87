@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Significant Digits — SCH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root {
+    --accent: #1c6e5e;
+    --accent-dark: #124a3f;
+    --accent-tint: #e3f2ee;
+  }
+
+  .rule-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin: 16px 0;
+  }
+  .rule-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+  }
+  .rule-card h3 { margin-bottom: 6px; }
+  .rule-card .example {
+    font-family: var(--mono);
+    background: var(--accent-tint);
+    border-radius: 5px;
+    padding: 4px 8px;
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 13.5px;
+  }
+
+  .counter-input {
+    width: 100%;
+    max-width: 320px;
+    font-family: var(--mono);
+    font-size: 20px;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    text-align: center;
+  }
+  .counter-wrap { text-align: center; }
+  .counter-result {
+    margin-top: 14px;
+    font-size: 17px;
+  }
+  .counter-result strong {
+    font-size: 30px;
+    color: var(--accent-dark);
+    display: block;
+  }
+  .counter-explain {
+    max-width: 460px;
+    margin: 10px auto 0;
+    color: var(--ink-soft);
+    font-size: 14px;
+    min-height: 20px;
+  }
+
+  .calc-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 14px 0;
+  }
+  .calc-row input[type="text"] {
+    width: 130px;
+    font-family: var(--mono);
+    font-size: 16px;
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    text-align: center;
+  }
+  .calc-row select {
+    font-family: var(--mono);
+    font-size: 16px;
+    padding: 8px 6px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--surface);
+  }
+  .calc-out {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 15px;
+  }
+  .calc-out .final {
+    font-size: 22px;
+    font-family: var(--mono);
+    font-weight: 700;
+    color: var(--accent-dark);
+  }
+
+  .practice-item {
+    border-bottom: 1px solid var(--line);
+    padding: 10px 0;
+  }
+  .practice-item:last-child { border-bottom: none; }
+  .practice-q { font-family: var(--mono); font-size: 15px; }
+  .reveal-btn {
+    margin-left: 10px;
+  }
+  .answer {
+    display: none;
+    margin-top: 6px;
+    color: var(--accent-dark);
+    font-weight: 600;
+  }
+  .answer.shown { display: block; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Study Hub</a>
+  <a href="../index.html">SCH3U — Chemistry</a>
+  <span class="crumb-current">Significant Digits</span>
+</div>
+
+<div class="wrap">
+  <h1>Significant Digits</h1>
+  <p class="subtitle">Unit 1: Measurement &amp; Matter · Counting sig figs, and rounding calculated answers correctly.</p>
+
+  <div class="callout">
+    <strong>Quiz reminder:</strong> for this quiz you only need <em>counting</em> significant digits and the
+    rounding rules below — you are <strong>not</strong> responsible for random vs. systematic error.
+  </div>
+
+  <h2>The counting rules</h2>
+  <div class="rule-grid">
+    <div class="rule-card">
+      <h3>1. Nonzero digits</h3>
+      <p>Every nonzero digit always counts.</p>
+      <span class="example">248 → 3 sig figs</span>
+    </div>
+    <div class="rule-card">
+      <h3>2. Captive zeros</h3>
+      <p>Zeros <em>between</em> two nonzero digits always count.</p>
+      <span class="example">3004 → 4 sig figs</span>
+    </div>
+    <div class="rule-card">
+      <h3>3. Leading zeros</h3>
+      <p>Zeros before the first nonzero digit are never significant — they just place the decimal.</p>
+      <span class="example">0.0857 → 3 sig figs</span>
+    </div>
+    <div class="rule-card">
+      <h3>4. Trailing zeros — with a decimal point</h3>
+      <p>If the number has a decimal point, trailing zeros <em>are</em> significant.</p>
+      <span class="example">0.0900 → 3 sig figs</span>
+    </div>
+    <div class="rule-card">
+      <h3>5. Trailing zeros — no decimal point</h3>
+      <p>Without a decimal point, trailing zeros are <em>not</em> counted as significant.</p>
+      <span class="example">210 → 2 sig figs</span>
+    </div>
+    <div class="rule-card">
+      <h3>6. Scientific notation</h3>
+      <p>Every digit shown in the coefficient is significant — that's the whole point of writing it that way.</p>
+      <span class="example">4.10 × 10⁻¹ → 3 sig figs</span>
+    </div>
+  </div>
+
+  <div class="demo">
+    <h3 style="text-align:center;">Try it: Sig Fig Counter</h3>
+    <div class="counter-wrap">
+      <input type="text" id="sfInput" class="counter-input" placeholder="e.g. 0.0900 or 6.91e9" autocomplete="off">
+      <div class="counter-result" id="sfResult">Type a number above.</div>
+      <div class="counter-explain" id="sfExplain"></div>
+    </div>
+  </div>
+
+  <h2>Rounding calculated answers</h2>
+  <div class="rule-grid">
+    <div class="rule-card">
+      <h3>Adding / Subtracting</h3>
+      <p>Round the answer to the <strong>fewest decimal places</strong> of any number in the problem.</p>
+      <span class="example">27.66 + 3.1 → answer has 1 decimal place</span>
+    </div>
+    <div class="rule-card">
+      <h3>Multiplying / Dividing</h3>
+      <p>Round the answer to the <strong>fewest sig figs</strong> of any number in the problem.</p>
+      <span class="example">27.66 × 3.1 → answer has 2 sig figs</span>
+    </div>
+  </div>
+
+  <div class="demo">
+    <h3 style="text-align:center;">Try it: Rounding Calculator</h3>
+    <div class="calc-row">
+      <input type="text" id="opA" placeholder="e.g. 84.76">
+      <select id="opSym">
+        <option value="+">+</option>
+        <option value="-">−</option>
+        <option value="*">×</option>
+        <option value="/">÷</option>
+      </select>
+      <input type="text" id="opB" placeholder="e.g. 8.2356">
+    </div>
+    <div class="calc-out" id="calcOut">Enter two numbers to see the raw answer and the correctly rounded one.</div>
+  </div>
+
+  <h2>Practice</h2>
+  <p>Cover the answer, work it out, then reveal.</p>
+
+  <div class="panel" id="practiceList"></div>
+
+  <div class="callout" style="margin-top:32px;">
+    <strong>Try this:</strong> before you check the tool, predict how many sig figs
+    <span style="font-family:var(--mono)">0.04500</span> has and explain why out loud —
+    then type it into the counter above to check yourself.
+  </div>
+</div>
+
+<div class="page-foot">SCH3U · Unit 1 — Measurement &amp; Matter</div>
+
+<script src="../../../shared/chem-utils.js"></script>
+<script>
+  const sfInput = document.getElementById('sfInput');
+  const sfResult = document.getElementById('sfResult');
+  const sfExplain = document.getElementById('sfExplain');
+
+  function explainFor(s) {
+    s = s.trim();
+    if (/[x×]\s*10|[eE][+-]?\d+$/.test(s)) {
+      return "Scientific notation: every digit in front of the ×10 power is significant.";
+    }
+    if (s.includes('.')) {
+      const [intPart] = s.split('.');
+      if (Number(intPart) === 0 || intPart === '' ) {
+        return "Leading zeros before the first nonzero digit don't count — everything from that digit onward does, including trailing zeros.";
+      }
+      return "There's a decimal point, so every digit shown (including any trailing zeros) counts.";
+    }
+    return "No decimal point, so trailing zeros are just placeholders and don't count.";
+  }
+
+  sfInput.addEventListener('input', () => {
+    const val = sfInput.value;
+    if (val.trim() === '') {
+      sfResult.innerHTML = 'Type a number above.';
+      sfExplain.textContent = '';
+      return;
+    }
+    const count = countSigFigs(val);
+    if (count === null) {
+      sfResult.innerHTML = "Hmm, that doesn't look like a number I can read.";
+      sfExplain.textContent = 'Try a plain decimal like 3004 or 0.0900, or scientific notation like 6.91e9.';
+      return;
+    }
+    sfResult.innerHTML = `<strong>${count}</strong> significant figure${count === 1 ? '' : 's'}`;
+    sfExplain.textContent = explainFor(val);
+  });
+
+  // Rounding calculator
+  const opA = document.getElementById('opA');
+  const opB = document.getElementById('opB');
+  const opSym = document.getElementById('opSym');
+  const calcOut = document.getElementById('calcOut');
+
+  function updateCalc() {
+    const aStr = opA.value.trim();
+    const bStr = opB.value.trim();
+    if (aStr === '' || bStr === '') {
+      calcOut.textContent = 'Enter two numbers to see the raw answer and the correctly rounded one.';
+      return;
+    }
+    const a = parseFloat(aStr);
+    const b = parseFloat(bStr);
+    if (isNaN(a) || isNaN(b)) {
+      calcOut.textContent = "Both boxes need to be numbers.";
+      return;
+    }
+    const op = opSym.value;
+    let raw, rounded, ruleText;
+
+    if (op === '+' || op === '-') {
+      raw = op === '+' ? a + b : a - b;
+      const dp = Math.min(countDecimalPlaces(aStr), countDecimalPlaces(bStr));
+      rounded = roundToDecimalPlaces(raw, dp);
+      ruleText = `fewest decimal places → ${dp}`;
+    } else {
+      raw = op === '*' ? a * b : a / b;
+      const sig = Math.min(countSigFigs(aStr) || 1, countSigFigs(bStr) || 1);
+      rounded = roundToSigFigs(raw, sig);
+      ruleText = `fewest sig figs → ${sig}`;
+    }
+
+    calcOut.innerHTML = `Raw calculator answer: <span style="font-family:var(--mono)">${raw}</span><br>
+      Rule applied: ${ruleText}<br>
+      Correctly rounded: <span class="final">${rounded}</span>`;
+  }
+  [opA, opB, opSym].forEach(el => el.addEventListener('input', updateCalc));
+  opSym.addEventListener('change', updateCalc);
+
+  // Practice problems (original, not from any worksheet)
+  const practice = [
+    { q: 'How many sig figs in 5060?', a: '3 (leading/captive digits count, trailing zero without a decimal does not)' },
+    { q: 'How many sig figs in 0.00340?', a: '3 (leading zeros don\'t count, trailing zero after the decimal does)' },
+    { q: '12.4 + 3.75 = ? (round correctly)', a: 'Raw: 16.15 → round to 1 decimal place → 16.2' },
+    { q: '8.31 × 2.0 = ? (round correctly)', a: 'Raw: 16.62 → round to 2 sig figs (fewest of the two) → 17' },
+    { q: '100.0 ÷ 4 = ? (round correctly)', a: 'Raw: 25 → "4" is a counted value here (infinite sig figs) so keep 100.0\'s 4 sig figs → 25.00' },
+    { q: 'How many sig figs in 3.20 × 10³?', a: '3 (every digit in the coefficient counts)' },
+  ];
+  const list = document.getElementById('practiceList');
+  practice.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'practice-item';
+    div.innerHTML = `
+      <span class="practice-q">${i + 1}. ${p.q}</span>
+      <button class="op-btn reveal-btn" type="button">Reveal</button>
+      <div class="answer">${p.a}</div>
+    `;
+    const btn = div.querySelector('button');
+    const ans = div.querySelector('.answer');
+    btn.addEventListener('click', () => {
+      ans.classList.toggle('shown');
+      btn.textContent = ans.classList.contains('shown') ? 'Hide' : 'Reveal';
+    });
+    list.appendChild(div);
+  });
+</script>
+</body>
+</html>

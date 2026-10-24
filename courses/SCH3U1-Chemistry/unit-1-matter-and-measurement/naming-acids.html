@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Naming Acids — SCH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent: #1c6e5e; --accent-dark: #124a3f; --accent-tint: #e3f2ee; }
+  table.ref-table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13.5px; }
+  table.ref-table th, table.ref-table td { border: 1px solid var(--line); padding: 7px 9px; text-align: left; }
+  table.ref-table th { background: var(--accent-tint); color: var(--accent-dark); }
+
+  .acid-row { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 14px 0; flex-wrap: wrap; }
+  .acid-row select { font-family: var(--mono); font-size: 15px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; width: 220px; }
+  .acid-out { text-align: center; margin-top: 12px; font-size: 18px; font-weight: 700; color: var(--accent-dark); }
+
+  .practice-item { border-bottom: 1px solid var(--line); padding: 10px 0; }
+  .practice-item:last-child { border-bottom: none; }
+  .answer { display: none; margin-top: 6px; color: var(--accent-dark); font-weight: 600; }
+  .answer.shown { display: block; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Study Hub</a>
+  <a href="../index.html">SCH3U — Chemistry</a>
+  <span class="crumb-current">Naming Acids</span>
+</div>
+
+<div class="wrap">
+  <h1>Naming Acids</h1>
+  <p class="subtitle">Unit 2: Chemical Nomenclature · Binary (hydro-) acids and oxyacids, written (aq).</p>
+
+  <div class="callout">
+    A compound releasing H⁺ in aqueous solution is an acid. There are two families: <strong>binary acids</strong>
+    (H + one other nonmetal) and <strong>oxyacids</strong> (H + a polyatomic ion containing oxygen).
+  </div>
+
+  <h2>Binary acids</h2>
+  <div class="callout">
+    <strong>Pattern:</strong> "hydro" + nonmetal stem + "-ic acid". Example: HCl (aq) → hydrochloric acid.
+  </div>
+  <table class="ref-table">
+    <tr><th>Formula</th><th>Name</th></tr>
+    <tr><td>HF (aq)</td><td>Hydrofluoric acid</td></tr>
+    <tr><td>HBr (aq)</td><td>Hydrobromic acid</td></tr>
+    <tr><td>HI (aq)</td><td>Hydroiodic acid</td></tr>
+    <tr><td>H₂S (aq)</td><td>Hydrosulfuric acid</td></tr>
+  </table>
+
+  <h2>Oxyacids</h2>
+  <div class="callout">
+    An oxyacid is just H⁺ added to a polyatomic ion that already contains oxygen. The ion's suffix changes:
+    <strong>-ate → -ic acid</strong>, <strong>-ite → -ous acid</strong>. The per-/hypo- prefixes carry straight over.
+  </div>
+
+  <h2>Try it: Ion → Acid Name</h2>
+  <div class="demo">
+    <div class="acid-row">
+      <select id="ionSelect">
+        <option value="nitrate|NO3|ic">Nitrate (NO₃⁻)</option>
+        <option value="nitrite|NO2|ous">Nitrite (NO₂⁻)</option>
+        <option value="sulfate|SO4|ic">Sulfate (SO₄²⁻)</option>
+        <option value="sulfite|SO3|ous">Sulfite (SO₃²⁻)</option>
+        <option value="chlorate|ClO3|ic">Chlorate (ClO₃⁻)</option>
+        <option value="chlorite|ClO2|ous">Chlorite (ClO₂⁻)</option>
+        <option value="perchlorate|ClO4|per-ic">Perchlorate (ClO₄⁻)</option>
+        <option value="hypochlorite|ClO|hypo-ous">Hypochlorite (ClO⁻)</option>
+        <option value="phosphate|PO4|ic">Phosphate (PO₄³⁻)</option>
+        <option value="carbonate|CO3|ic">Carbonate (CO₃²⁻)</option>
+      </select>
+    </div>
+    <div class="acid-out" id="acidOut"></div>
+  </div>
+
+  <h2>Practice</h2>
+  <div class="panel" id="practiceList"></div>
+
+  <div class="callout" style="margin-top:32px;">
+    <strong>Try this:</strong> before revealing, name H₃PO₄(aq) and HClO(aq) — use the ate→ic / ite→ous rule.
+  </div>
+</div>
+
+<div class="page-foot">SCH3U · Unit 2 — Chemical Nomenclature</div>
+
+<script>
+  const ionSelect = document.getElementById('ionSelect');
+  const acidOut = document.getElementById('acidOut');
+
+  const acidNames = {
+    'nitrate': 'Nitric acid (HNO₃)',
+    'nitrite': 'Nitrous acid (HNO₂)',
+    'sulfate': 'Sulfuric acid (H₂SO₄)',
+    'sulfite': 'Sulfurous acid (H₂SO₃)',
+    'chlorate': 'Chloric acid (HClO₃)',
+    'chlorite': 'Chlorous acid (HClO₂)',
+    'perchlorate': 'Perchloric acid (HClO₄)',
+    'hypochlorite': 'Hypochlorous acid (HClO)',
+    'phosphate': 'Phosphoric acid (H₃PO₄)',
+    'carbonate': 'Carbonic acid (H₂CO₃)',
+  };
+
+  function updateAcid() {
+    const key = ionSelect.value.split('|')[0];
+    acidOut.textContent = acidNames[key];
+  }
+  ionSelect.addEventListener('change', updateAcid);
+  updateAcid();
+
+  const practice = [
+    { q: 'Name HCl(aq).', a: 'Hydrochloric acid' },
+    { q: 'Name H₂CO₃(aq).', a: 'Carbonic acid' },
+    { q: 'Name HNO₂(aq).', a: 'Nitrous acid' },
+    { q: 'Write the formula for sulfuric acid.', a: 'H₂SO₄(aq)' },
+    { q: 'Name HClO(aq).', a: 'Hypochlorous acid' },
+  ];
+  const list = document.getElementById('practiceList');
+  practice.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'practice-item';
+    div.innerHTML = `<span>${i + 1}. ${p.q}</span><button class="op-btn reveal-btn" type="button" style="margin-left:10px;">Reveal</button><div class="answer">${p.a}</div>`;
+    const btn = div.querySelector('button');
+    const ans = div.querySelector('.answer');
+    btn.addEventListener('click', () => {
+      ans.classList.toggle('shown');
+      btn.textContent = ans.classList.contains('shown') ? 'Hide' : 'Reveal';
+    });
+    list.appendChild(div);
+  });
+</script>
+</body>
+</html>

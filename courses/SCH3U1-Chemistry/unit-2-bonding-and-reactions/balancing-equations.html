@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Balancing Equations — SCH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent: #1c6e5e; --accent-dark: #124a3f; --accent-tint: #e3f2ee; }
+
+  .eq-item { margin: 18px 0; padding: 14px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+  .eq-line { font-family: var(--mono); font-size: 17px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: center; }
+  .eq-line input {
+    width: 40px; font-family: var(--mono); font-size: 16px; text-align: center;
+    border: 1px solid var(--line); border-radius: 5px; padding: 4px 2px;
+  }
+  .eq-line input.correct { border-color: #1c6e5e; background: #eaf6f1; }
+  .eq-line input.wrong { border-color: #a03030; background: #fbeaea; }
+  .eq-check { text-align: center; margin-top: 10px; }
+  .eq-feedback { text-align: center; margin-top: 6px; font-size: 13.5px; min-height: 18px; }
+  .eq-feedback.ok { color: var(--accent-dark); font-weight: 600; }
+  .eq-feedback.bad { color: #a03030; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Study Hub</a>
+  <a href="../index.html">SCH3U — Chemistry</a>
+  <span class="crumb-current">Balancing Equations</span>
+</div>
+
+<div class="wrap">
+  <h1>Balancing Chemical Equations</h1>
+  <p class="subtitle">Unit 5: Chemical Reactions · Conservation of mass — same atoms in, same atoms out.</p>
+
+  <div class="callout">
+    <strong>The law of conservation of mass:</strong> atoms aren't created or destroyed in a chemical reaction,
+    just rearranged. A balanced equation has the same number of each type of atom on both sides.
+  </div>
+
+  <h2>Tips</h2>
+  <div class="panel">
+    <ul style="margin:0; padding-left:20px; line-height:1.9;">
+      <li>Only change the big numbers in front of formulas (<strong>coefficients</strong>) — never the little
+      subscripts inside a formula. Changing a subscript makes a different substance entirely.</li>
+      <li>Balance one element at a time; save lone elements (like O₂ or a single metal) for last.</li>
+      <li>Treat an unchanged polyatomic ion (like SO₄²⁻) as one unit if it appears on both sides.</li>
+      <li>If you end up with fractions, multiply every coefficient by the same number to clear them.</li>
+      <li>Count the total number of each atom on both sides as a final check.</li>
+    </ul>
+  </div>
+
+  <h2>Try it: Balance These</h2>
+  <p>Fill in each blank with the correct coefficient (use 1 where no number is needed), then check.</p>
+
+  <div id="eqList"></div>
+
+  <div class="callout" style="margin-top:32px;">
+    <strong>Try this:</strong> before checking equation 5 below, predict whether it will need any coefficient
+    bigger than 3 — then see if you were right.
+  </div>
+</div>
+
+<div class="page-foot">SCH3U · Unit 5 — Chemical Reactions</div>
+
+<script>
+  // Each equation: segments is an array alternating formula-text and blank-markers.
+  // answers: array of correct coefficients in order of blanks.
+  const equations = [
+    {
+      parts: ['__ Al', '+', '__ O\u2082', '\u2192', '__ Al\u2082O\u2083'],
+      answers: [4, 3, 2],
+    },
+    {
+      parts: ['__ C\u2083H\u2088', '+', '__ O\u2082', '\u2192', '__ CO\u2082', '+', '__ H\u2082O'],
+      answers: [1, 5, 3, 4],
+    },
+    {
+      parts: ['__ NaOH', '+', '__ H\u2082SO\u2084', '\u2192', '__ Na\u2082SO\u2084', '+', '__ H\u2082O'],
+      answers: [2, 1, 1, 2],
+    },
+    {
+      parts: ['__ Fe\u2082O\u2083', '+', '__ CO', '\u2192', '__ Fe', '+', '__ CO\u2082'],
+      answers: [1, 3, 2, 3],
+    },
+    {
+      parts: ['__ Ca(OH)\u2082', '+', '__ H\u2083PO\u2084', '\u2192', '__ Ca\u2083(PO\u2084)\u2082', '+', '__ H\u2082O'],
+      answers: [3, 2, 1, 6],
+    },
+  ];
+
+  const eqList = document.getElementById('eqList');
+
+  equations.forEach((eq, idx) => {
+    const item = document.createElement('div');
+    item.className = 'eq-item';
+
+    let blankCount = 0;
+    const lineHtml = eq.parts.map(p => {
+      if (p === '__' || /^__ /.test(p)) {
+        const rest = p.replace('__', '').trim();
+        blankCount++;
+        return `<input type="text" class="eq-blank" data-idx="${blankCount - 1}"> ${rest}`;
+      }
+      return `<span>${p}</span>`;
+    }).join(' ');
+
+    item.innerHTML = `
+      <div style="font-weight:600; margin-bottom:8px;">Equation ${idx + 1}</div>
+      <div class="eq-line">${lineHtml}</div>
+      <div class="eq-check"><button class="op-btn" type="button">Check</button></div>
+      <div class="eq-feedback"></div>
+    `;
+    eqList.appendChild(item);
+
+    const btn = item.querySelector('button');
+    const feedback = item.querySelector('.eq-feedback');
+    const blanks = item.querySelectorAll('.eq-blank');
+
+    btn.addEventListener('click', () => {
+      let allCorrect = true;
+      blanks.forEach((input, i) => {
+        input.classList.remove('correct', 'wrong');
+        const val = parseInt(input.value, 10);
+        if (val === eq.answers[i]) {
+          input.classList.add('correct');
+        } else {
+          input.classList.add('wrong');
+          allCorrect = false;
+        }
+      });
+      feedback.textContent = allCorrect
+        ? 'Balanced correctly!'
+        : `Not quite — check the highlighted coefficients. (Correct set: ${eq.answers.join(', ')})`;
+      feedback.className = 'eq-feedback ' + (allCorrect ? 'ok' : 'bad');
+    });
+  });
+</script>
+</body>
+</html>

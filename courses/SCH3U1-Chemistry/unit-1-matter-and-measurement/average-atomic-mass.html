@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Average Atomic Mass — SCH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root {
+    --accent: #1c6e5e;
+    --accent-dark: #124a3f;
+    --accent-tint: #e3f2ee;
+  }
+
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .slider-row label { width: 130px; font-family: var(--mono); font-size: 14px; text-align: right; }
+  .slider-row input[type="range"] { flex: 1; max-width: 260px; }
+  .slider-row .pct { width: 55px; font-family: var(--mono); text-align: left; }
+
+  .aam-out {
+    text-align: center;
+    margin-top: 16px;
+    font-size: 16px;
+  }
+  .aam-out .final { font-size: 26px; font-weight: 700; color: var(--accent-dark); font-family: var(--mono); }
+  .aam-steps { text-align: center; color: var(--ink-soft); font-size: 13.5px; margin-top: 6px; }
+
+  .practice-item { border-bottom: 1px solid var(--line); padding: 10px 0; }
+  .practice-item:last-child { border-bottom: none; }
+  .answer { display: none; margin-top: 6px; color: var(--accent-dark); font-weight: 600; }
+  .answer.shown { display: block; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Study Hub</a>
+  <a href="../index.html">SCH3U — Chemistry</a>
+  <span class="crumb-current">Average Atomic Mass</span>
+</div>
+
+<div class="wrap">
+  <h1>Average Atomic Mass</h1>
+  <p class="subtitle">Unit 1: Measurement &amp; Matter · Isotopes and the weighted average on the periodic table.</p>
+
+  <div class="callout">
+    Isotopes of an element have the <strong>same number of protons</strong> but a
+    <strong>different number of neutrons</strong> — so they have different masses.
+    The mass shown on the periodic table is a <strong>weighted average</strong> of all
+    the naturally occurring isotopes, based on how common each one is.
+  </div>
+
+  <div class="panel">
+    <h3>The formula</h3>
+    <p style="font-family:var(--mono); text-align:center; font-size:15px;">
+      average atomic mass = (mass₁ × fractional abundance₁) + (mass₂ × fractional abundance₂) + …
+    </p>
+    <p>Turn each percent into a decimal first (75% → 0.75), and check that all the percentages add to 100%.</p>
+  </div>
+
+  <h2>Try it: Two-Isotope Calculator</h2>
+  <p>Boron has two naturally occurring isotopes. Drag the slider to change how abundant each one is
+     (they'll always add to 100%) and watch the average atomic mass update.</p>
+
+  <div class="demo">
+    <div class="slider-row">
+      <label>Boron-10 (10.013 u)</label>
+      <input type="range" id="abSlider" min="0" max="100" value="20">
+      <span class="pct" id="abPct">20%</span>
+    </div>
+    <div class="slider-row">
+      <label>Boron-11 (11.009 u)</label>
+      <span style="flex:1; text-align:center; font-family:var(--mono);" id="ab2Pct">80%</span>
+    </div>
+    <div class="aam-out" id="aamOut"></div>
+    <div class="aam-steps" id="aamSteps"></div>
+  </div>
+
+  <h2>Practice</h2>
+  <p>Cover the answer, calculate, then reveal. Round your final answer to the hundredths place.</p>
+  <div class="panel" id="practiceList"></div>
+
+  <div class="callout" style="margin-top:32px;">
+    <strong>Try this:</strong> before checking the calculator, predict whether boron's average atomic mass
+    should be closer to 10.013 or 11.009 given that boron-11 makes up about 80% of natural boron — then confirm with the slider.
+  </div>
+</div>
+
+<div class="page-foot">SCH3U · Unit 1 — Measurement &amp; Matter</div>
+
+<script>
+  const abSlider = document.getElementById('abSlider');
+  const abPct = document.getElementById('abPct');
+  const ab2Pct = document.getElementById('ab2Pct');
+  const aamOut = document.getElementById('aamOut');
+  const aamSteps = document.getElementById('aamSteps');
+
+  const m1 = 10.013, m2 = 11.009;
+
+  function updateAAM() {
+    const p1 = Number(abSlider.value);
+    const p2 = 100 - p1;
+    abPct.textContent = p1 + '%';
+    ab2Pct.textContent = p2 + '% Boron-11 (11.009 u)';
+    const avg = (m1 * (p1 / 100)) + (m2 * (p2 / 100));
+    aamOut.innerHTML = `Average atomic mass = <span class="final">${avg.toFixed(3)} u</span>`;
+    aamSteps.textContent = `(${m1} × ${(p1/100).toFixed(2)}) + (${m2} × ${(p2/100).toFixed(2)}) = ${avg.toFixed(3)}`;
+  }
+  abSlider.addEventListener('input', updateAAM);
+  updateAAM();
+
+  const practice = [
+    {
+      q: 'Neon has three isotopes: Ne-20 (19.992 u, 90.48%), Ne-21 (20.994 u, 0.27%), Ne-22 (21.991 u, 9.25%). Find the average atomic mass.',
+      a: '(19.992×0.9048) + (20.994×0.0027) + (21.991×0.0925) ≈ 20.18 u'
+    },
+    {
+      q: 'Gallium has two isotopes: Ga-69 (68.926 u, 60.11%) and Ga-71 (70.925 u, 39.89%). Find the average atomic mass.',
+      a: '(68.926×0.6011) + (70.925×0.3989) ≈ 69.72 u'
+    },
+    {
+      q: 'An element has isotopes of mass 6.015 u (7.5%) and 7.016 u (92.5%). Without calculating, is the average closer to 6 or 7? Then calculate.',
+      a: 'Closer to 7, since it\'s far more abundant → (6.015×0.075)+(7.016×0.925) ≈ 6.94 u'
+    },
+  ];
+  const list = document.getElementById('practiceList');
+  practice.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'practice-item';
+    div.innerHTML = `
+      <span>${i + 1}. ${p.q}</span>
+      <button class="op-btn reveal-btn" type="button" style="margin-left:10px;">Reveal</button>
+      <div class="answer">${p.a}</div>
+    `;
+    const btn = div.querySelector('button');
+    const ans = div.querySelector('.answer');
+    btn.addEventListener('click', () => {
+      ans.classList.toggle('shown');
+      btn.textContent = ans.classList.contains('shown') ? 'Hide' : 'Reveal';
+    });
+    list.appendChild(div);
+  });
+</script>
+</body>
+</html>

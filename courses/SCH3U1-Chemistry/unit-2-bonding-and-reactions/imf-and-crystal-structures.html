@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IMF &amp; Crystal Structures — SCH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent: #1c6e5e; --accent-dark: #124a3f; --accent-tint: #e3f2ee; }
+
+  .imf-tool { max-width: 480px; margin: 0 auto; }
+  .imf-q { margin: 14px 0; text-align: center; }
+  .imf-q label { font-weight: 600; display: block; margin-bottom: 6px; }
+  .imf-q select { font-family: var(--mono); font-size: 15px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; width: 220px; }
+  .imf-result { text-align: center; margin-top: 16px; padding: 14px; background: var(--accent-tint); border-radius: 8px; font-weight: 600; }
+
+  table.ref-table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 14px; }
+  table.ref-table th, table.ref-table td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; }
+  table.ref-table th { background: var(--accent-tint); color: var(--accent-dark); }
+
+  .allotrope-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin: 16px 0; }
+  .allotrope-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; }
+  .allotrope-card h4 { margin: 0 0 6px; font-size: 14.5px; color: var(--accent-dark); }
+
+  .practice-item { border-bottom: 1px solid var(--line); padding: 10px 0; }
+  .practice-item:last-child { border-bottom: none; }
+  .answer { display: none; margin-top: 6px; color: var(--accent-dark); font-weight: 600; }
+  .answer.shown { display: block; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Study Hub</a>
+  <a href="../index.html">SCH3U — Chemistry</a>
+  <span class="crumb-current">IMF &amp; Crystal Structures</span>
+</div>
+
+<div class="wrap">
+  <h1>Intermolecular Forces &amp; Crystal Structures</h1>
+  <p class="subtitle">Unit 4: Bonding &amp; Molecular Shape · What holds separate molecules together, and how solids pack.</p>
+
+  <div class="callout">
+    <strong>Intra</strong>molecular forces (bonds) hold a molecule <em>together</em> — strong.
+    <strong>Inter</strong>molecular forces (IMFs) hold separate molecules <em>to each other</em> — much weaker,
+    but they're what control melting point, boiling point, and physical state.
+  </div>
+
+  <h2>The three IMFs</h2>
+  <div class="rule-grid" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin:16px 0;">
+    <div class="rule-card" style="background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:14px 16px;">
+      <h3>London dispersion</h3>
+      <p>Present in <strong>every</strong> molecule (polar or nonpolar) — temporary, shifting dipoles. More
+      electrons/bigger molecule → stronger London forces. The <em>only</em> IMF in nonpolar molecules.</p>
+    </div>
+    <div class="rule-card" style="background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:14px 16px;">
+      <h3>Dipole-dipole</h3>
+      <p>Between the permanent positive end of one polar molecule and the negative end of another.
+      Only in polar molecules.</p>
+    </div>
+    <div class="rule-card" style="background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:14px 16px;">
+      <h3>Hydrogen bonding</h3>
+      <p>A strong special case of dipole-dipole: H on one molecule attracted to O, N, or F on
+      <strong>another</strong> molecule. Not a true bond, but ~10% the strength of one.</p>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>Strength:</strong> London dispersion &lt; dipole-dipole &lt; hydrogen bonding (weakest to strongest).
+    Stronger IMFs mean more energy is needed to separate molecules — so higher melting and boiling points.
+  </div>
+
+  <h2>Try it: IMF Identifier</h2>
+  <div class="demo imf-tool">
+    <div class="imf-q">
+      <label>Is the molecule polar?</label>
+      <select id="q1"><option value="">— choose —</option><option value="yes">Yes</option><option value="no">No</option></select>
+    </div>
+    <div class="imf-q" id="q2wrap" style="display:none;">
+      <label>Does it have H directly bonded to O, N, or F?</label>
+      <select id="q2"><option value="">— choose —</option><option value="yes">Yes</option><option value="no">No</option></select>
+    </div>
+    <div class="imf-result" id="imfResult" style="display:none;"></div>
+  </div>
+
+  <h2>Crystal structures</h2>
+  <p>Solids with very regular, repeating particle arrangements are crystalline. How they're classified depends on
+  what's doing the "holding together":</p>
+
+  <table class="ref-table">
+    <tr><th>Crystal type</th><th>Particles</th><th>Held by</th><th>Typical properties</th><th>Examples</th></tr>
+    <tr><td>Ionic</td><td>Cations &amp; anions</td><td>Ionic bonds</td><td>Hard, brittle, medium–high mp, conducts only molten/aqueous</td><td>NaCl</td></tr>
+    <tr><td>Molecular</td><td>Molecules</td><td>IMFs (London/dipole-dipole/H-bond)</td><td>Soft, low mp, never conducts</td><td>H₂O(s), I₂(s)</td></tr>
+    <tr><td>Metallic</td><td>Metal cations + delocalized e⁻</td><td>Metallic bonds</td><td>Malleable, ductile, conducts solid &amp; molten</td><td>Fe, Cu</td></tr>
+    <tr><td>Covalent network</td><td>Atoms</td><td>Covalent bonds throughout</td><td>Very hard, very high mp, nonconductor</td><td>SiO₂, diamond</td></tr>
+  </table>
+
+  <h2>A closer look: carbon allotropes</h2>
+  <p>Allotropes are different structural forms of the same element.</p>
+  <div class="allotrope-grid">
+    <div class="allotrope-card"><h4>Diamond</h4>Tetrahedrally bonded carbon network. Hard, nonconductor, transparent, very high mp.</div>
+    <div class="allotrope-card"><h4>Graphite</h4>Flat hexagonal sheets (trigonal planar carbon) held together by weak London forces between layers. Soft, conducts (delocalized e⁻ within a layer).</div>
+    <div class="allotrope-card"><h4>Graphene</h4>A single sheet of graphite. Extremely strong, highly conductive, one atom thick.</div>
+    <div class="allotrope-card"><h4>Fullerene</h4>Hollow carbon sphere/ellipsoid (e.g. the C₆₀ "buckyball") of hexagons and pentagons. Very stable.</div>
+    <div class="allotrope-card"><h4>Nanotube</h4>A rolled cylinder of graphene. High tensile strength, conducts electricity.</div>
+  </div>
+
+  <h2>Practice</h2>
+  <div class="panel" id="practiceList"></div>
+
+  <div class="callout" style="margin-top:32px;">
+    <strong>Try this:</strong> before checking the IMF tool, decide what the strongest IMF present in ethanol
+    (CH₃CH₂OH, which has an O–H group) would be — then confirm with the tool.
+  </div>
+</div>
+
+<div class="page-foot">SCH3U · Unit 4 — Bonding &amp; Molecular Shape</div>
+
+<script>
+  const q1 = document.getElementById('q1');
+  const q2 = document.getElementById('q2');
+  const q2wrap = document.getElementById('q2wrap');
+  const imfResult = document.getElementById('imfResult');
+
+  function evaluate() {
+    if (q1.value === 'no') {
+      imfResult.style.display = 'block';
+      imfResult.textContent = 'Strongest IMF present: London dispersion forces only (the molecule is nonpolar).';
+      q2wrap.style.display = 'none';
+      return;
+    }
+    if (q1.value === 'yes') {
+      q2wrap.style.display = 'block';
+      if (q2.value === 'yes') {
+        imfResult.style.display = 'block';
+        imfResult.textContent = 'Strongest IMF present: Hydrogen bonding (H bonded to O, N, or F — plus dipole-dipole and London forces too, but H-bonding dominates).';
+      } else if (q2.value === 'no') {
+        imfResult.style.display = 'block';
+        imfResult.textContent = 'Strongest IMF present: Dipole-dipole forces (plus London dispersion, but no H-bonding).';
+      } else {
+        imfResult.style.display = 'none';
+      }
+      return;
+    }
+    q2wrap.style.display = 'none';
+    imfResult.style.display = 'none';
+  }
+  q1.addEventListener('change', evaluate);
+  q2.addEventListener('change', evaluate);
+
+  const practice = [
+    { q: 'What is the only IMF present in a sample of pure O₂ gas?', a: 'London dispersion forces (O₂ is nonpolar, so that\'s the only IMF available)' },
+    { q: 'Why does I₂ have a higher melting point than F₂, even though both are nonpolar diatomic halogens?', a: 'I₂ has far more electrons and is a larger molecule, so its London dispersion forces are stronger, requiring more energy to melt.' },
+    { q: 'Would you expect HF or HCl to have the higher boiling point? Why?', a: 'HF — it can hydrogen bond (H to F), while HCl can only manage dipole-dipole forces (Cl isn\'t one of O/N/F).' },
+    { q: 'Classify the crystal type: hard, nonconducting, very high melting point, made entirely of covalently bonded Si and O atoms.', a: 'Covalent network (e.g. SiO₂/quartz)' },
+    { q: 'Graphite conducts electricity but diamond does not, even though both are pure carbon. Why?', a: 'Graphite has delocalized electrons free to move within each hexagonal layer; diamond\'s electrons are all locked into localized single bonds in its tetrahedral network.' },
+  ];
+  const list = document.getElementById('practiceList');
+  practice.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'practice-item';
+    div.innerHTML = `<span>${i + 1}. ${p.q}</span><button class="op-btn reveal-btn" type="button" style="margin-left:10px;">Reveal</button><div class="answer">${p.a}</div>`;
+    const btn = div.querySelector('button');
+    const ans = div.querySelector('.answer');
+    btn.addEventListener('click', () => {
+      ans.classList.toggle('shown');
+      btn.textContent = ans.classList.contains('shown') ? 'Hide' : 'Reveal';
+    });
+    list.appendChild(div);
+  });
+</script>
+</body>
+</html>

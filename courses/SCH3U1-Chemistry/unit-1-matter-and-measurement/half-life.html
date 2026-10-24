@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Half-Life — SCH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent: #1c6e5e; --accent-dark: #124a3f; --accent-tint: #e3f2ee; }
+
+  .hl-row { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; margin: 14px 0; }
+  .hl-row label { font-size: 13px; color: var(--ink-soft); display: block; margin-bottom: 4px; }
+  .hl-row input { width: 140px; font-family: var(--mono); font-size: 16px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; text-align: center; }
+  .hl-out { text-align: center; margin-top: 14px; font-size: 16px; }
+  .hl-out .final { font-size: 24px; font-weight: 700; color: var(--accent-dark); font-family: var(--mono); }
+
+  table.decay-table { width: 100%; max-width: 420px; margin: 14px auto; border-collapse: collapse; font-size: 14px; }
+  table.decay-table th, table.decay-table td { border: 1px solid var(--line); padding: 6px 10px; text-align: center; }
+  table.decay-table th { background: var(--accent-tint); color: var(--accent-dark); }
+
+  .practice-item { border-bottom: 1px solid var(--line); padding: 10px 0; }
+  .practice-item:last-child { border-bottom: none; }
+  .answer { display: none; margin-top: 6px; color: var(--accent-dark); font-weight: 600; }
+  .answer.shown { display: block; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Study Hub</a>
+  <a href="../index.html">SCH3U — Chemistry</a>
+  <span class="crumb-current">Half-Life</span>
+</div>
+
+<div class="wrap">
+  <h1>Half-Life</h1>
+  <p class="subtitle">Unit 1, Lesson 3 · How long it takes for half a radioactive sample to decay.</p>
+
+  <div class="callout">
+    <strong>Half-life (t½):</strong> the time it takes for half of a radioactive sample to decay. It's a constant
+    for a given isotope — it doesn't matter how much you start with, half of whatever remains disappears every
+    half-life.
+  </div>
+
+  <h2>Try it: Half-Life Table</h2>
+  <p>Enter a starting mass and a number of half-lives to see how much remains at each step.</p>
+
+  <div class="demo">
+    <div class="hl-row">
+      <div><label>Starting mass (g)</label><input type="text" id="hlMass" value="80"></div>
+      <div><label>Number of half-lives to show</label><input type="text" id="hlSteps" value="5"></div>
+    </div>
+    <table class="decay-table" id="hlTable"></table>
+  </div>
+
+  <h2>Finding an exact time (non-whole half-lives)</h2>
+  <div class="callout">
+    If the fraction remaining doesn't land on a clean half-life (like 20% instead of 25% or 50%), use:
+  </div>
+  <p style="text-align:center; font-family:var(--mono); font-size:16px;">
+    N<sub>t</sub> = N₀ (½)<sup>n</sup>&nbsp;&nbsp;&nbsp;where n = t / t½
+  </p>
+  <p>Solve for n using logarithms: n = log(N<sub>t</sub>/N₀) ÷ log(0.5), then multiply n by the half-life to
+  get the elapsed time.</p>
+
+  <h2>Try it: Elapsed Time Calculator</h2>
+  <div class="demo">
+    <div class="hl-row">
+      <div><label>Half-life (years)</label><input type="text" id="hlT12" value="5730"></div>
+      <div><label>% of original remaining</label><input type="text" id="hlPct" value="20"></div>
+    </div>
+    <div class="hl-out" id="hlOut"></div>
+  </div>
+
+  <h2>Practice</h2>
+  <div class="panel" id="practiceList"></div>
+
+  <div class="callout" style="margin-top:32px;">
+    <strong>Try this:</strong> before checking the table above, predict how much of a 200 g sample remains
+    after exactly 3 half-lives — then verify.
+  </div>
+</div>
+
+<div class="page-foot">SCH3U · Unit 1, Lesson 3 — Isotopes &amp; Half-Life</div>
+
+<script>
+  const hlMass = document.getElementById('hlMass');
+  const hlSteps = document.getElementById('hlSteps');
+  const hlTable = document.getElementById('hlTable');
+
+  function updateTable() {
+    const mass = parseFloat(hlMass.value);
+    const steps = parseInt(hlSteps.value, 10);
+    if (isNaN(mass) || isNaN(steps) || steps < 0) { hlTable.innerHTML = ''; return; }
+    let rows = '<tr><th># half-lives</th><th>Mass remaining</th></tr>';
+    for (let n = 0; n <= Math.min(steps, 12); n++) {
+      const remaining = mass * Math.pow(0.5, n);
+      rows += `<tr><td>${n}</td><td>${remaining.toFixed(3).replace(/\.?0+$/, '')} g</td></tr>`;
+    }
+    hlTable.innerHTML = rows;
+  }
+  [hlMass, hlSteps].forEach(el => el.addEventListener('input', updateTable));
+  updateTable();
+
+  const hlT12 = document.getElementById('hlT12');
+  const hlPct = document.getElementById('hlPct');
+  const hlOut = document.getElementById('hlOut');
+  function updateElapsed() {
+    const t12 = parseFloat(hlT12.value);
+    const pct = parseFloat(hlPct.value);
+    if (isNaN(t12) || isNaN(pct) || pct <= 0 || pct > 100) { hlOut.textContent = 'Enter valid values.'; return; }
+    const n = Math.log(pct / 100) / Math.log(0.5);
+    const elapsed = n * t12;
+    hlOut.innerHTML = `n = ${n.toFixed(2)} half-lives → elapsed time = <span class="final">${elapsed.toFixed(0)}</span> (same units as half-life)`;
+  }
+  [hlT12, hlPct].forEach(el => el.addEventListener('input', updateElapsed));
+  updateElapsed();
+
+  const practice = [
+    { q: 'The half-life of Iodine-131 is 8 days. How much of a 40 g sample remains after 24 days?', a: '24 days = 3 half-lives → 40 → 20 → 10 → 5 g remains' },
+    { q: 'A 100 g sample decays to 12.5 g. How many half-lives have passed?', a: '3 half-lives (100 → 50 → 25 → 12.5)' },
+    { q: 'Carbon-14 has a half-life of 5730 years. A sample has 25% of its original C-14 remaining. Roughly how old is it?', a: '2 half-lives (100% → 50% → 25%) = 2 × 5730 = 11 460 years' },
+    { q: 'If a radioisotope has a very short half-life, is it more or less radioactive (in terms of activity) than one with a long half-life, for the same starting amount?', a: 'More — it decays faster, so more particles are emitted per second.' },
+  ];
+  const list = document.getElementById('practiceList');
+  practice.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'practice-item';
+    div.innerHTML = `<span>${i + 1}. ${p.q}</span><button class="op-btn reveal-btn" type="button" style="margin-left:10px;">Reveal</button><div class="answer">${p.a}</div>`;
+    const btn = div.querySelector('button');
+    const ans = div.querySelector('.answer');
+    btn.addEventListener('click', () => {
+      ans.classList.toggle('shown');
+      btn.textContent = ans.classList.contains('shown') ? 'Hide' : 'Reveal';
+    });
+    list.appendChild(div);
+  });
+</script>
+</body>
+</html>

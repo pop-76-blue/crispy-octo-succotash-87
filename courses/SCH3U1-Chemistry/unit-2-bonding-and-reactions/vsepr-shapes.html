@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VSEPR Shapes — SCH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent: #1c6e5e; --accent-dark: #124a3f; --accent-tint: #e3f2ee; }
+
+  .vsepr-wrap { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; justify-content: center; }
+  .vsepr-controls { display: flex; flex-direction: column; gap: 14px; min-width: 200px; }
+  .vsepr-controls label { font-size: 13px; color: var(--ink-soft); display: block; margin-bottom: 4px; }
+  .vsepr-controls select { font-family: var(--mono); font-size: 16px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; width: 100%; }
+  #shapeSvg { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+  .vsepr-result { min-width: 220px; }
+  .vsepr-result .stat-row { display: flex; justify-content: space-between; font-size: 14.5px; padding: 6px 0; border-bottom: 1px solid var(--line); }
+  .vsepr-result .stat-row span:last-child { font-weight: 700; color: var(--accent-dark); text-align: right; }
+
+  .practice-item { border-bottom: 1px solid var(--line); padding: 10px 0; }
+  .practice-item:last-child { border-bottom: none; }
+  .answer { display: none; margin-top: 6px; color: var(--accent-dark); font-weight: 600; }
+  .answer.shown { display: block; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Study Hub</a>
+  <a href="../index.html">SCH3U — Chemistry</a>
+  <span class="crumb-current">VSEPR Shapes</span>
+</div>
+
+<div class="wrap">
+  <h1>VSEPR Theory</h1>
+  <p class="subtitle">Unit 4: Bonding &amp; Molecular Shape · Valence Shell Electron Pair Repulsion.</p>
+
+  <div class="callout">
+    <strong>Big idea:</strong> electron pairs (bonding or lone) around a central atom repel each other and
+    spread out as far apart as possible — that spacing gives the molecule its shape. Lone pairs take up more
+    space than bonding pairs, which compresses the bond angles below the "ideal" value.
+  </div>
+
+  <div class="callout">
+    A note on scope: some of this material (5, 6, and 7 electron domains) goes beyond what a 4-domain-capped
+    quiz would cover — check with your own notes/teacher for what's testable right now.
+  </div>
+
+  <h2>General method</h2>
+  <div class="panel">
+    <ol style="margin:0; padding-left:20px; line-height:1.9;">
+      <li>Draw the Lewis structure and count bonding pairs (bp) and lone pairs (lp) around the <strong>central</strong> atom. A single, double, or triple bond all count as <strong>one</strong> bonding pair/domain.</li>
+      <li>Total electron pairs (ep) = bp + lp. Use that total to find the base electron geometry.</li>
+      <li>Lone pairs modify the shape's <em>name</em> and compress the bond angle, but don't change the electron geometry.</li>
+    </ol>
+  </div>
+
+  <h2>Try it: Shape Finder</h2>
+  <div class="demo">
+    <div class="vsepr-wrap">
+      <div class="vsepr-controls">
+        <div>
+          <label>Total electron pairs (domains)</label>
+          <select id="epSelect"></select>
+        </div>
+        <div>
+          <label>Lone pairs on central atom</label>
+          <select id="lpSelect"></select>
+        </div>
+        <div class="vsepr-result" id="vseprResult"></div>
+      </div>
+      <svg id="shapeSvg" width="260" height="260" viewBox="0 0 260 260"></svg>
+    </div>
+    <p style="text-align:center; font-size:12.5px; color:var(--ink-soft); margin-top:6px;">Simplified 2D schematic — filled dots are bonded atoms, shaded ovals are lone pairs. See the bond angle for the true 3D geometry.</p>
+  </div>
+
+  <div class="callout">
+    Want to actually rotate molecules in 3D? Try the
+    <a href="https://phet.colorado.edu/sims/html/molecule-shapes/latest/molecule-shapes_en.html" target="_blank" rel="noopener">PhET Molecule Shapes simulator</a> —
+    build a molecule and see the real geometry update live.
+  </div>
+
+  <h2>Practice</h2>
+  <div class="panel" id="practiceList"></div>
+
+  <div class="callout" style="margin-top:32px;">
+    <strong>Try this:</strong> before using the tool, predict the shape of NH₃ (3 bonding pairs, 1 lone pair) —
+    name it and estimate the bond angle — then check with the Shape Finder above.
+  </div>
+</div>
+
+<div class="page-foot">SCH3U · Unit 4 — Bonding &amp; Molecular Shape</div>
+
+<script>
+  const shapeData = {
+    '2-0': { name: 'Linear', geom: 'Linear', angle: '180°', example: 'CO₂, BeF₂' },
+    '3-0': { name: 'Trigonal planar', geom: 'Trigonal planar', angle: '120°', example: 'BF₃' },
+    '3-1': { name: 'Bent (angular)', geom: 'Trigonal planar', angle: '~118°', example: 'SO₂' },
+    '4-0': { name: 'Tetrahedral', geom: 'Tetrahedral', angle: '109.5°', example: 'CH₄' },
+    '4-1': { name: 'Trigonal pyramidal', geom: 'Tetrahedral', angle: '~107.5°', example: 'NH₃' },
+    '4-2': { name: 'Bent (angular)', geom: 'Tetrahedral', angle: '~104.5°', example: 'H₂O' },
+    '5-0': { name: 'Trigonal bipyramidal', geom: 'Trigonal bipyramidal', angle: '90°, 120°, 180°', example: 'PCl₅' },
+    '5-1': { name: 'See-saw', geom: 'Trigonal bipyramidal', angle: '<90°, <120°, 180°', example: 'SF₄' },
+    '5-2': { name: 'T-shaped', geom: 'Trigonal bipyramidal', angle: '<90°, 180°', example: 'BrF₃' },
+    '5-3': { name: 'Linear', geom: 'Trigonal bipyramidal', angle: '180°', example: 'I₃⁻' },
+    '6-0': { name: 'Octahedral', geom: 'Octahedral', angle: '90°, 180°', example: 'SF₆' },
+    '6-1': { name: 'Square pyramidal', geom: 'Octahedral', angle: '<90°', example: 'BrF₅' },
+    '6-2': { name: 'Square planar', geom: 'Octahedral', angle: '90°, 180°', example: 'XeF₄' },
+    '7-0': { name: 'Pentagonal bipyramidal', geom: 'Pentagonal bipyramidal', angle: '72°, 90°, 180°', example: 'IF₇' },
+  };
+
+  const epSelect = document.getElementById('epSelect');
+  const lpSelect = document.getElementById('lpSelect');
+  const vseprResult = document.getElementById('vseprResult');
+  const svgNS = "http://www.w3.org/2000/svg";
+  const shapeSvg = document.getElementById('shapeSvg');
+
+  for (let ep = 2; ep <= 7; ep++) {
+    const opt = document.createElement('option');
+    opt.value = ep; opt.textContent = ep;
+    if (ep === 4) opt.selected = true;
+    epSelect.appendChild(opt);
+  }
+
+  function populateLP() {
+    const ep = parseInt(epSelect.value, 10);
+    lpSelect.innerHTML = '';
+    const maxLp = ep >= 5 ? ep - 2 : ep - 1; // need at least a couple bonding pairs to have a real central atom for small ep; keep simple
+    for (let lp = 0; lp <= Math.min(ep - 1, ep === 2 ? 0 : (ep - 2)); lp++) {
+      // allow lp up to ep-? based on available data keys
+    }
+    // Instead, just offer lp values that exist in shapeData for this ep
+    const available = Object.keys(shapeData).filter(k => k.startsWith(ep + '-')).map(k => parseInt(k.split('-')[1], 10)).sort((a,b)=>a-b);
+    available.forEach(lp => {
+      const opt = document.createElement('option');
+      opt.value = lp; opt.textContent = lp;
+      lpSelect.appendChild(opt);
+    });
+  }
+  epSelect.addEventListener('change', () => { populateLP(); updateShape(); });
+  lpSelect.addEventListener('change', updateShape);
+
+  function drawSchematic(ep, lp) {
+    shapeSvg.innerHTML = '';
+    const cx = 130, cy = 130, rPos = 90;
+    const bp = ep - lp;
+
+    // central atom
+    const centre = document.createElementNS(svgNS, 'circle');
+    centre.setAttribute('cx', cx); centre.setAttribute('cy', cy); centre.setAttribute('r', 10);
+    centre.setAttribute('fill', '#124a3f');
+    shapeSvg.appendChild(centre);
+
+    for (let i = 0; i < ep; i++) {
+      const angle = (2 * Math.PI * i / ep) - Math.PI / 2;
+      const x = cx + rPos * Math.cos(angle);
+      const y = cy + rPos * Math.sin(angle);
+      const isLone = i >= bp; // draw bonding first, lone pairs last
+
+      if (!isLone) {
+        const line = document.createElementNS(svgNS, 'line');
+        line.setAttribute('x1', cx); line.setAttribute('y1', cy);
+        line.setAttribute('x2', x); line.setAttribute('y2', y);
+        line.setAttribute('stroke', '#565d6b'); line.setAttribute('stroke-width', '2');
+        shapeSvg.appendChild(line);
+
+        const dot = document.createElementNS(svgNS, 'circle');
+        dot.setAttribute('cx', x); dot.setAttribute('cy', y); dot.setAttribute('r', 13);
+        dot.setAttribute('fill', '#1c6e5e'); dot.setAttribute('stroke', '#124a3f');
+        shapeSvg.appendChild(dot);
+
+        const label = document.createElementNS(svgNS, 'text');
+        label.setAttribute('x', x); label.setAttribute('y', y + 4);
+        label.setAttribute('text-anchor', 'middle'); label.setAttribute('font-size', '12');
+        label.setAttribute('fill', '#fff'); label.setAttribute('font-weight', '700');
+        label.textContent = 'X';
+        shapeSvg.appendChild(label);
+      } else {
+        const oval = document.createElementNS(svgNS, 'ellipse');
+        oval.setAttribute('cx', x); oval.setAttribute('cy', y);
+        oval.setAttribute('rx', 16); oval.setAttribute('ry', 10);
+        oval.setAttribute('fill', '#d7dbe1'); oval.setAttribute('stroke', '#9aa1ab');
+        shapeSvg.appendChild(oval);
+      }
+    }
+  }
+
+  function updateShape() {
+    const ep = parseInt(epSelect.value, 10);
+    const lp = parseInt(lpSelect.value, 10);
+    const bp = ep - lp;
+    const data = shapeData[`${ep}-${lp}`];
+    drawSchematic(ep, lp);
+    if (!data) { vseprResult.innerHTML = 'No standard shape for this combination.'; return; }
+    vseprResult.innerHTML = `
+      <div class="stat-row"><span>Bonding pairs</span><span>${bp}</span></div>
+      <div class="stat-row"><span>Lone pairs</span><span>${lp}</span></div>
+      <div class="stat-row"><span>Electron geometry</span><span>${data.geom}</span></div>
+      <div class="stat-row"><span>Shape name</span><span>${data.name}</span></div>
+      <div class="stat-row"><span>Bond angle(s)</span><span>${data.angle}</span></div>
+      <div class="stat-row"><span>Example</span><span>${data.example}</span></div>
+    `;
+  }
+  populateLP();
+  updateShape();
+
+  // Practice
+  const practice = [
+    { q: 'CH₄ has 4 bonding pairs and 0 lone pairs. What shape and bond angle?', a: 'Tetrahedral, 109.5°' },
+    { q: 'H₂O has 2 bonding pairs and 2 lone pairs. What shape and approximate bond angle?', a: 'Bent (angular), ~104.5° (compressed from 109.5° by the two lone pairs)' },
+    { q: 'SF₄ has 4 bonding pairs and 1 lone pair (5 total domains). What shape?', a: 'See-saw' },
+    { q: 'Why does NH₃ have a smaller bond angle than CH₄, even though both have 4 electron domains?', a: 'NH₃ has a lone pair, which takes up more space than a bonding pair and pushes the N–H bonds closer together (109.5° → ~107.5°).' },
+  ];
+  const list = document.getElementById('practiceList');
+  practice.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'practice-item';
+    div.innerHTML = `<span>${i + 1}. ${p.q}</span><button class="op-btn reveal-btn" type="button" style="margin-left:10px;">Reveal</button><div class="answer">${p.a}</div>`;
+    const btn = div.querySelector('button');
+    const ans = div.querySelector('.answer');
+    btn.addEventListener('click', () => {
+      ans.classList.toggle('shown');
+      btn.textContent = ans.classList.contains('shown') ? 'Hide' : 'Reveal';
+    });
+    list.appendChild(div);
+  });
+</script>
+</body>
+</html>

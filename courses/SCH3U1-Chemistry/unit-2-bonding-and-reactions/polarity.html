@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Polarity — SCH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent: #1c6e5e; --accent-dark: #124a3f; --accent-tint: #e3f2ee; }
+
+  .en-row { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; margin: 14px 0; }
+  .en-row input { width: 150px; font-family: var(--mono); font-size: 16px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; text-align: center; }
+  .en-row label { font-size: 13px; color: var(--ink-soft); display:block; margin-bottom:4px; }
+  .en-out { text-align: center; margin-top: 14px; font-size: 16px; }
+  .en-out .final { font-size: 22px; font-weight: 700; color: var(--accent-dark); font-family: var(--mono); }
+  .en-scale { position: relative; height: 54px; max-width: 480px; margin: 18px auto 0; background: linear-gradient(to right, #e3f2ee, #ffe9c9, #f8d0d0); border-radius: 8px; border: 1px solid var(--line); }
+  .en-scale .tick { position: absolute; top: 0; bottom: 0; width: 2px; background: #333; }
+  .en-scale .marker { position: absolute; top: -22px; transform: translateX(-50%); font-size: 11px; font-weight: 700; }
+  .en-scale-labels { display: flex; justify-content: space-between; max-width: 480px; margin: 4px auto 0; font-size: 11.5px; color: var(--ink-soft); }
+
+  .toggle-row { display: flex; justify-content: center; gap: 10px; margin: 14px 0; }
+  .mol-example { display: none; text-align: center; }
+  .mol-example.active { display: block; }
+
+  .practice-item { border-bottom: 1px solid var(--line); padding: 10px 0; }
+  .practice-item:last-child { border-bottom: none; }
+  .answer { display: none; margin-top: 6px; color: var(--accent-dark); font-weight: 600; }
+  .answer.shown { display: block; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Study Hub</a>
+  <a href="../index.html">SCH3U — Chemistry</a>
+  <span class="crumb-current">Polarity</span>
+</div>
+
+<div class="wrap">
+  <h1>Polarity</h1>
+  <p class="subtitle">Unit 4: Bonding &amp; Molecular Shape · Bond polarity, molecular polarity, and why shape matters.</p>
+
+  <h2>Bond polarity</h2>
+  <p>Electronegativity (EN) measures how strongly an atom pulls on shared (bonded) electrons. The bigger the
+  EN difference between two bonded atoms, the more unevenly the electrons are shared.</p>
+
+  <div class="demo">
+    <h3 style="text-align:center;">Try it: Bond Polarity Calculator</h3>
+    <div class="en-row">
+      <div><label>EN of atom A</label><input type="text" id="enA" value="2.1"></div>
+      <div><label>EN of atom B</label><input type="text" id="enB" value="3.5"></div>
+    </div>
+    <div class="en-out" id="enOut"></div>
+    <div class="en-scale" id="enScale">
+      <div class="tick" id="enTick" style="left:0%"></div>
+      <div class="marker" id="enMarker" style="left:0%"></div>
+    </div>
+    <div class="en-scale-labels"><span>0</span><span>0.4</span><span>1.7</span><span>3.3</span></div>
+  </div>
+
+  <div class="rule-grid" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; margin-top:16px;">
+    <div style="background:var(--surface); border:1px solid var(--line); border-left:4px solid var(--accent); border-radius:var(--radius); padding:12px 14px;"><strong>0 – 0.4</strong><br>Nonpolar (pure) covalent — electrons shared almost equally.</div>
+    <div style="background:var(--surface); border:1px solid var(--line); border-left:4px solid var(--accent); border-radius:var(--radius); padding:12px 14px;"><strong>0.4 – 1.7</strong><br>Polar covalent — unequal sharing, partial charges (δ+/δ−).</div>
+    <div style="background:var(--surface); border:1px solid var(--line); border-left:4px solid var(--accent); border-radius:var(--radius); padding:12px 14px;"><strong>1.7+</strong><br>Ionic — electrons essentially transferred, not shared.</div>
+  </div>
+
+  <h2>Molecular polarity</h2>
+  <p>A bond being polar doesn't automatically make the whole <em>molecule</em> polar — shape matters. A molecule
+  is polar only if it has an overall (net) dipole: one end more positive, the other more negative.</p>
+
+  <div class="callout">
+    <strong>Quick checklist</strong> — a molecule is usually <strong>nonpolar</strong> if:
+    the central atom has no lone pairs, AND all the outer atoms are the same (symmetric arrangement) — the
+    individual bond dipoles point in different directions and cancel out.<br>
+    It's usually <strong>polar</strong> if there's a lone pair on the central atom, or the outer atoms are
+    different — the bond dipoles don't fully cancel, leaving a net dipole.
+  </div>
+
+  <div class="demo">
+    <h3 style="text-align:center;">Compare: CO₂ vs. H₂O</h3>
+    <div class="toggle-row">
+      <button class="op-btn" data-active="true" id="btnCO2" type="button">CO₂</button>
+      <button class="op-btn" id="btnH2O" type="button">H₂O</button>
+    </div>
+    <div class="mol-example active" id="exCO2">
+      <svg width="280" height="140" viewBox="0 0 280 140">
+        <line x1="60" y1="70" x2="140" y2="70" stroke="#565d6b" stroke-width="3"/>
+        <line x1="140" y1="70" x2="220" y2="70" stroke="#565d6b" stroke-width="3"/>
+        <circle cx="60" cy="70" r="18" fill="#c0392b"/><text x="60" y="75" text-anchor="middle" fill="#fff" font-weight="700">O</text>
+        <circle cx="140" cy="70" r="16" fill="#1c6e5e"/><text x="140" y="75" text-anchor="middle" fill="#fff" font-weight="700">C</text>
+        <circle cx="220" cy="70" r="18" fill="#c0392b"/><text x="220" y="75" text-anchor="middle" fill="#fff" font-weight="700">O</text>
+        <text x="60" y="40" text-anchor="middle" font-size="13" fill="#555">δ−</text>
+        <text x="140" y="40" text-anchor="middle" font-size="13" fill="#555">δ+δ+</text>
+        <text x="220" y="40" text-anchor="middle" font-size="13" fill="#555">δ−</text>
+      </svg>
+      <p>Linear, 180°. The two C=O bond dipoles point in exactly opposite directions and are equal in
+      size — they cancel completely. <strong>Nonpolar molecule</strong>, even though each individual bond is polar.</p>
+    </div>
+    <div class="mol-example" id="exH2O">
+      <svg width="280" height="160" viewBox="0 0 280 160">
+        <line x1="140" y1="50" x2="90" y2="110" stroke="#565d6b" stroke-width="3"/>
+        <line x1="140" y1="50" x2="190" y2="110" stroke="#565d6b" stroke-width="3"/>
+        <circle cx="140" cy="50" r="18" fill="#c0392b"/><text x="140" y="55" text-anchor="middle" fill="#fff" font-weight="700">O</text>
+        <circle cx="90" cy="110" r="14" fill="#2c6fbb"/><text x="90" y="115" text-anchor="middle" fill="#fff" font-weight="700" font-size="12">H</text>
+        <circle cx="190" cy="110" r="14" fill="#2c6fbb"/><text x="190" y="115" text-anchor="middle" fill="#fff" font-weight="700" font-size="12">H</text>
+        <line x1="140" y1="50" x2="140" y2="20" stroke="#8a6d1a" stroke-width="2" marker-end="url(#arrow)"/>
+        <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="#8a6d1a"/></marker></defs>
+        <text x="140" y="15" text-anchor="middle" font-size="12" fill="#8a6d1a">net dipole</text>
+      </svg>
+      <p>Bent, ~104.5°. The two O–H bond dipoles don't point opposite each other (and there are lone pairs on
+      the central O), so they add up to a net dipole. <strong>Polar molecule.</strong></p>
+    </div>
+  </div>
+
+  <h2>Practice</h2>
+  <div class="panel" id="practiceList"></div>
+
+  <div class="callout" style="margin-top:32px;">
+    <strong>Try this:</strong> before revealing the answer, predict whether CCl₄ is polar or nonpolar (it's
+    tetrahedral with 4 identical Cl atoms and no lone pairs on carbon) — then check your reasoning below.
+  </div>
+</div>
+
+<div class="page-foot">SCH3U · Unit 4 — Bonding &amp; Molecular Shape</div>
+
+<script>
+  const enA = document.getElementById('enA');
+  const enB = document.getElementById('enB');
+  const enOut = document.getElementById('enOut');
+  const enTick = document.getElementById('enTick');
+  const enMarker = document.getElementById('enMarker');
+
+  function updateEN() {
+    const a = parseFloat(enA.value), b = parseFloat(enB.value);
+    if (isNaN(a) || isNaN(b)) { enOut.textContent = 'Enter both EN values.'; return; }
+    const diff = Math.abs(a - b);
+    let type;
+    if (diff < 0.4) type = 'Nonpolar covalent';
+    else if (diff < 1.7) type = 'Polar covalent';
+    else type = 'Ionic';
+    enOut.innerHTML = `EN difference = <span class="final">${diff.toFixed(1)}</span> → ${type}`;
+    const pct = Math.min(100, (diff / 3.3) * 100);
+    enTick.style.left = pct + '%';
+    enMarker.style.left = pct + '%';
+    enMarker.textContent = diff.toFixed(1);
+  }
+  [enA, enB].forEach(el => el.addEventListener('input', updateEN));
+  updateEN();
+
+  const btnCO2 = document.getElementById('btnCO2');
+  const btnH2O = document.getElementById('btnH2O');
+  const exCO2 = document.getElementById('exCO2');
+  const exH2O = document.getElementById('exH2O');
+  btnCO2.addEventListener('click', () => {
+    btnCO2.dataset.active = 'true'; btnH2O.removeAttribute('data-active');
+    exCO2.classList.add('active'); exH2O.classList.remove('active');
+  });
+  btnH2O.addEventListener('click', () => {
+    btnH2O.dataset.active = 'true'; btnCO2.removeAttribute('data-active');
+    exH2O.classList.add('active'); exCO2.classList.remove('active');
+  });
+
+  const practice = [
+    { q: 'H–F has EN values of 2.1 and 4.0. Classify the bond.', a: 'Diff = 1.9 → ionic (right at the edge, but over 1.7)' },
+    { q: 'Is CCl₄ polar or nonpolar? Why?', a: 'Nonpolar — tetrahedral, no lone pairs on C, all 4 outer atoms identical, so the bond dipoles cancel symmetrically.' },
+    { q: 'Is NH₃ polar or nonpolar? Why?', a: 'Polar — there\'s a lone pair on the central N, which breaks the symmetry, so the dipoles don\'t cancel.' },
+    { q: 'Two diatomic molecules, H₂ and HCl. Which is polar?', a: 'HCl (EN difference between H and Cl is nonzero); H₂ is nonpolar since both atoms are identical (EN diff = 0).' },
+  ];
+  const list = document.getElementById('practiceList');
+  practice.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'practice-item';
+    div.innerHTML = `<span>${i + 1}. ${p.q}</span><button class="op-btn reveal-btn" type="button" style="margin-left:10px;">Reveal</button><div class="answer">${p.a}</div>`;
+    const btn = div.querySelector('button');
+    const ans = div.querySelector('.answer');
+    btn.addEventListener('click', () => {
+      ans.classList.toggle('shown');
+      btn.textContent = ans.classList.contains('shown') ? 'Hide' : 'Reveal';
+    });
+    list.appendChild(div);
+  });
+</script>
+</body>
+</html>

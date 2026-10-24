@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Naming Ionic Compounds — SCH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent: #1c6e5e; --accent-dark: #124a3f; --accent-tint: #e3f2ee; }
+  table.ref-table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13.5px; }
+  table.ref-table th, table.ref-table td { border: 1px solid var(--line); padding: 7px 9px; text-align: left; }
+  table.ref-table th { background: var(--accent-tint); color: var(--accent-dark); }
+
+  .cross-row { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; margin: 14px 0; }
+  .cross-row select { font-family: var(--mono); font-size: 16px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; width: 140px; }
+  .cross-out { text-align: center; margin-top: 14px; font-size: 16px; }
+  .cross-out .final { font-size: 26px; font-weight: 700; color: var(--accent-dark); font-family: var(--mono); }
+
+  .practice-item { border-bottom: 1px solid var(--line); padding: 10px 0; }
+  .practice-item:last-child { border-bottom: none; }
+  .answer { display: none; margin-top: 6px; color: var(--accent-dark); font-weight: 600; }
+  .answer.shown { display: block; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Study Hub</a>
+  <a href="../index.html">SCH3U — Chemistry</a>
+  <span class="crumb-current">Naming Ionic Compounds</span>
+</div>
+
+<div class="wrap">
+  <h1>Naming Ionic Compounds</h1>
+  <p class="subtitle">Unit 2: Chemical Nomenclature · Fixed-charge binaries and the Stock system for multivalent metals.</p>
+
+  <div class="callout">
+    This unit uses the <strong>Stock system</strong> (Roman numerals) for multivalent metals — not the classical
+    "-ous/-ic" naming system, and no organic naming either.
+  </div>
+
+  <h2>Binary ionic compounds (fixed charge)</h2>
+  <div class="callout">
+    <strong>Naming:</strong> metal's full name + nonmetal's stem + "-ide". Example: Al₂O₃ → aluminum oxide.<br>
+    <strong>Writing the formula (cross-over rule):</strong> write each ion's charge as a subscript on the
+    <em>other</em> ion, then reduce to the lowest whole-number ratio.
+    Example: Mg²⁺ and N³⁻ → Mg₃N₂ (charges cross over as subscripts).
+  </div>
+
+  <h2>Try it: Cross-Over Rule</h2>
+  <div class="demo">
+    <div class="cross-row">
+      <div>
+        <label style="display:block; font-size:13px; color:var(--ink-soft);">Cation charge</label>
+        <select id="catCharge">
+          <option value="1">1+</option><option value="2">2+</option><option value="3">3+</option><option value="4">4+</option>
+        </select>
+      </div>
+      <span style="font-size:20px;">+</span>
+      <div>
+        <label style="display:block; font-size:13px; color:var(--ink-soft);">Anion charge</label>
+        <select id="anCharge">
+          <option value="1">1−</option><option value="2">2−</option><option value="3">3−</option><option value="4">4−</option>
+        </select>
+      </div>
+    </div>
+    <div class="cross-out" id="crossOut"></div>
+  </div>
+
+  <h2>Multivalent metals (Stock system)</h2>
+  <p>Some metals can form more than one stable ion. The Roman numeral after the metal's name tells you which
+  charge is being used <em>in that compound</em> — it does not change the metal's name.</p>
+
+  <table class="ref-table">
+    <tr><th>Metal</th><th>Common charges</th><th>Metal</th><th>Common charges</th></tr>
+    <tr><td>Copper (Cu)</td><td>1+, 2+</td><td>Tin (Sn)</td><td>2+, 4+</td></tr>
+    <tr><td>Mercury (Hg)</td><td>1+, 2+</td><td>Lead (Pb)</td><td>2+, 4+</td></tr>
+    <tr><td>Iron (Fe)</td><td>2+, 3+</td><td>Manganese (Mn)</td><td>2+, 4+</td></tr>
+    <tr><td>Cobalt (Co)</td><td>2+, 3+</td><td>Nitrogen (N), Phosphorus (P)</td><td>3+, 5+</td></tr>
+    <tr><td>Nickel (Ni)</td><td>2+, 3+</td><td>Arsenic (As), Antimony (Sb), Bismuth (Bi)</td><td>3+, 5+</td></tr>
+    <tr><td>Chromium (Cr)</td><td>2+, 3+, 6+</td><td>Gold (Au)</td><td>1+, 3+</td></tr>
+  </table>
+
+  <div class="callout">
+    To find the charge when you're given a formula, work backward: the total positive charge must balance the
+    total negative charge. Example: in Fe₂S₃, sulfide is always 2−, so 3 S = 6− total, meaning the 2 Fe must
+    together supply 6+, so each Fe is 3+ → iron(III) sulfide.
+  </div>
+
+  <h2>Practice</h2>
+  <div class="panel" id="practiceList"></div>
+
+  <div class="callout" style="margin-top:32px;">
+    <strong>Try this:</strong> before revealing, name PbO₂. Figure out the charge on Pb using the fact that
+    oxide is always 2−.
+  </div>
+</div>
+
+<div class="page-foot">SCH3U · Unit 2 — Chemical Nomenclature</div>
+
+<script>
+  function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
+  const catCharge = document.getElementById('catCharge');
+  const anCharge = document.getElementById('anCharge');
+  const crossOut = document.getElementById('crossOut');
+
+  function updateCross() {
+    let cat = parseInt(catCharge.value, 10);
+    let an = parseInt(anCharge.value, 10);
+    const g = gcd(cat, an);
+    const catSub = an / g;
+    const anSub = cat / g;
+    const catText = catSub === 1 ? 'A' : `A<sub>${catSub}</sub>`;
+    const anText = anSub === 1 ? 'B' : `B<sub>${anSub}</sub>`;
+    crossOut.innerHTML = `If A is ${cat}+ and B is ${an}−: formula = <span class="final">${catText}${anText}</span>`;
+  }
+  [catCharge, anCharge].forEach(el => el.addEventListener('change', updateCross));
+  updateCross();
+
+  const practice = [
+    { q: 'Name KBr.', a: 'Potassium bromide' },
+    { q: 'Name Ba₃N₂.', a: 'Barium nitride' },
+    { q: 'Write the formula for aluminum sulfide.', a: 'Al₂S₃ (Al³⁺ and S²⁻ cross over)' },
+    { q: 'Name CuCl₂ (copper can be 1+ or 2+).', a: 'Copper(II) chloride — 2 Cl⁻ = 2− total, so Cu must be 2+' },
+    { q: 'Name Fe₂O₃.', a: 'Iron(III) oxide — 3 O²⁻ = 6− total, split across 2 Fe = 3+ each' },
+    { q: 'Write the formula for tin(IV) oxide.', a: 'SnO₂ (Sn⁴⁺ and O²⁻ cross over, then reduce: Sn₂O₄ → SnO₂)' },
+  ];
+  const list = document.getElementById('practiceList');
+  practice.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'practice-item';
+    div.innerHTML = `<span>${i + 1}. ${p.q}</span><button class="op-btn reveal-btn" type="button" style="margin-left:10px;">Reveal</button><div class="answer">${p.a}</div>`;
+    const btn = div.querySelector('button');
+    const ans = div.querySelector('.answer');
+    btn.addEventListener('click', () => {
+      ans.classList.toggle('shown');
+      btn.textContent = ans.classList.contains('shown') ? 'Hide' : 'Reveal';
+    });
+    list.appendChild(div);
+  });
+</script>
+</body>
+</html>

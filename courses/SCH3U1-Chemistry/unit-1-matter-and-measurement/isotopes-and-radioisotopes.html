@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Isotopes &amp; Radioisotopes — SCH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent: #1c6e5e; --accent-dark: #124a3f; --accent-tint: #e3f2ee; }
+
+  .notation-wrap { display: flex; justify-content: center; align-items: center; gap: 20px; margin: 16px 0; flex-wrap: wrap; }
+  .notation-box { text-align: center; font-family: var(--mono); }
+  .notation-box .big { font-size: 42px; position: relative; }
+  .notation-box .sup { position: absolute; top: -4px; left: -22px; font-size: 16px; }
+  .notation-box .sub { position: absolute; bottom: -2px; left: -22px; font-size: 16px; }
+  .notation-box .lbl { font-size: 12px; color: var(--ink-soft); margin-top: 4px; }
+
+  .penrow { display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; margin: 14px 0; }
+  .penrow input { width: 90px; font-family: var(--mono); font-size: 16px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; text-align: center; }
+  .pen-out { display: flex; gap: 16px; justify-content: center; margin-top: 14px; flex-wrap: wrap; }
+  .pen-box { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 10px 16px; text-align: center; min-width: 90px; }
+  .pen-box .num { font-size: 22px; font-weight: 700; color: var(--accent-dark); font-family: var(--mono); }
+  .pen-box .lbl { font-size: 12px; color: var(--ink-soft); }
+
+  table.ref-table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13.5px; }
+  table.ref-table th, table.ref-table td { border: 1px solid var(--line); padding: 7px 9px; text-align: left; }
+  table.ref-table th { background: var(--accent-tint); color: var(--accent-dark); }
+
+  .practice-item { border-bottom: 1px solid var(--line); padding: 10px 0; }
+  .practice-item:last-child { border-bottom: none; }
+  .answer { display: none; margin-top: 6px; color: var(--accent-dark); font-weight: 600; }
+  .answer.shown { display: block; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Study Hub</a>
+  <a href="../index.html">SCH3U — Chemistry</a>
+  <span class="crumb-current">Isotopes &amp; Radioisotopes</span>
+</div>
+
+<div class="wrap">
+  <h1>Isotopes &amp; Radioisotopes</h1>
+  <p class="subtitle">Unit 1, Lesson 3 · Same element, different mass — and what happens when the nucleus is unstable.</p>
+
+  <h2>Isotope notation</h2>
+  <p>Isotopes are atoms of the <strong>same element</strong> (same number of protons) with a
+  <strong>different number of neutrons</strong> — so they have different masses.</p>
+
+  <div class="notation-wrap">
+    <div class="notation-box">
+      <div class="big"><span class="sup">A</span><span class="sub">Z</span>X</div>
+      <div class="lbl">A = mass number (p⁺ + n⁰)<br>Z = atomic number (p⁺)<br>X = element symbol</div>
+    </div>
+  </div>
+
+  <div class="callout">A neutral atom always has electrons = protons. Neutrons = mass number (A) − atomic number (Z).</div>
+
+  <h2>Try it: PEN Calculator</h2>
+  <div class="demo">
+    <div class="penrow">
+      <label style="font-family:var(--mono);">Atomic number (Z)</label>
+      <input type="text" id="penZ" value="17">
+    </div>
+    <div class="penrow">
+      <label style="font-family:var(--mono);">Mass number (A)</label>
+      <input type="text" id="penA" value="37">
+    </div>
+    <div class="pen-out" id="penOut"></div>
+  </div>
+
+  <h2>Radioisotopes</h2>
+  <div class="callout">
+    An unstable isotope (too many or too few neutrons for a stable nucleus) is a <strong>radioisotope</strong>.
+    It decays — spontaneously releasing particles/energy to reach a more stable arrangement.
+  </div>
+
+  <table class="ref-table">
+    <tr><th>Radiation</th><th>What it is</th><th>Stopped by</th></tr>
+    <tr><td>Alpha (α)</td><td>Heaviest, most highly charged particle (a helium nucleus)</td><td>Paper, or even a few cm of air</td></tr>
+    <tr><td>Beta (β)</td><td>A fast-moving electron, negatively charged</td><td>~0.5 cm of aluminum</td></tr>
+    <tr><td>Gamma (γ)</td><td>Pure energy (a wave) — no mass, no charge</td><td>Thick lead or concrete</td></tr>
+  </table>
+
+  <h2>Average atomic mass</h2>
+  <div class="callout">
+    The mass shown on the periodic table is a <strong>weighted average</strong> of all naturally occurring
+    isotopes of that element, based on how abundant each one is. See the
+    <a href="average-atomic-mass.html">Average Atomic Mass page</a> for the interactive calculator and practice.
+  </div>
+
+  <h2>Applications</h2>
+  <div class="rule-grid" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin:16px 0;">
+    <div class="rule-card" style="background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:14px 16px;">
+      <h3>Medical tracers &amp; PET scans</h3>
+      <p>A radioisotope (e.g. Fluorine-18) is attached to a molecule the body uses naturally (like glucose) and
+      injected. As it decays, it reveals where that molecule accumulates — useful for spotting tumours.</p>
+    </div>
+    <div class="rule-card" style="background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:14px 16px;">
+      <h3>Radiotherapy</h3>
+      <p>Targeted radiation (e.g. Co-60) destroys malignant cells.</p>
+    </div>
+    <div class="rule-card" style="background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:14px 16px;">
+      <h3>Dating artifacts</h3>
+      <p>Carbon-14 decays at a known rate, letting scientists estimate the age of once-living material.
+      See the <a href="half-life.html">Half-Life page</a>.</p>
+    </div>
+  </div>
+
+  <h2>Practice</h2>
+  <div class="panel" id="practiceList"></div>
+
+  <div class="callout" style="margin-top:32px;">
+    <strong>Try this:</strong> before checking the tool, work out by hand how many protons, neutrons, and
+    electrons are in potassium-39 (Z = 19) — then confirm with the PEN calculator above.
+  </div>
+</div>
+
+<div class="page-foot">SCH3U · Unit 1, Lesson 3 — Isotopes &amp; Half-Life</div>
+
+<script>
+  const penZ = document.getElementById('penZ');
+  const penA = document.getElementById('penA');
+  const penOut = document.getElementById('penOut');
+  function updatePEN() {
+    const z = parseInt(penZ.value, 10);
+    const a = parseInt(penA.value, 10);
+    if (isNaN(z) || isNaN(a) || z < 0 || a < z) {
+      penOut.innerHTML = '<span style="color:#a03030;">Mass number should be ≥ atomic number.</span>';
+      return;
+    }
+    const n = a - z;
+    penOut.innerHTML = `
+      <div class="pen-box"><div class="num">${z}</div><div class="lbl">protons (p⁺)</div></div>
+      <div class="pen-box"><div class="num">${z}</div><div class="lbl">electrons (e⁻)</div></div>
+      <div class="pen-box"><div class="num">${n}</div><div class="lbl">neutrons (n⁰)</div></div>
+    `;
+  }
+  [penZ, penA].forEach(el => el.addEventListener('input', updatePEN));
+  updatePEN();
+
+  const practice = [
+    { q: 'Carbon-14 has an atomic number of 6. How many neutrons does it have?', a: '8 (14 − 6)' },
+    { q: 'Which type of radiation is stopped by just a sheet of paper?', a: 'Alpha (α)' },
+    { q: 'Which type of radiation is pure energy, with no mass or charge?', a: 'Gamma (γ)' },
+    { q: 'Two atoms both have 17 protons, but one has 18 neutrons and the other has 20. What are these atoms called, relative to each other?', a: 'Isotopes of chlorine (same protons, different neutrons)' },
+    { q: 'Why is the atomic mass on the periodic table usually not a whole number?', a: 'It\'s a weighted average across all the naturally occurring isotopes of that element, each contributing based on its abundance.' },
+  ];
+  const list = document.getElementById('practiceList');
+  practice.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'practice-item';
+    div.innerHTML = `<span>${i + 1}. ${p.q}</span><button class="op-btn reveal-btn" type="button" style="margin-left:10px;">Reveal</button><div class="answer">${p.a}</div>`;
+    const btn = div.querySelector('button');
+    const ans = div.querySelector('.answer');
+    btn.addEventListener('click', () => {
+      ans.classList.toggle('shown');
+      btn.textContent = ans.classList.contains('shown') ? 'Hide' : 'Reveal';
+    });
+    list.appendChild(div);
+  });
+</script>
+</body>
+</html>

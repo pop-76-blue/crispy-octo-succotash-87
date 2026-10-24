@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>First 20 Elements — SCH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root {
+    --accent: #1c6e5e;
+    --accent-dark: #124a3f;
+    --accent-tint: #e3f2ee;
+  }
+
+  .ref-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 8px;
+    margin: 16px 0;
+  }
+  .ref-tile {
+    text-align: center;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 8px 4px;
+  }
+  .ref-tile .num { font-size: 10px; color: var(--ink-soft); }
+  .ref-tile .sym { font-size: 20px; font-weight: 700; color: var(--accent-dark); font-family: var(--mono); }
+  .ref-tile .name { font-size: 11px; color: var(--ink-soft); }
+
+  .quiz-wrap { text-align: center; }
+  .flash-card {
+    width: 220px;
+    height: 150px;
+    margin: 10px auto;
+    background: var(--surface);
+    border: 2px solid var(--accent);
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--accent-dark);
+    cursor: pointer;
+    user-select: none;
+  }
+  .flash-input {
+    width: 220px;
+    font-size: 16px;
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    text-align: center;
+    margin-top: 8px;
+  }
+  .flash-feedback {
+    margin-top: 10px;
+    font-weight: 600;
+    min-height: 24px;
+  }
+  .flash-feedback.correct { color: var(--accent-dark); }
+  .flash-feedback.wrong { color: #a03030; }
+  .flash-score { margin-top: 10px; color: var(--ink-soft); font-size: 14px; }
+  .flash-btns { margin-top: 10px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Study Hub</a>
+  <a href="../index.html">SCH3U — Chemistry</a>
+  <span class="crumb-current">First 20 Elements</span>
+</div>
+
+<div class="wrap">
+  <h1>First 20 Elements</h1>
+  <p class="subtitle">Unit 1: Measurement &amp; Matter · Symbols will be on the periodic table you're given — names won't be.</p>
+
+  <div class="callout">
+    <strong>Quiz reminder:</strong> the periodic table you're given shows symbols only.
+    You need to know the <strong>name</strong> that goes with each symbol, for elements 1–20.
+  </div>
+
+  <h2>Reference table</h2>
+  <div class="ref-grid" id="refGrid"></div>
+
+  <h2>Drill: Symbol → Name</h2>
+  <div class="demo quiz-wrap">
+    <div class="flash-card" id="flashCard">H</div>
+    <input type="text" id="flashInput" class="flash-input" placeholder="Type the element's name" autocomplete="off">
+    <div class="flash-feedback" id="flashFeedback"></div>
+    <div class="flash-btns">
+      <button class="op-btn" id="checkBtn" type="button">Check</button>
+      <button class="op-btn" id="skipBtn" type="button">Skip</button>
+    </div>
+    <div class="flash-score" id="flashScore">Score: 0 / 0</div>
+  </div>
+
+  <div class="callout" style="margin-top:32px;">
+    <strong>Try this:</strong> go through the drill until you get <strong>10 in a row correct</strong>
+    before checking your score — that's roughly quiz-ready.
+  </div>
+</div>
+
+<div class="page-foot">SCH3U · Unit 1 — Measurement &amp; Matter</div>
+
+<script>
+  const elements = [
+    ['H', 'Hydrogen'], ['He', 'Helium'], ['Li', 'Lithium'], ['Be', 'Beryllium'],
+    ['B', 'Boron'], ['C', 'Carbon'], ['N', 'Nitrogen'], ['O', 'Oxygen'],
+    ['F', 'Fluorine'], ['Ne', 'Neon'], ['Na', 'Sodium'], ['Mg', 'Magnesium'],
+    ['Al', 'Aluminum'], ['Si', 'Silicon'], ['P', 'Phosphorus'], ['S', 'Sulfur'],
+    ['Cl', 'Chlorine'], ['Ar', 'Argon'], ['K', 'Potassium'], ['Ca', 'Calcium'],
+  ];
+
+  const refGrid = document.getElementById('refGrid');
+  elements.forEach(([sym, name], i) => {
+    const d = document.createElement('div');
+    d.className = 'ref-tile';
+    d.innerHTML = `<div class="num">${i + 1}</div><div class="sym">${sym}</div><div class="name">${name}</div>`;
+    refGrid.appendChild(d);
+  });
+
+  let order = [];
+  let idx = 0;
+  let correctCount = 0, total = 0;
+
+  function shuffle() {
+    order = elements.map((_, i) => i);
+    for (let i = order.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [order[i], order[j]] = [order[j], order[i]];
+    }
+    idx = 0;
+  }
+  shuffle();
+
+  const flashCard = document.getElementById('flashCard');
+  const flashInput = document.getElementById('flashInput');
+  const flashFeedback = document.getElementById('flashFeedback');
+  const flashScore = document.getElementById('flashScore');
+
+  function showCard() {
+    if (idx >= order.length) shuffle();
+    flashCard.textContent = elements[order[idx]][0];
+    flashInput.value = '';
+    flashFeedback.textContent = '';
+    flashFeedback.className = 'flash-feedback';
+    flashInput.focus();
+  }
+  showCard();
+
+  function check() {
+    const correctName = elements[order[idx]][1].toLowerCase();
+    const guess = flashInput.value.trim().toLowerCase();
+    total++;
+    if (guess === correctName) {
+      correctCount++;
+      flashFeedback.textContent = 'Correct!';
+      flashFeedback.className = 'flash-feedback correct';
+    } else {
+      flashFeedback.textContent = `Not quite — it's ${elements[order[idx]][1]}.`;
+      flashFeedback.className = 'flash-feedback wrong';
+    }
+    flashScore.textContent = `Score: ${correctCount} / ${total}`;
+    idx++;
+    setTimeout(showCard, 900);
+  }
+
+  document.getElementById('checkBtn').addEventListener('click', check);
+  document.getElementById('skipBtn').addEventListener('click', () => { idx++; showCard(); });
+  flashInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') check(); });
+  flashCard.addEventListener('click', () => flashInput.focus());
+</script>
+</body>
+</html>

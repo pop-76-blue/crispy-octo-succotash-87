@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bonding Practice Quiz — SCH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent: #1c6e5e; --accent-dark: #124a3f; --accent-tint: #e3f2ee; }
+
+  .q-section { margin: 24px 0; }
+  .q-section-title { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid var(--accent); padding-bottom: 4px; margin-bottom: 10px; }
+  .q-section-title h3 { margin: 0; color: var(--accent-dark); }
+  .q-marks { font-size: 13px; color: var(--ink-soft); font-weight: 700; }
+  .q-block { margin: 14px 0; padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .q-block:last-child { border-bottom: none; }
+  .q-prompt { font-weight: 600; margin-bottom: 8px; }
+  .q-prompt .q-pts { font-weight: 400; font-style: italic; color: var(--ink-soft); font-size: 13px; }
+  .q-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 6px 0; }
+  .q-row label { min-width: 170px; font-family: var(--mono); font-size: 14px; }
+  .q-row input[type="text"], .q-row select { font-family: var(--mono); font-size: 15px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; width: 190px; }
+  .q-input.correct { border-color: #1c6e5e; background: #eaf6f1; }
+  .q-input.wrong { border-color: #a03030; background: #fbeaea; }
+  .q-feedback { font-size: 13px; margin-left: 4px; color: #a03030; }
+  .score-bar { position: sticky; bottom: 0; background: var(--surface); border-top: 2px solid var(--accent); padding: 14px 18px; margin: 30px -24px 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+  .score-total { font-weight: 700; font-size: 16px; color: var(--accent-dark); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Study Hub</a>
+  <a href="../index.html">SCH3U — Chemistry</a>
+  <span class="crumb-current">Bonding Practice Quiz</span>
+</div>
+
+<div class="wrap">
+  <h1>Unit 4 Practice Quiz</h1>
+  <p class="subtitle">Bonding &amp; Molecular Shape · Lewis structures, VSEPR, polarity, and IMF — self-checking.</p>
+
+  <div class="callout">A self-test covering all of Unit 4. Answer everything, then press Check My Answers.</div>
+
+  <div class="q-section">
+    <div class="q-section-title"><h3>Lewis Structures</h3><span class="q-marks">4 marks</span></div>
+    <div class="q-block">
+      <div class="q-prompt">1. What is the TVE (total valence electrons) for SO₂? <span class="q-pts">(1)</span></div>
+      <div class="q-row"><input type="text" class="q-input" data-answer="18" data-pts="1"></div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">2. An atom has 5 valence electrons, 2 lone pair electrons, and 6 bonding electrons. What is its formal charge? <span class="q-pts">(1)</span></div>
+      <div class="q-row"><input type="text" class="q-input" data-answer="-3" data-pts="1" placeholder="e.g. -1 or +1"></div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">3. How many bonds are shown by a Lewis structure line between two atoms with three lines? <span class="q-pts">(1)</span></div>
+      <div class="q-row">
+        <select class="q-input" data-answer="triple" data-pts="1">
+          <option value="">— choose —</option>
+          <option value="single">Single</option>
+          <option value="double">Double</option>
+          <option value="triple">Triple</option>
+        </select>
+      </div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">4. Resonance structures represent different molecules. True or false? <span class="q-pts">(1)</span></div>
+      <div class="q-row">
+        <select class="q-input" data-answer="false" data-pts="1">
+          <option value="">— choose —</option>
+          <option value="true">True</option>
+          <option value="false">False</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="q-section">
+    <div class="q-section-title"><h3>VSEPR</h3><span class="q-marks">6 marks</span></div>
+    <div class="q-block">
+      <div class="q-prompt">5. A central atom has 4 bonding pairs and 0 lone pairs. Name the shape and give the bond angle. <span class="q-pts">(2)</span></div>
+      <div class="q-row"><label>Shape</label><input type="text" class="q-input" data-answer="tetrahedral" data-pts="1"></div>
+      <div class="q-row"><label>Bond angle</label><input type="text" class="q-input" data-numeric="true" data-answer="109.5" data-tol="0.5" data-pts="1"></div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">6. A central atom has 3 bonding pairs and 1 lone pair. Name the shape. <span class="q-pts">(1)</span></div>
+      <div class="q-row"><input type="text" class="q-input" data-answer="trigonal pyramidal" data-pts="1"></div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">7. A central atom has 2 bonding pairs and 2 lone pairs (4 total domains). Name the shape. <span class="q-pts">(1)</span></div>
+      <div class="q-row"><input type="text" class="q-input" data-answer="bent" data-pts="1"></div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">8. A central atom has 5 bonding pairs, 0 lone pairs. Name the shape. <span class="q-pts">(1)</span></div>
+      <div class="q-row"><input type="text" class="q-input" data-answer="trigonal bipyramidal" data-pts="1"></div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">9. A central atom has 4 bonding pairs, 2 lone pairs (6 total domains). Name the shape. <span class="q-pts">(1)</span></div>
+      <div class="q-row"><input type="text" class="q-input" data-answer="square planar" data-pts="1"></div>
+    </div>
+  </div>
+
+  <div class="q-section">
+    <div class="q-section-title"><h3>Polarity</h3><span class="q-marks">4 marks</span></div>
+    <div class="q-block">
+      <div class="q-prompt">10. Two atoms have EN values 2.5 and 3.0. Classify the bond. <span class="q-pts">(1)</span></div>
+      <div class="q-row">
+        <select class="q-input" data-answer="polar covalent" data-pts="1">
+          <option value="">— choose —</option>
+          <option value="nonpolar covalent">Nonpolar covalent</option>
+          <option value="polar covalent">Polar covalent</option>
+          <option value="ionic">Ionic</option>
+        </select>
+      </div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">11. CO₂ is linear with two identical, opposite C=O bonds. Is the molecule polar or nonpolar? <span class="q-pts">(1)</span></div>
+      <div class="q-row">
+        <select class="q-input" data-answer="nonpolar" data-pts="1">
+          <option value="">— choose —</option>
+          <option value="polar">Polar</option>
+          <option value="nonpolar">Nonpolar</option>
+        </select>
+      </div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">12. NH₃ has a lone pair on its central atom. Is it polar or nonpolar? <span class="q-pts">(1)</span></div>
+      <div class="q-row">
+        <select class="q-input" data-answer="polar" data-pts="1">
+          <option value="">— choose —</option>
+          <option value="polar">Polar</option>
+          <option value="nonpolar">Nonpolar</option>
+        </select>
+      </div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">13. True or false: a molecule can have polar bonds but still be a nonpolar molecule overall. <span class="q-pts">(1)</span></div>
+      <div class="q-row">
+        <select class="q-input" data-answer="true" data-pts="1">
+          <option value="">— choose —</option>
+          <option value="true">True</option>
+          <option value="false">False</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="q-section">
+    <div class="q-section-title"><h3>IMF &amp; Crystal Structures</h3><span class="q-marks">6 marks</span></div>
+    <div class="q-block">
+      <div class="q-prompt">14. Name the only IMF present in a nonpolar molecule. <span class="q-pts">(1)</span></div>
+      <div class="q-row"><input type="text" class="q-input" data-answer="london dispersion" data-pts="1"></div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">15. Put these in order from weakest to strongest: hydrogen bonding, London dispersion, dipole-dipole. <span class="q-pts">(1)</span></div>
+      <div class="q-row"><input type="text" class="q-input" data-answer="london dispersion, dipole-dipole, hydrogen bonding" data-pts="1" placeholder="separate with commas"></div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">16. For hydrogen bonding, H must be bonded to one of three elements. Name all three. <span class="q-pts">(1)</span></div>
+      <div class="q-row"><input type="text" class="q-input" data-answer="o, n, f" data-pts="1" placeholder="comma separated"></div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">17. NaCl is a solid held together by electrostatic attraction between ions. What crystal type is this? <span class="q-pts">(1)</span></div>
+      <div class="q-row"><input type="text" class="q-input" data-answer="ionic" data-pts="1"></div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">18. Which crystal type has the highest typical melting point: molecular, or covalent network? <span class="q-pts">(1)</span></div>
+      <div class="q-row">
+        <select class="q-input" data-answer="covalent network" data-pts="1">
+          <option value="">— choose —</option>
+          <option value="molecular">Molecular</option>
+          <option value="covalent network">Covalent network</option>
+        </select>
+      </div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">19. Name the carbon allotrope that is a single, one-atom-thick sheet. <span class="q-pts">(1)</span></div>
+      <div class="q-row"><input type="text" class="q-input" data-answer="graphene" data-pts="1"></div>
+    </div>
+  </div>
+
+  <div class="score-bar">
+    <div>
+      <button class="op-btn" id="checkAllBtn" type="button" style="background:var(--accent); color:#fff; border-color:var(--accent-dark);">Check My Answers</button>
+      <button class="op-btn" id="resetBtn" type="button">Reset</button>
+    </div>
+    <div class="score-total" id="scoreTotal">Score: — / 20</div>
+  </div>
+</div>
+
+<div class="page-foot">SCH3U · Unit 4 — Bonding &amp; Molecular Shape</div>
+
+<script>
+  function normalize(s) { return (s || '').toString().trim().toLowerCase().replace(/\s+/g, ' '); }
+
+  document.getElementById('checkAllBtn').addEventListener('click', () => {
+    let earned = 0, possible = 0;
+    document.querySelectorAll('.q-input').forEach(input => {
+      const pts = parseFloat(input.dataset.pts || '0');
+      possible += pts;
+      input.classList.remove('correct', 'wrong');
+      let fb = input.parentElement.querySelector('.q-feedback');
+      if (fb) fb.remove();
+
+      let isCorrect = false;
+      if (input.dataset.numeric === 'true') {
+        const val = parseFloat(input.value);
+        const correctVal = parseFloat(input.dataset.answer);
+        const tol = parseFloat(input.dataset.tol || '0.05');
+        if (!isNaN(val) && Math.abs(val - correctVal) <= tol) isCorrect = true;
+      } else {
+        isCorrect = normalize(input.value) === normalize(input.dataset.answer);
+      }
+
+      if (isCorrect) {
+        input.classList.add('correct');
+        earned += pts;
+      } else {
+        input.classList.add('wrong');
+        const span = document.createElement('span');
+        span.className = 'q-feedback';
+        span.textContent = `correct: ${input.dataset.answer}`;
+        input.insertAdjacentElement('afterend', span);
+      }
+    });
+    document.getElementById('scoreTotal').textContent = `Score: ${earned.toFixed(0)} / ${possible.toFixed(0)}`;
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    document.querySelectorAll('.q-input').forEach(input => {
+      input.value = '';
+      input.classList.remove('correct', 'wrong');
+      const fb = input.parentElement.querySelector('.q-feedback');
+      if (fb) fb.remove();
+    });
+    document.getElementById('scoreTotal').textContent = 'Score: — / 20';
+  });
+</script>
+</body>
+</html>

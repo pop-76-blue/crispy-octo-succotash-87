@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Naming Practice Quiz — SCH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent: #1c6e5e; --accent-dark: #124a3f; --accent-tint: #e3f2ee; }
+
+  .q-section { margin: 24px 0; }
+  .q-section-title { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid var(--accent); padding-bottom: 4px; margin-bottom: 10px; }
+  .q-section-title h3 { margin: 0; color: var(--accent-dark); }
+  .q-marks { font-size: 13px; color: var(--ink-soft); font-weight: 700; }
+  .q-block { margin: 14px 0; padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .q-block:last-child { border-bottom: none; }
+  .q-prompt { font-weight: 600; margin-bottom: 8px; font-family: var(--mono); font-size: 15px; }
+  .q-prompt .q-pts { font-weight: 400; font-style: italic; color: var(--ink-soft); font-size: 13px; font-family: var(--sans); }
+  .q-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 6px 0; justify-content: center; }
+  .q-row input[type="text"] { font-family: var(--mono); font-size: 15px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; width: 260px; }
+  .q-input.correct { border-color: #1c6e5e; background: #eaf6f1; }
+  .q-input.wrong { border-color: #a03030; background: #fbeaea; }
+  .q-feedback { font-size: 13px; margin-left: 4px; color: #a03030; }
+  .score-bar { position: sticky; bottom: 0; background: var(--surface); border-top: 2px solid var(--accent); padding: 14px 18px; margin: 30px -24px 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+  .score-total { font-weight: 700; font-size: 16px; color: var(--accent-dark); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Study Hub</a>
+  <a href="../index.html">SCH3U — Chemistry</a>
+  <span class="crumb-current">Naming Practice Quiz</span>
+</div>
+
+<div class="wrap">
+  <h1>Unit 2 Practice Quiz</h1>
+  <p class="subtitle">Chemical Nomenclature · Ionic, molecular, polyatomic, acids, hydrates — self-checking.</p>
+
+  <div class="callout">Type names in lowercase with no special formatting (e.g. "iron(iii) oxide", "carbon dioxide"). Answers accept Roman numerals as typed in parentheses.</div>
+
+  <div class="q-section">
+    <div class="q-section-title"><h3>Binary &amp; Multivalent Ionic</h3><span class="q-marks">6 marks</span></div>
+    <div class="q-block"><div class="q-prompt">1. Name MgBr₂. <span class="q-pts">(1)</span></div><div class="q-row"><input type="text" class="q-input" data-answer="magnesium bromide" data-pts="1"></div></div>
+    <div class="q-block"><div class="q-prompt">2. Name Al₂O₃. <span class="q-pts">(1)</span></div><div class="q-row"><input type="text" class="q-input" data-answer="aluminum oxide" data-pts="1"></div></div>
+    <div class="q-block"><div class="q-prompt">3. Name CuO (copper can be 1+ or 2+). <span class="q-pts">(1)</span></div><div class="q-row"><input type="text" class="q-input" data-answer="copper(ii) oxide" data-pts="1"></div></div>
+    <div class="q-block"><div class="q-prompt">4. Name SnCl₄. <span class="q-pts">(1)</span></div><div class="q-row"><input type="text" class="q-input" data-answer="tin(iv) chloride" data-pts="1"></div></div>
+    <div class="q-block"><div class="q-prompt">5. Write the formula for iron(III) sulfide. <span class="q-pts">(1)</span></div><div class="q-row"><input type="text" class="q-input" data-answer="fe2s3" data-pts="1"></div></div>
+    <div class="q-block"><div class="q-prompt">6. Write the formula for calcium phosphide. <span class="q-pts">(1)</span></div><div class="q-row"><input type="text" class="q-input" data-answer="ca3p2" data-pts="1"></div></div>
+  </div>
+
+  <div class="q-section">
+    <div class="q-section-title"><h3>Molecular Compounds</h3><span class="q-marks">4 marks</span></div>
+    <div class="q-block"><div class="q-prompt">7. Name N₂O₅. <span class="q-pts">(1)</span></div><div class="q-row"><input type="text" class="q-input" data-answer="dinitrogen pentoxide" data-pts="1"></div></div>
+    <div class="q-block"><div class="q-prompt">8. Name CCl₄. <span class="q-pts">(1)</span></div><div class="q-row"><input type="text" class="q-input" data-answer="carbon tetrachloride" data-pts="1"></div></div>
+    <div class="q-block"><div class="q-prompt">9. Write the formula for phosphorus trichloride. <span class="q-pts">(1)</span></div><div class="q-row"><input type="text" class="q-input" data-answer="pcl3" data-pts="1"></div></div>
+    <div class="q-block"><div class="q-prompt">10. Write the formula for sulfur trioxide. <span class="q-pts">(1)</span></div><div class="q-row"><input type="text" class="q-input" data-answer="so3" data-pts="1"></div></div>
+  </div>
+
+  <div class="q-section">
+    <div class="q-section-title"><h3>Polyatomic Ions</h3><span class="q-marks">4 marks</span></div>
+    <div class="q-block"><div class="q-prompt">11. Name NaHCO₃. <span class="q-pts">(1)</span></div><div class="q-row"><input type="text" class="q-input" data-answer="sodium hydrogen carbonate" data-pts="1"></div></div>
+    <div class="q-block"><div class="q-prompt">12. Name (NH₄)₂SO₄. <span class="q-pts">(1)</span></div><div class="q-row"><input type="text" class="q-input" data-answer="ammonium sulfate" data-pts="1"></div></div>
+    <div class="q-block"><div class="q-prompt">13. Write the formula for potassium permanganate. <span class="q-pts">(1)</span></div><div class="q-row"><input type="text" class="q-input" data-answer="kmno4" data-pts="1"></div></div>
+    <div class="q-block"><div class="q-prompt">14. Write the formula for calcium phosphate. <span class="q-pts">(1)</span></div><div class="q-row"><input type="text" class="q-input" data-answer="ca3(po4)2" data-pts="1"></div></div>
+  </div>
+
+  <div class="q-section">
+    <div class="q-section-title"><h3>Acids</h3><span class="q-marks">3 marks</span></div>
+    <div class="q-block"><div class="q-prompt">15. Name HBr(aq). <span class="q-pts">(1)</span></div><div class="q-row"><input type="text" class="q-input" data-answer="hydrobromic acid" data-pts="1"></div></div>
+    <div class="q-block"><div class="q-prompt">16. Name H₂SO₃(aq). <span class="q-pts">(1)</span></div><div class="q-row"><input type="text" class="q-input" data-answer="sulfurous acid" data-pts="1"></div></div>
+    <div class="q-block"><div class="q-prompt">17. Write the formula for nitric acid. <span class="q-pts">(1)</span></div><div class="q-row"><input type="text" class="q-input" data-answer="hno3" data-pts="1"></div></div>
+  </div>
+
+  <div class="q-section">
+    <div class="q-section-title"><h3>Hydrates</h3><span class="q-marks">3 marks</span></div>
+    <div class="q-block"><div class="q-prompt">18. Name CuSO₄ · 5H₂O. <span class="q-pts">(1)</span></div><div class="q-row"><input type="text" class="q-input" data-answer="copper(ii) sulfate pentahydrate" data-pts="1"></div></div>
+    <div class="q-block"><div class="q-prompt">19. Write the formula for magnesium sulfate heptahydrate. <span class="q-pts">(1)</span></div><div class="q-row"><input type="text" class="q-input" data-answer="mgso4 · 7h2o" data-pts="1" placeholder="use a dot: formula · 7h2o"></div></div>
+    <div class="q-block"><div class="q-prompt">20. What happens to the water in a hydrate when it's gently heated? <span class="q-pts">(1 — self-check)</span></div><div class="q-row"><input type="text" class="q-input" data-answer="it is driven off / evaporates, leaving the anhydrous salt" data-pts="0" placeholder="short answer, not auto-graded"></div></div>
+  </div>
+
+  <div class="score-bar">
+    <div>
+      <button class="op-btn" id="checkAllBtn" type="button" style="background:var(--accent); color:#fff; border-color:var(--accent-dark);">Check My Answers</button>
+      <button class="op-btn" id="resetBtn" type="button">Reset</button>
+    </div>
+    <div class="score-total" id="scoreTotal">Score: — / 19</div>
+  </div>
+</div>
+
+<div class="page-foot">SCH3U · Unit 2 — Chemical Nomenclature</div>
+
+<script>
+  function normalize(s) {
+    return (s || '').toString().trim().toLowerCase()
+      .replace(/\s+/g, ' ')
+      .replace(/₂/g,'2').replace(/₃/g,'3').replace(/₄/g,'4').replace(/₅/g,'5')
+      .replace(/₆/g,'6').replace(/₇/g,'7');
+  }
+
+  document.getElementById('checkAllBtn').addEventListener('click', () => {
+    let earned = 0, possible = 0;
+    document.querySelectorAll('.q-input').forEach(input => {
+      const pts = parseFloat(input.dataset.pts || '0');
+      possible += pts;
+      input.classList.remove('correct', 'wrong');
+      let fb = input.parentElement.querySelector('.q-feedback');
+      if (fb) fb.remove();
+
+      if (pts === 0) return; // self-check only, not auto-graded
+
+      const isCorrect = normalize(input.value) === normalize(input.dataset.answer);
+      if (isCorrect) {
+        input.classList.add('correct');
+        earned += pts;
+      } else {
+        input.classList.add('wrong');
+        const span = document.createElement('span');
+        span.className = 'q-feedback';
+        span.textContent = `correct: ${input.dataset.answer}`;
+        input.insertAdjacentElement('afterend', span);
+      }
+    });
+    document.getElementById('scoreTotal').textContent = `Score: ${earned.toFixed(0)} / ${possible.toFixed(0)}`;
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    document.querySelectorAll('.q-input').forEach(input => {
+      input.value = '';
+      input.classList.remove('correct', 'wrong');
+      const fb = input.parentElement.querySelector('.q-feedback');
+      if (fb) fb.remove();
+    });
+    document.getElementById('scoreTotal').textContent = 'Score: — / 19';
+  });
+</script>
+</body>
+</html>

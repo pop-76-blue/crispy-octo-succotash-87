@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Periodic Trends — SCH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent: #1c6e5e; --accent-dark: #124a3f; --accent-tint: #e3f2ee; }
+
+  table.ref-table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13.5px; }
+  table.ref-table th, table.ref-table td { border: 1px solid var(--line); padding: 7px 9px; text-align: left; }
+  table.ref-table th { background: var(--accent-tint); color: var(--accent-dark); }
+
+  .trend-wrap { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; margin: 14px 0; }
+  .trend-wrap select { font-family: var(--mono); font-size: 15px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; }
+  .trend-out { text-align: center; margin-top: 16px; padding: 14px; background: var(--accent-tint); border-radius: 8px; font-weight: 600; min-height: 20px; }
+
+  .family-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin: 14px 0; }
+  .family-grid div { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; font-size: 13.5px; }
+  .family-grid strong { color: var(--accent-dark); }
+
+  .practice-item { border-bottom: 1px solid var(--line); padding: 10px 0; }
+  .practice-item:last-child { border-bottom: none; }
+  .answer { display: none; margin-top: 6px; color: var(--accent-dark); font-weight: 600; }
+  .answer.shown { display: block; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Study Hub</a>
+  <a href="../index.html">SCH3U — Chemistry</a>
+  <span class="crumb-current">Periodic Trends</span>
+</div>
+
+<div class="wrap">
+  <h1>Periodic Trends</h1>
+  <p class="subtitle">Unit 1, Lesson 4 · How atomic properties change as you move across and down the periodic table.</p>
+
+  <h2>Periodic table organization</h2>
+  <div class="callout">
+    <strong>Rows (periods)</strong> = number of occupied energy shells.<br>
+    <strong>Columns (groups/families)</strong> = number of valence electrons (for main-group elements).
+  </div>
+  <div class="family-grid">
+    <div><strong>Group 1</strong> — Alkali metals (very reactive)</div>
+    <div><strong>Group 2</strong> — Alkaline earth metals (reactive)</div>
+    <div><strong>Groups 3–12</strong> — Transition metals</div>
+    <div><strong>Group 17</strong> — Halogens (very reactive)</div>
+    <div><strong>Group 18</strong> — Noble gases (stable/unreactive)</div>
+    <div><strong>Lanthanides / Actinides</strong> — the two rows set below the main table</div>
+  </div>
+
+  <h2>What drives the trends</h2>
+  <div class="callout">
+    Two competing effects explain every trend below:<br>
+    <strong>Nuclear charge</strong> — the pull of the nucleus on the valence shell (increases as you add protons).<br>
+    <strong>Shielding</strong> — inner-shell electrons blocking that pull (increases as you add energy shells).
+  </div>
+
+  <h2>The four properties</h2>
+  <table class="ref-table">
+    <tr><th>Property</th><th>Definition</th><th>Across a period →</th><th>Down a group ↓</th></tr>
+    <tr><td>Atomic radius</td><td>Size of the atom</td><td>Decreases (more nuclear pull, same shielding)</td><td>Increases (new shell added each row)</td></tr>
+    <tr><td>Ionization energy</td><td>Energy to remove an electron</td><td>Increases (held more tightly)</td><td>Decreases (outer e⁻ is farther away, more shielded)</td></tr>
+    <tr><td>Electronegativity</td><td>Pull on <em>shared</em> (bonded) electrons</td><td>Increases (except noble gases)</td><td>Decreases</td></tr>
+    <tr><td>Electron affinity</td><td>Energy released adding an electron</td><td>Increases (more negative/more energy released)</td><td>Decreases</td></tr>
+  </table>
+
+  <div class="callout">
+    <strong>Ions vs. neutral atoms:</strong> cations (+ ions) are smaller than their neutral atom — losing an
+    electron often means losing a whole outer shell. Anions (− ions) are larger than their neutral atom — the
+    same nuclear charge now has to hold onto more electrons, so it pulls each one in a little less tightly.
+  </div>
+
+  <h2>Try it: Compare Two Elements</h2>
+  <div class="demo">
+    <div class="trend-wrap">
+      <select id="elA"></select>
+      <span>vs.</span>
+      <select id="elB"></select>
+    </div>
+    <div class="trend-wrap">
+      <select id="propSelect">
+        <option value="radius">Atomic radius</option>
+        <option value="ie">Ionization energy</option>
+        <option value="en">Electronegativity</option>
+      </select>
+    </div>
+    <div class="trend-out" id="trendOut"></div>
+  </div>
+
+  <h2>Practice</h2>
+  <div class="panel" id="practiceList"></div>
+
+  <div class="callout" style="margin-top:32px;">
+    <strong>Try this:</strong> before checking the tool, rank Na, Mg, and K from smallest to largest atomic
+    radius, explaining your reasoning using nuclear charge and shielding — then check with the comparator.
+  </div>
+</div>
+
+<div class="page-foot">SCH3U · Unit 1, Lesson 4 — Periodic Trends</div>
+
+<script>
+  // period, group (main-group only, simplified) for first 20 elements
+  const elements = [
+    ['H', 1, 1], ['He', 1, 18],
+    ['Li', 2, 1], ['Be', 2, 2], ['B', 2, 13], ['C', 2, 14], ['N', 2, 15], ['O', 2, 16], ['F', 2, 17], ['Ne', 2, 18],
+    ['Na', 3, 1], ['Mg', 3, 2], ['Al', 3, 13], ['Si', 3, 14], ['P', 3, 15], ['S', 3, 16], ['Cl', 3, 17], ['Ar', 3, 18],
+    ['K', 4, 1], ['Ca', 4, 2],
+  ];
+
+  const elA = document.getElementById('elA');
+  const elB = document.getElementById('elB');
+  elements.forEach(([sym], i) => {
+    const o1 = document.createElement('option'); o1.value = i; o1.textContent = sym; elA.appendChild(o1);
+    const o2 = document.createElement('option'); o2.value = i; o2.textContent = sym; elB.appendChild(o2);
+  });
+  elA.value = 10; // Na
+  elB.value = 17; // Cl
+
+  const propSelect = document.getElementById('propSelect');
+  const trendOut = document.getElementById('trendOut');
+
+  function compare() {
+    const [symA, perA, grpA] = elements[elA.value];
+    const [symB, perB, grpB] = elements[elB.value];
+    const prop = propSelect.value;
+
+    if (symA === symB) { trendOut.textContent = 'Pick two different elements.'; return; }
+
+    // "position score": higher period = more shells; within a period, higher group (main-group order) = further right
+    function positionRank(per, grp) {
+      // map group to a left-to-right rank for comparison purposes (1..18 already works directly for main-group)
+      return { per, grp };
+    }
+    const a = positionRank(perA, grpA), b = positionRank(perB, grpB);
+
+    let winner, reason;
+    if (prop === 'radius') {
+      // bigger period -> bigger radius; if same period, smaller group number (more left) -> bigger radius
+      if (a.per !== b.per) {
+        winner = a.per > b.per ? symA : symB;
+        reason = 'more energy shells (lower on the table) means a larger atomic radius.';
+      } else {
+        winner = a.grp < b.grp ? symA : symB;
+        reason = 'further left in the same period means less nuclear pull on the valence shell, so a larger radius.';
+      }
+    } else {
+      // ionization energy & electronegativity: smaller period -> higher value; if same period, further right (higher group) -> higher value
+      if (a.per !== b.per) {
+        winner = a.per < b.per ? symA : symB;
+        reason = 'fewer energy shells (higher on the table) means the valence electrons are held more tightly.';
+      } else {
+        winner = a.grp > b.grp ? symA : symB;
+        reason = 'further right in the same period means stronger nuclear pull on the valence shell.';
+      }
+    }
+    const propLabel = prop === 'radius' ? 'larger atomic radius' : (prop === 'ie' ? 'higher ionization energy' : 'higher electronegativity');
+    trendOut.textContent = `${winner} has the ${propLabel} — ${reason}`;
+  }
+  [elA, elB, propSelect].forEach(el => el.addEventListener('change', compare));
+  compare();
+
+  const practice = [
+    { q: 'Which is larger: a sodium atom (Na) or a sodium ion (Na⁺)?', a: 'The neutral Na atom — losing an electron to form Na⁺ also means losing its entire outer shell.' },
+    { q: 'Which has a higher ionization energy: fluorine or iodine? Why?', a: 'Fluorine — it\'s higher up the group, so its valence electrons are closer to the nucleus and held more tightly.' },
+    { q: 'Which is larger: a chloride ion (Cl⁻) or a neutral chlorine atom (Cl)?', a: 'Cl⁻ — the same nuclear charge is now spread over one more electron, so attraction is weaker and the ion is larger.' },
+    { q: 'Rank Mg, Al, and Si by increasing electronegativity.', a: 'Mg < Al < Si (electronegativity increases moving right across a period)' },
+  ];
+  const list = document.getElementById('practiceList');
+  practice.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'practice-item';
+    div.innerHTML = `<span>${i + 1}. ${p.q}</span><button class="op-btn reveal-btn" type="button" style="margin-left:10px;">Reveal</button><div class="answer">${p.a}</div>`;
+    const btn = div.querySelector('button');
+    const ans = div.querySelector('.answer');
+    btn.addEventListener('click', () => {
+      ans.classList.toggle('shown');
+      btn.textContent = ans.classList.contains('shown') ? 'Hide' : 'Reveal';
+    });
+    list.appendChild(div);
+  });
+</script>
+</body>
+</html>

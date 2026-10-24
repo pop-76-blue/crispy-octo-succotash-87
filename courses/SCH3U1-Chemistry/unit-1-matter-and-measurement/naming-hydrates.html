@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Naming Hydrates — SCH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent: #1c6e5e; --accent-dark: #124a3f; --accent-tint: #e3f2ee; }
+  table.ref-table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13.5px; }
+  table.ref-table th, table.ref-table td { border: 1px solid var(--line); padding: 7px 9px; text-align: left; }
+  table.ref-table th { background: var(--accent-tint); color: var(--accent-dark); }
+
+  .practice-item { border-bottom: 1px solid var(--line); padding: 10px 0; }
+  .practice-item:last-child { border-bottom: none; }
+  .answer { display: none; margin-top: 6px; color: var(--accent-dark); font-weight: 600; }
+  .answer.shown { display: block; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Study Hub</a>
+  <a href="../index.html">SCH3U — Chemistry</a>
+  <span class="crumb-current">Naming Hydrates</span>
+</div>
+
+<div class="wrap">
+  <h1>Naming Hydrates</h1>
+  <p class="subtitle">Unit 2: Chemical Nomenclature · Salts with water built into their crystal structure.</p>
+
+  <div class="callout">
+    A hydrate is an ionic compound with a specific number of water molecules trapped in its crystal structure.
+    The water is loosely held and can be driven off with gentle heating, leaving the <strong>anhydrous</strong>
+    (water-free) salt behind.
+  </div>
+
+  <h2>Naming pattern</h2>
+  <div class="callout">
+    Name the ionic compound normally, then add a numerical prefix (same mono-di-tri list as molecular compounds)
+    + "hydrate" for the number of water molecules.<br>
+    Example: MgSO₄ · 7H₂O → magnesium sulfate <strong>heptahydrate</strong>.
+  </div>
+
+  <table class="ref-table">
+    <tr><th>Formula</th><th>Name</th></tr>
+    <tr><td>CuSO₄ · 5H₂O</td><td>Copper(II) sulfate pentahydrate</td></tr>
+    <tr><td>CoCl₂ · 6H₂O</td><td>Cobalt(II) chloride hexahydrate</td></tr>
+    <tr><td>Na₂CO₃ · 10H₂O</td><td>Sodium carbonate decahydrate</td></tr>
+  </table>
+
+  <h2>Practice</h2>
+  <div class="panel" id="practiceList"></div>
+
+  <div class="callout" style="margin-top:32px;">
+    <strong>Try this:</strong> before revealing, name CaCl₂ · 2H₂O, and write the formula for
+    iron(III) chloride hexahydrate.
+  </div>
+</div>
+
+<div class="page-foot">SCH3U · Unit 2 — Chemical Nomenclature</div>
+
+<script>
+  const practice = [
+    { q: 'Name CaCl₂ · 2H₂O.', a: 'Calcium chloride dihydrate' },
+    { q: 'Write the formula for iron(III) chloride hexahydrate.', a: 'FeCl₃ · 6H₂O' },
+    { q: 'Name BaCl₂ · 2H₂O.', a: 'Barium chloride dihydrate' },
+    { q: 'Write the formula for nickel(II) sulfate heptahydrate.', a: 'NiSO₄ · 7H₂O' },
+  ];
+  const list = document.getElementById('practiceList');
+  practice.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'practice-item';
+    div.innerHTML = `<span>${i + 1}. ${p.q}</span><button class="op-btn reveal-btn" type="button" style="margin-left:10px;">Reveal</button><div class="answer">${p.a}</div>`;
+    const btn = div.querySelector('button');
+    const ans = div.querySelector('.answer');
+    btn.addEventListener('click', () => {
+      ans.classList.toggle('shown');
+      btn.textContent = ans.classList.contains('shown') ? 'Hide' : 'Reveal';
+    });
+    list.appendChild(div);
+  });
+</script>
+</body>
+</html>

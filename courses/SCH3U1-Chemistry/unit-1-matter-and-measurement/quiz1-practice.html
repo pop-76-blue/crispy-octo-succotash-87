@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quiz 1 Practice — SCH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root {
+    --accent: #1c6e5e;
+    --accent-dark: #124a3f;
+    --accent-tint: #e3f2ee;
+  }
+
+  .q-section {
+    margin: 24px 0;
+  }
+  .q-section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 4px;
+    margin-bottom: 10px;
+  }
+  .q-section-title h3 { margin: 0; color: var(--accent-dark); }
+  .q-marks { font-size: 13px; color: var(--ink-soft); font-weight: 700; }
+
+  .q-block {
+    margin: 14px 0;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .q-block:last-child { border-bottom: none; }
+  .q-prompt { font-weight: 600; margin-bottom: 8px; }
+  .q-prompt .q-pts { font-weight: 400; font-style: italic; color: var(--ink-soft); font-size: 13px; }
+
+  .q-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 6px 0;
+  }
+  .q-row label { min-width: 200px; font-family: var(--mono); font-size: 14px; }
+  .q-row input[type="text"], .q-row select {
+    font-family: var(--mono);
+    font-size: 15px;
+    padding: 6px 10px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    width: 170px;
+  }
+  .q-row textarea {
+    font-family: var(--sans);
+    font-size: 14.5px;
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    width: 100%;
+    max-width: 500px;
+    min-height: 50px;
+  }
+
+  .q-input.correct { border-color: #1c6e5e; background: #eaf6f1; }
+  .q-input.wrong { border-color: #a03030; background: #fbeaea; }
+  .q-feedback { font-size: 13px; margin-left: 4px; }
+  .q-feedback.correct-text { color: var(--accent-dark); }
+  .q-feedback.wrong-text { color: #a03030; }
+
+  .reveal-answer { display: none; margin-top: 6px; color: var(--accent-dark); font-size: 14px; }
+  .reveal-answer.shown { display: block; }
+
+  .score-bar {
+    position: sticky;
+    bottom: 0;
+    background: var(--surface);
+    border-top: 2px solid var(--accent);
+    padding: 14px 18px;
+    margin: 30px -24px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .score-total { font-weight: 700; font-size: 16px; color: var(--accent-dark); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Study Hub</a>
+  <a href="../index.html">SCH3U — Chemistry</a>
+  <span class="crumb-current">Quiz 1 Practice</span>
+</div>
+
+<div class="wrap">
+  <h1>Quiz 1 — Practice Version</h1>
+  <p class="subtitle">Unit 1: Measurement &amp; Matter · A self-check practice run, not the real quiz.</p>
+
+  <div class="callout">
+    This is a <strong>practice quiz</strong> so you can test yourself before the real one — the actual
+    questions will be different. Answer everything first, then press <strong>Check My Answers</strong>
+    at the bottom. Calculator and a symbols-only periodic table would be allowed on the real quiz too.
+  </div>
+
+  <!-- SECTION A -->
+  <div class="q-section">
+    <div class="q-section-title"><h3>Section A — Grade 9 Review (+ a bit more)</h3><span class="q-marks">6 marks</span></div>
+
+    <div class="q-block">
+      <div class="q-prompt">1. Classify each sample. <span class="q-pts">(2 marks)</span></div>
+      <div class="q-row"><label>a) Pure copper wire</label>
+        <select class="q-input" data-answer="element" data-pts="0.5">
+          <option value="">— choose —</option>
+          <option value="element">Element</option>
+          <option value="compound">Compound</option>
+          <option value="homogeneous mixture">Homogeneous mixture</option>
+          <option value="heterogeneous mixture">Heterogeneous mixture</option>
+        </select>
+      </div>
+      <div class="q-row"><label>b) Salt fully dissolved in water</label>
+        <select class="q-input" data-answer="homogeneous mixture" data-pts="0.5">
+          <option value="">— choose —</option>
+          <option value="element">Element</option>
+          <option value="compound">Compound</option>
+          <option value="homogeneous mixture">Homogeneous mixture</option>
+          <option value="heterogeneous mixture">Heterogeneous mixture</option>
+        </select>
+      </div>
+      <div class="q-row"><label>c) Carbon dioxide gas</label>
+        <select class="q-input" data-answer="compound" data-pts="0.5">
+          <option value="">— choose —</option>
+          <option value="element">Element</option>
+          <option value="compound">Compound</option>
+          <option value="homogeneous mixture">Homogeneous mixture</option>
+          <option value="heterogeneous mixture">Heterogeneous mixture</option>
+        </select>
+      </div>
+      <div class="q-row"><label>d) Vegetable soup with visible chunks</label>
+        <select class="q-input" data-answer="heterogeneous mixture" data-pts="0.5">
+          <option value="">— choose —</option>
+          <option value="element">Element</option>
+          <option value="compound">Compound</option>
+          <option value="homogeneous mixture">Homogeneous mixture</option>
+          <option value="heterogeneous mixture">Heterogeneous mixture</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-prompt">2. Match each scientist to their model/discovery. <span class="q-pts">(2 marks)</span></div>
+      <div class="q-row"><label>Dalton</label>
+        <select class="q-input" data-answer="c" data-pts="0.5">
+          <option value="">—</option>
+          <option value="a">A) Nuclear model — dense positive nucleus</option>
+          <option value="b">B) Planetary model — fixed energy shells</option>
+          <option value="c">C) Solid sphere — atoms indivisible</option>
+          <option value="d">D) Plum pudding — discovered the electron</option>
+        </select>
+      </div>
+      <div class="q-row"><label>Thomson</label>
+        <select class="q-input" data-answer="d" data-pts="0.5">
+          <option value="">—</option>
+          <option value="a">A) Nuclear model — dense positive nucleus</option>
+          <option value="b">B) Planetary model — fixed energy shells</option>
+          <option value="c">C) Solid sphere — atoms indivisible</option>
+          <option value="d">D) Plum pudding — discovered the electron</option>
+        </select>
+      </div>
+      <div class="q-row"><label>Rutherford</label>
+        <select class="q-input" data-answer="a" data-pts="0.5">
+          <option value="">—</option>
+          <option value="a">A) Nuclear model — dense positive nucleus</option>
+          <option value="b">B) Planetary model — fixed energy shells</option>
+          <option value="c">C) Solid sphere — atoms indivisible</option>
+          <option value="d">D) Plum pudding — discovered the electron</option>
+        </select>
+      </div>
+      <div class="q-row"><label>Bohr</label>
+        <select class="q-input" data-answer="b" data-pts="0.5">
+          <option value="">—</option>
+          <option value="a">A) Nuclear model — dense positive nucleus</option>
+          <option value="b">B) Planetary model — fixed energy shells</option>
+          <option value="c">C) Solid sphere — atoms indivisible</option>
+          <option value="d">D) Plum pudding — discovered the electron</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-prompt">3. An atom has an atomic number of 12 and a mass number of 25. <span class="q-pts">(2 marks)</span></div>
+      <div class="q-row"><label>Protons</label><input type="text" class="q-input" data-answer="12" data-pts="0.67"></div>
+      <div class="q-row"><label>Neutrons</label><input type="text" class="q-input" data-answer="13" data-pts="0.67"></div>
+      <div class="q-row"><label>Electrons</label><input type="text" class="q-input" data-answer="12" data-pts="0.66"></div>
+    </div>
+  </div>
+
+  <!-- SECTION B -->
+  <div class="q-section">
+    <div class="q-section-title"><h3>Section B — Significant Digits</h3><span class="q-marks">6 marks</span></div>
+
+    <div class="q-block">
+      <div class="q-prompt">4. How many sig figs in each? <span class="q-pts">(2 marks)</span></div>
+      <div class="q-row"><label>7.40 × 10⁻⁴</label><input type="text" class="q-input" data-answer="3" data-pts="0.5"></div>
+      <div class="q-row"><label>0.00620</label><input type="text" class="q-input" data-answer="3" data-pts="0.5"></div>
+      <div class="q-row"><label>50400</label><input type="text" class="q-input" data-answer="3" data-pts="0.5"></div>
+      <div class="q-row"><label>8106</label><input type="text" class="q-input" data-answer="4" data-pts="0.5"></div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-prompt">5. Solve and round correctly. <span class="q-pts">(3 marks)</span></div>
+      <div class="q-row"><label>45.62 + 3.1 =</label><input type="text" class="q-input" data-numeric="true" data-answer="48.7" data-tol="0.05" data-pts="1"></div>
+      <div class="q-row"><label>8.44 × 2.1 =</label><input type="text" class="q-input" data-numeric="true" data-answer="18" data-tol="0.5" data-pts="1"></div>
+      <div class="q-row"><label>96.5 ÷ 12.30 =</label><input type="text" class="q-input" data-numeric="true" data-answer="7.85" data-tol="0.02" data-pts="1"></div>
+      <p style="font-size:13px; color:var(--ink-soft); margin-top:4px;">
+        (This checks the value — it won't catch a right number with the wrong number of decimal places or sig figs. Double-check your rounding by hand.)
+      </p>
+    </div>
+
+    <div class="q-block">
+      <div class="q-prompt">6. Write 0.0002385 in scientific notation. <span class="q-pts">(1 mark)</span></div>
+      <div class="q-row"><label>Answer</label><input type="text" class="q-input" data-scinotation="true" data-answer="2.385e-4" data-pts="1" placeholder="e.g. 2.385 x 10^-4"></div>
+    </div>
+  </div>
+
+  <!-- SECTION C -->
+  <div class="q-section">
+    <div class="q-section-title"><h3>Section C — Accuracy &amp; Precision</h3><span class="q-marks">4 marks</span></div>
+
+    <div class="q-block">
+      <div class="q-prompt">7. Define accuracy and precision in your own words. <span class="q-pts">(2 marks — self-checked, not auto-graded)</span></div>
+      <div class="q-row"><textarea placeholder="Accuracy is..."></textarea></div>
+      <div class="q-row"><textarea placeholder="Precision is..."></textarea></div>
+      <button class="op-btn reveal-btn" type="button" data-target="def-answer">Show sample answers</button>
+      <div class="reveal-answer" id="def-answer">
+        Accuracy: how close a measurement is to the true or accepted value.<br>
+        Precision: how close a set of measurements are to each other (reproducibility).
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-prompt">8. A student measures the boiling point of a liquid as 79.8°C. The accepted value is 78.4°C. Find the percent error. <span class="q-pts">(2 marks)</span></div>
+      <div class="q-row"><label>% error</label><input type="text" class="q-input" data-numeric="true" data-answer="1.79" data-tol="0.1" data-pts="2"></div>
+    </div>
+  </div>
+
+  <!-- SECTION D -->
+  <div class="q-section">
+    <div class="q-section-title"><h3>Section D — Metric Prefixes</h3><span class="q-marks">3 marks</span></div>
+
+    <div class="q-block">
+      <div class="q-prompt">9. Convert the following. <span class="q-pts">(3 marks)</span></div>
+      <div class="q-row"><label>2.4 km = _____ m</label><input type="text" class="q-input" data-numeric="true" data-answer="2400" data-tol="1" data-pts="1"></div>
+      <div class="q-row"><label>650 cm = _____ m</label><input type="text" class="q-input" data-numeric="true" data-answer="6.5" data-tol="0.05" data-pts="1"></div>
+      <div class="q-row"><label>0.08 m = _____ mm</label><input type="text" class="q-input" data-numeric="true" data-answer="80" data-tol="1" data-pts="1"></div>
+    </div>
+  </div>
+
+  <!-- SECTION E -->
+  <div class="q-section">
+    <div class="q-section-title"><h3>Section E — First 20 Elements</h3><span class="q-marks">4 marks</span></div>
+
+    <div class="q-block">
+      <div class="q-prompt">10. Name the element. <span class="q-pts">(2 marks)</span></div>
+      <div class="q-row"><label>Mg</label><input type="text" class="q-input" data-answer="magnesium" data-pts="1"></div>
+      <div class="q-row"><label>P</label><input type="text" class="q-input" data-answer="phosphorus" data-pts="1"></div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-prompt">11. Give the symbol. <span class="q-pts">(2 marks)</span></div>
+      <div class="q-row"><label>Fluorine</label><input type="text" class="q-input" data-answer="f" data-pts="1"></div>
+      <div class="q-row"><label>Potassium</label><input type="text" class="q-input" data-answer="k" data-pts="1"></div>
+    </div>
+  </div>
+
+  <div class="score-bar">
+    <div>
+      <button class="op-btn" id="checkAllBtn" type="button" style="background:var(--accent); color:#fff; border-color:var(--accent-dark);">Check My Answers</button>
+      <button class="op-btn" id="resetBtn" type="button">Reset</button>
+    </div>
+    <div class="score-total" id="scoreTotal">Auto-graded: — / 21 &nbsp;(+2 self-checked)</div>
+  </div>
+</div>
+
+<div class="page-foot">SCH3U · Unit 1 — Measurement &amp; Matter</div>
+
+<script>
+  // Reveal buttons (for open-ended definitions)
+  document.querySelectorAll('.reveal-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = document.getElementById(btn.dataset.target);
+      target.classList.toggle('shown');
+      btn.textContent = target.classList.contains('shown') ? 'Hide sample answers' : 'Show sample answers';
+    });
+  });
+
+  function normalize(s) {
+    return (s || '').toString().trim().toLowerCase().replace(/\s+/g, ' ');
+  }
+
+  function parseFlexibleNumber(str) {
+    let s = String(str).trim();
+    if (s === '') return NaN;
+    const sci = s.match(/^(-?\d+\.?\d*)\s*[x×]\s*10\s*\^?\s*(-?\d+)$/i) ||
+                s.match(/^(-?\d+\.?\d*)\s*[eE]\s*(-?\d+)$/);
+    if (sci) {
+      return parseFloat(sci[1]) * Math.pow(10, parseFloat(sci[2]));
+    }
+    const n = parseFloat(s.replace(/,/g, ''));
+    return n;
+  }
+
+  document.getElementById('checkAllBtn').addEventListener('click', () => {
+    let earned = 0;
+    let possible = 0;
+    document.querySelectorAll('.q-input').forEach(input => {
+      const pts = parseFloat(input.dataset.pts || '0');
+      possible += pts;
+      input.classList.remove('correct', 'wrong');
+      // clear old feedback
+      let fb = input.parentElement.querySelector('.q-feedback');
+      if (fb) fb.remove();
+
+      let isCorrect = false;
+      const rawVal = input.value;
+      const answer = input.dataset.answer;
+
+      if (input.dataset.numeric === 'true' || input.dataset.scinotation === 'true') {
+        const val = input.dataset.scinotation === 'true' ? parseFlexibleNumber(rawVal) : parseFloat(rawVal);
+        const correctVal = input.dataset.scinotation === 'true' ? parseFlexibleNumber(answer) : parseFloat(answer);
+        const tol = parseFloat(input.dataset.tol || '0.05');
+        if (!isNaN(val) && Math.abs(val - correctVal) <= tol) isCorrect = true;
+      } else {
+        isCorrect = normalize(rawVal) === normalize(answer);
+      }
+
+      if (isCorrect) {
+        input.classList.add('correct');
+        earned += pts;
+      } else {
+        input.classList.add('wrong');
+        const span = document.createElement('span');
+        span.className = 'q-feedback wrong-text';
+        span.textContent = `correct: ${input.dataset.answer}`;
+        input.insertAdjacentElement('afterend', span);
+      }
+    });
+
+    document.getElementById('scoreTotal').textContent =
+      `Auto-graded: ${earned.toFixed(1)} / ${possible.toFixed(0)}  (+2 self-checked)`;
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    document.querySelectorAll('.q-input').forEach(input => {
+      input.value = '';
+      input.classList.remove('correct', 'wrong');
+      const fb = input.parentElement.querySelector('.q-feedback');
+      if (fb) fb.remove();
+    });
+    document.querySelectorAll('textarea').forEach(t => t.value = '');
+    document.querySelectorAll('.reveal-answer').forEach(r => r.classList.remove('shown'));
+    document.getElementById('scoreTotal').textContent = 'Auto-graded: — / 21  (+2 self-checked)';
+  });
+</script>
+</body>
+</html>

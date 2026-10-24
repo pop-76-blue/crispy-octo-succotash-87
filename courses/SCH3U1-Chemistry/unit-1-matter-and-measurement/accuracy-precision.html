@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Accuracy &amp; Precision — SCH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root {
+    --accent: #1c6e5e;
+    --accent-dark: #124a3f;
+    --accent-tint: #e3f2ee;
+  }
+
+  .def-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin: 16px 0;
+  }
+  @media (max-width: 560px) { .def-grid { grid-template-columns: 1fr; } }
+  .def-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--accent);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+  }
+
+  .target-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  #targetSvg {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    cursor: crosshair;
+    touch-action: none;
+  }
+  .target-stats {
+    min-width: 220px;
+    max-width: 280px;
+  }
+  .target-stats .stat-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14.5px;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .target-stats .verdict {
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-radius: 6px;
+    background: var(--accent-tint);
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .pe-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: 14px 0;
+  }
+  .pe-row label { font-size: 13.5px; color: var(--ink-soft); display: block; margin-bottom: 4px; }
+  .pe-row input {
+    width: 140px;
+    font-family: var(--mono);
+    font-size: 16px;
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    text-align: center;
+  }
+  .pe-out {
+    text-align: center;
+    margin-top: 12px;
+    font-size: 16px;
+  }
+  .pe-out .final { font-size: 24px; font-weight: 700; color: var(--accent-dark); font-family: var(--mono); }
+
+  .practice-item { border-bottom: 1px solid var(--line); padding: 10px 0; }
+  .practice-item:last-child { border-bottom: none; }
+  .answer { display: none; margin-top: 6px; color: var(--accent-dark); font-weight: 600; }
+  .answer.shown { display: block; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Study Hub</a>
+  <a href="../index.html">SCH3U — Chemistry</a>
+  <span class="crumb-current">Accuracy &amp; Precision</span>
+</div>
+
+<div class="wrap">
+  <h1>Accuracy &amp; Precision</h1>
+  <p class="subtitle">Unit 1: Measurement &amp; Matter · How close, and how consistent.</p>
+
+  <div class="def-grid">
+    <div class="def-card">
+      <h3>Accuracy</h3>
+      <p>How close a measurement is to the <strong>true or accepted value</strong>.</p>
+    </div>
+    <div class="def-card">
+      <h3>Precision</h3>
+      <p>How close a set of measurements are to <strong>each other</strong> — reproducibility.</p>
+    </div>
+  </div>
+
+  <div class="callout">
+    A set of measurements can be precise but not accurate (tightly clustered, but off-target),
+    accurate but not precise (scattered, but centred on the target), both, or neither.
+  </div>
+
+  <h2>Try it: plot some "shots"</h2>
+  <p>Click inside the target below to place a few hits, then read the verdict.</p>
+
+  <div class="target-wrap">
+    <svg id="targetSvg" width="320" height="320" viewBox="0 0 320 320"></svg>
+    <div class="target-stats">
+      <div class="stat-row"><span>Hits placed</span><span id="statCount">0</span></div>
+      <div class="stat-row"><span>Average distance from centre</span><span id="statAvgDist">–</span></div>
+      <div class="stat-row"><span>Spread between hits</span><span id="statSpread">–</span></div>
+      <div class="verdict" id="statVerdict">Click the target to begin.</div>
+      <button class="op-btn" id="clearBtn" type="button" style="margin-top:10px; width:100%;">Clear</button>
+    </div>
+  </div>
+
+  <h2>Percent error</h2>
+  <div class="callout">
+    % error = &nbsp;<span style="font-family:var(--mono)">|accepted − measured| ÷ accepted × 100</span>
+  </div>
+
+  <div class="demo">
+    <h3 style="text-align:center;">Try it: Percent Error Calculator</h3>
+    <div class="pe-row">
+      <div><label for="peAccepted">Accepted value</label><input type="text" id="peAccepted" placeholder="e.g. 2.70"></div>
+      <div><label for="peMeasured">Measured value</label><input type="text" id="peMeasured" placeholder="e.g. 2.85"></div>
+    </div>
+    <div class="pe-out" id="peOut">Enter both values.</div>
+  </div>
+
+  <h2>Practice</h2>
+  <div class="panel" id="practiceList"></div>
+
+  <div class="callout" style="margin-top:32px;">
+    <strong>Try this:</strong> before checking the calculator, estimate whether a measured density of
+    2.85 g/cm³ against an accepted 2.70 g/cm³ is a "good" result (under 5% error) or not — then verify above.
+  </div>
+</div>
+
+<div class="page-foot">SCH3U · Unit 1 — Measurement &amp; Matter</div>
+
+<script>
+  // --- Target interactive ---
+  const svgNS = "http://www.w3.org/2000/svg";
+  const svg = document.getElementById('targetSvg');
+  const cx = 160, cy = 160;
+  const rings = [140, 105, 70, 35]; // outer to inner radii
+  const ringColors = ['#f7f7f5', '#ffffff', '#f7f7f5', '#ffffff'];
+
+  rings.forEach((r, i) => {
+    const c = document.createElementNS(svgNS, 'circle');
+    c.setAttribute('cx', cx);
+    c.setAttribute('cy', cy);
+    c.setAttribute('r', r);
+    c.setAttribute('fill', ringColors[i]);
+    c.setAttribute('stroke', '#d7dbe1');
+    svg.appendChild(c);
+  });
+  const bull = document.createElementNS(svgNS, 'circle');
+  bull.setAttribute('cx', cx); bull.setAttribute('cy', cy); bull.setAttribute('r', 6);
+  bull.setAttribute('fill', '#1c6e5e');
+  svg.appendChild(bull);
+
+  let hits = [];
+
+  function addHit(x, y) {
+    hits.push({ x, y });
+    const dot = document.createElementNS(svgNS, 'circle');
+    dot.setAttribute('cx', x);
+    dot.setAttribute('cy', y);
+    dot.setAttribute('r', 5);
+    dot.setAttribute('fill', '#c0392b');
+    dot.setAttribute('stroke', '#7a231b');
+    svg.appendChild(dot);
+    updateStats();
+  }
+
+  svg.addEventListener('click', (e) => {
+    const rect = svg.getBoundingClientRect();
+    const x = (e.clientX - rect.left) * (320 / rect.width);
+    const y = (e.clientY - rect.top) * (320 / rect.height);
+    addHit(x, y);
+  });
+
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    hits = [];
+    svg.querySelectorAll('circle[fill="#c0392b"]').forEach(el => el.remove());
+    updateStats();
+  });
+
+  function updateStats() {
+    const n = hits.length;
+    document.getElementById('statCount').textContent = n;
+    const verdict = document.getElementById('statVerdict');
+    if (n === 0) {
+      document.getElementById('statAvgDist').textContent = '–';
+      document.getElementById('statSpread').textContent = '–';
+      verdict.textContent = 'Click the target to begin.';
+      return;
+    }
+    const dists = hits.map(h => Math.hypot(h.x - cx, h.y - cy));
+    const avgDist = dists.reduce((a, b) => a + b, 0) / n;
+    document.getElementById('statAvgDist').textContent = avgDist.toFixed(1) + ' px';
+
+    let spread = 0;
+    if (n > 1) {
+      const mx = hits.reduce((a, h) => a + h.x, 0) / n;
+      const my = hits.reduce((a, h) => a + h.y, 0) / n;
+      spread = hits.reduce((a, h) => a + Math.hypot(h.x - mx, h.y - my), 0) / n;
+    }
+    document.getElementById('statSpread').textContent = n > 1 ? spread.toFixed(1) + ' px' : 'need 2+ hits';
+
+    const accurate = avgDist < 45;
+    const precise = n > 1 ? spread < 20 : null;
+    let text;
+    if (n === 1) {
+      text = accurate ? 'Close to the bullseye so far — add more hits to judge precision.' : 'Off-centre so far — add more hits to judge precision.';
+    } else if (accurate && precise) {
+      text = 'Accurate AND precise — tight cluster right on target.';
+    } else if (accurate && !precise) {
+      text = 'Accurate but NOT precise — centred overall, but scattered.';
+    } else if (!accurate && precise) {
+      text = 'Precise but NOT accurate — tightly clustered, off-target.';
+    } else {
+      text = 'Neither accurate nor precise — scattered and off-target.';
+    }
+    verdict.textContent = text;
+  }
+
+  // --- Percent error calculator ---
+  const peAccepted = document.getElementById('peAccepted');
+  const peMeasured = document.getElementById('peMeasured');
+  const peOut = document.getElementById('peOut');
+
+  function updatePE() {
+    const a = parseFloat(peAccepted.value);
+    const m = parseFloat(peMeasured.value);
+    if (isNaN(a) || isNaN(m) || a === 0) {
+      peOut.textContent = 'Enter both values.';
+      return;
+    }
+    const err = Math.abs(a - m) / a * 100;
+    peOut.innerHTML = `% error = <span class="final">${err.toFixed(2)}%</span>`;
+  }
+  [peAccepted, peMeasured].forEach(el => el.addEventListener('input', updatePE));
+
+  // --- Practice ---
+  const practice = [
+    { q: 'A student measures the length of a rod three times: 12.1 cm, 12.0 cm, 12.1 cm. The accepted length is 15.0 cm. Accurate, precise, both, or neither?', a: 'Precise (very consistent), but not accurate (far from 15.0 cm).' },
+    { q: 'The accepted boiling point of a substance is 78.4°C. A student measures 78.3°C. What is the percent error?', a: '|78.4 − 78.3| / 78.4 × 100 ≈ 0.13%' },
+    { q: 'Four trials give 5.10 g, 5.42 g, 4.88 g, 5.25 g for an accepted mass of 5.20 g. Would you call this data precise? Why or why not?', a: 'Not very precise — the trials are spread out fairly widely (over 0.5 g range) even though the average is close to accepted.' },
+  ];
+  const list = document.getElementById('practiceList');
+  practice.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'practice-item';
+    div.innerHTML = `
+      <span>${i + 1}. ${p.q}</span>
+      <button class="op-btn reveal-btn" type="button" style="margin-left:10px;">Reveal</button>
+      <div class="answer">${p.a}</div>
+    `;
+    const btn = div.querySelector('button');
+    const ans = div.querySelector('.answer');
+    btn.addEventListener('click', () => {
+      ans.classList.toggle('shown');
+      btn.textContent = ans.classList.contains('shown') ? 'Hide' : 'Reveal';
+    });
+    list.appendChild(div);
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Polyatomic Ions — SCH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent: #1c6e5e; --accent-dark: #124a3f; --accent-tint: #e3f2ee; }
+  table.ref-table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13.5px; }
+  table.ref-table th, table.ref-table td { border: 1px solid var(--line); padding: 7px 9px; text-align: left; }
+  table.ref-table th { background: var(--accent-tint); color: var(--accent-dark); }
+
+  .family-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 14px 0; text-align: center; font-family: var(--mono); }
+  .family-grid div { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 10px 6px; font-size: 13px; }
+  .family-grid .hdr { background: var(--accent-tint); font-weight: 700; color: var(--accent-dark); font-family: var(--sans); }
+
+  .practice-item { border-bottom: 1px solid var(--line); padding: 10px 0; }
+  .practice-item:last-child { border-bottom: none; }
+  .answer { display: none; margin-top: 6px; color: var(--accent-dark); font-weight: 600; }
+  .answer.shown { display: block; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Study Hub</a>
+  <a href="../index.html">SCH3U — Chemistry</a>
+  <span class="crumb-current">Polyatomic Ions</span>
+</div>
+
+<div class="wrap">
+  <h1>Polyatomic Ions</h1>
+  <p class="subtitle">Unit 2: Chemical Nomenclature · Multi-atom ions that act as a single unit, and the -ate/-ite/per-/hypo- family pattern.</p>
+
+  <div class="callout">
+    A polyatomic ion's charge comes from the group as a whole — name a compound containing one just like any
+    other ionic compound (metal/cation name + polyatomic ion name), and don't change the polyatomic ion's name
+    or charge.
+  </div>
+
+  <h2>Common polyatomic ions</h2>
+  <table class="ref-table">
+    <tr><th>Ion</th><th>Formula</th><th>Ion</th><th>Formula</th></tr>
+    <tr><td>Hydroxide</td><td>OH⁻</td><td>Carbonate</td><td>CO₃²⁻</td></tr>
+    <tr><td>Ammonium</td><td>NH₄⁺</td><td>Sulfate</td><td>SO₄²⁻</td></tr>
+    <tr><td>Nitrate</td><td>NO₃⁻</td><td>Sulfite</td><td>SO₃²⁻</td></tr>
+    <tr><td>Nitrite</td><td>NO₂⁻</td><td>Phosphate</td><td>PO₄³⁻</td></tr>
+    <tr><td>Acetate</td><td>CH₃COO⁻</td><td>Chromate</td><td>CrO₄²⁻</td></tr>
+    <tr><td>Cyanide</td><td>CN⁻</td><td>Dichromate</td><td>Cr₂O₇²⁻</td></tr>
+    <tr><td>Permanganate</td><td>MnO₄⁻</td><td>Peroxide</td><td>O₂²⁻</td></tr>
+  </table>
+
+  <h2>The -ate / -ite / per- / hypo- family</h2>
+  <p>Some elements (especially chlorine) form a whole family of oxyanions with the same charge but different
+  numbers of oxygen atoms. The <strong>"-ate"</strong> form is the reference point you memorize; the others are
+  named relative to it:</p>
+
+  <div class="family-grid">
+    <div class="hdr">− 2 oxygens<br>"hypo...ite"</div>
+    <div class="hdr">− 1 oxygen<br>"-ite"</div>
+    <div class="hdr">base<br>"-ate"</div>
+    <div class="hdr">+ 1 oxygen<br>"per...ate"</div>
+    <div>hypochlorite<br>ClO⁻</div>
+    <div>chlorite<br>ClO₂⁻</div>
+    <div>chlorate<br>ClO₃⁻</div>
+    <div>perchlorate<br>ClO₄⁻</div>
+  </div>
+
+  <div class="callout">
+    The charge on the ion stays the same across the whole family — only the number of oxygens (and the prefix/suffix) changes.
+  </div>
+
+  <h2>Practice</h2>
+  <div class="panel" id="practiceList"></div>
+
+  <div class="callout" style="margin-top:32px;">
+    <strong>Try this:</strong> before revealing, name Al(NO₃)₃ and NaHCO₃ (the "hydrogen" in the second one
+    means one H⁺ has been added to carbonate).
+  </div>
+</div>
+
+<div class="page-foot">SCH3U · Unit 2 — Chemical Nomenclature</div>
+
+<script>
+  const practice = [
+    { q: 'Name K₂SO₄.', a: 'Potassium sulfate' },
+    { q: 'Write the formula for ammonium carbonate.', a: '(NH₄)₂CO₃' },
+    { q: 'Name Al(NO₃)₃.', a: 'Aluminum nitrate' },
+    { q: 'Name NaHCO₃ (one H⁺ added to carbonate).', a: 'Sodium hydrogen carbonate (also known as sodium bicarbonate)' },
+    { q: 'If chlorate is ClO₃⁻, what is the formula for hypochlorite?', a: 'ClO⁻ (two fewer oxygens than the "-ate" form, same charge)' },
+  ];
+  const list = document.getElementById('practiceList');
+  practice.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'practice-item';
+    div.innerHTML = `<span>${i + 1}. ${p.q}</span><button class="op-btn reveal-btn" type="button" style="margin-left:10px;">Reveal</button><div class="answer">${p.a}</div>`;
+    const btn = div.querySelector('button');
+    const ans = div.querySelector('.answer');
+    btn.addEventListener('click', () => {
+      ans.classList.toggle('shown');
+      btn.textContent = ans.classList.contains('shown') ? 'Hide' : 'Reveal';
+    });
+    list.appendChild(div);
+  });
+</script>
+</body>
+</html>

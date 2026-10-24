@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Metric Prefixes — SCH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root {
+    --accent: #1c6e5e;
+    --accent-dark: #124a3f;
+    --accent-tint: #e3f2ee;
+  }
+
+  .ladder {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 6px;
+    margin: 20px 0 26px;
+    flex-wrap: wrap;
+  }
+  .rung {
+    text-align: center;
+    font-family: var(--mono);
+  }
+  .rung .box {
+    width: 74px;
+    padding: 10px 4px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--surface);
+    font-weight: 700;
+  }
+  .rung .box.kilo { background: var(--accent); color: #fff; border-color: var(--accent-dark); }
+  .rung .power { font-size: 12px; color: var(--ink-soft); margin-top: 4px; }
+  .arrow { color: var(--ink-soft); font-size: 20px; padding-bottom: 20px; }
+
+  .conv-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 16px 0;
+  }
+  .conv-row input[type="text"] {
+    width: 130px;
+    font-family: var(--mono);
+    font-size: 18px;
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    text-align: center;
+  }
+  .conv-row select {
+    font-family: var(--mono);
+    font-size: 16px;
+    padding: 8px 6px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--surface);
+  }
+  .conv-out {
+    text-align: center;
+    margin-top: 14px;
+    font-size: 18px;
+  }
+  .conv-out .final {
+    font-size: 26px;
+    font-family: var(--mono);
+    font-weight: 700;
+    color: var(--accent-dark);
+  }
+  .conv-steps {
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 13.5px;
+    margin-top: 6px;
+  }
+
+  .practice-item { border-bottom: 1px solid var(--line); padding: 10px 0; }
+  .practice-item:last-child { border-bottom: none; }
+  .answer { display: none; margin-top: 6px; color: var(--accent-dark); font-weight: 600; }
+  .answer.shown { display: block; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Study Hub</a>
+  <a href="../index.html">SCH3U — Chemistry</a>
+  <span class="crumb-current">Metric Prefixes</span>
+</div>
+
+<div class="wrap">
+  <h1>Metric Prefixes</h1>
+  <p class="subtitle">Unit 1: Measurement &amp; Matter · Moving between kilo, the base unit, centi, and milli.</p>
+
+  <div class="callout">
+    <strong>Quiz reminder:</strong> memorize the relationships between <strong>milli, centi, the base unit
+    (no prefix), and kilo</strong>. Any other prefix (like nano or mega) will be given to you if needed.
+  </div>
+
+  <h2>The ladder</h2>
+  <p>Each step is a power of ten. Moving right multiplies by 10; moving left divides by 10.</p>
+
+  <div class="ladder">
+    <div class="rung"><div class="box kilo">kilo</div><div class="power">×1000</div></div>
+    <div class="arrow">→</div>
+    <div class="rung"><div class="box">base</div><div class="power">×1</div></div>
+    <div class="arrow">→</div>
+    <div class="rung"><div class="box">centi</div><div class="power">×0.01</div></div>
+    <div class="arrow">→</div>
+    <div class="rung"><div class="box">milli</div><div class="power">×0.001</div></div>
+  </div>
+
+  <div class="callout">
+    Example: 1 km = 1000 m (base unit). 1 m = 100 cm. 1 m = 1000 mm.
+    Notice centi and milli both compare to the <em>base unit</em>, not to each other directly.
+  </div>
+
+  <div class="demo">
+    <h3 style="text-align:center;">Try it: Prefix Converter</h3>
+    <div class="conv-row">
+      <input type="text" id="cvValue" placeholder="e.g. 3.5" value="1">
+      <select id="cvFrom">
+        <option value="kilo">kilo</option>
+        <option value="base" selected>base (m, g, L...)</option>
+        <option value="centi">centi</option>
+        <option value="milli">milli</option>
+      </select>
+      <span>→</span>
+      <select id="cvTo">
+        <option value="kilo">kilo</option>
+        <option value="base">base (m, g, L...)</option>
+        <option value="centi" selected>centi</option>
+        <option value="milli">milli</option>
+      </select>
+    </div>
+    <div class="conv-out" id="cvOut"></div>
+    <div class="conv-steps" id="cvSteps"></div>
+  </div>
+
+  <h2>Practice</h2>
+  <div class="panel" id="practiceList"></div>
+
+  <div class="callout" style="margin-top:32px;">
+    <strong>Try this:</strong> before checking the converter, predict how many millimetres are in 2.5 km —
+    then use the tool above to check your answer.
+  </div>
+</div>
+
+<div class="page-foot">SCH3U · Unit 1 — Measurement &amp; Matter</div>
+
+<script>
+  // exponent relative to base unit
+  const exps = { kilo: 3, base: 0, centi: -2, milli: -3 };
+  const labels = { kilo: 'kilo', base: 'base unit', centi: 'centi', milli: 'milli' };
+
+  const cvValue = document.getElementById('cvValue');
+  const cvFrom = document.getElementById('cvFrom');
+  const cvTo = document.getElementById('cvTo');
+  const cvOut = document.getElementById('cvOut');
+  const cvSteps = document.getElementById('cvSteps');
+
+  function updateConv() {
+    const val = parseFloat(cvValue.value);
+    if (isNaN(val)) {
+      cvOut.textContent = 'Enter a number above.';
+      cvSteps.textContent = '';
+      return;
+    }
+    const from = cvFrom.value, to = cvTo.value;
+    const diff = exps[from] - exps[to];
+    const result = val * Math.pow(10, diff);
+    cvOut.innerHTML = `<span class="final">${result}</span> (${labels[to]})`;
+    cvSteps.textContent = `Moved ${Math.abs(diff)} place${Math.abs(diff) === 1 ? '' : 's'} ${diff > 0 ? 'right (×10 each step)' : 'left (÷10 each step)'} on the ladder.`;
+  }
+  [cvValue, cvFrom, cvTo].forEach(el => el.addEventListener('input', updateConv));
+  updateConv();
+
+  const practice = [
+    { q: '4.2 km = ______ m', a: '4200 m' },
+    { q: '650 cm = ______ m', a: '6.50 m' },
+    { q: '3 m = ______ mm', a: '3000 mm' },
+    { q: '0.75 km = ______ cm', a: '75 000 cm' },
+    { q: '82 mm = ______ m', a: '0.082 m' },
+  ];
+  const list = document.getElementById('practiceList');
+  practice.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'practice-item';
+    div.innerHTML = `
+      <span style="font-family:var(--mono)">${i + 1}. ${p.q}</span>
+      <button class="op-btn reveal-btn" type="button" style="margin-left:10px;">Reveal</button>
+      <div class="answer">${p.a}</div>
+    `;
+    const btn = div.querySelector('button');
+    const ans = div.querySelector('.answer');
+    btn.addEventListener('click', () => {
+      ans.classList.toggle('shown');
+      btn.textContent = ans.classList.contains('shown') ? 'Hide' : 'Reveal';
+    });
+    list.appendChild(div);
+  });
+</script>
+</body>
+</html>

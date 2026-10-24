@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reaction Types — SCH3U</title>
+<link rel="stylesheet" href="../../../shared/base.css">
+<style>
+  :root { --accent: #1c6e5e; --accent-dark: #124a3f; --accent-tint: #e3f2ee; }
+
+  .rule-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; margin: 16px 0; }
+  .rule-card { background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: var(--radius); padding: 14px 16px; }
+  .rule-card h3 { margin-bottom: 6px; font-size: 15px; }
+  .rule-card .form { font-family: var(--mono); font-size: 13.5px; color: var(--accent-dark); background: var(--accent-tint); padding: 4px 8px; border-radius: 5px; display: inline-block; margin-top: 4px; }
+
+  table.ref-table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13.5px; }
+  table.ref-table th, table.ref-table td { border: 1px solid var(--line); padding: 7px 9px; text-align: left; }
+  table.ref-table th { background: var(--accent-tint); color: var(--accent-dark); }
+
+  .drill-eq { font-family: var(--mono); font-size: 16px; text-align: center; margin: 10px 0; }
+  .drill-select { text-align: center; margin: 10px 0; }
+  .drill-select select { font-family: var(--mono); font-size: 15px; padding: 7px 10px; border: 1px solid var(--line); border-radius: 6px; }
+  .drill-feedback { text-align: center; min-height: 20px; font-weight: 600; margin-top: 6px; }
+  .drill-feedback.ok { color: var(--accent-dark); }
+  .drill-feedback.bad { color: #a03030; }
+  .drill-nav { text-align: center; margin-top: 10px; }
+
+  .practice-item { border-bottom: 1px solid var(--line); padding: 10px 0; }
+  .practice-item:last-child { border-bottom: none; }
+  .answer { display: none; margin-top: 6px; color: var(--accent-dark); font-weight: 600; }
+  .answer.shown { display: block; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../../index.html">Study Hub</a>
+  <a href="../index.html">SCH3U — Chemistry</a>
+  <span class="crumb-current">Reaction Types</span>
+</div>
+
+<div class="wrap">
+  <h1>Types of Chemical Reactions</h1>
+  <p class="subtitle">Unit 5: Chemical Reactions · The six families, plus the sub-patterns that predict products.</p>
+
+  <h2>The six types</h2>
+  <div class="rule-grid">
+    <div class="rule-card"><h3>Synthesis</h3>Two or more substances combine into one.<br><span class="form">A + B → AB</span></div>
+    <div class="rule-card"><h3>Decomposition</h3>One compound breaks into two or more simpler substances.<br><span class="form">AB → A + B</span></div>
+    <div class="rule-card"><h3>Single displacement</h3>One element swaps places with part of a compound.<br><span class="form">A + BC → AC + B</span></div>
+    <div class="rule-card"><h3>Double displacement</h3>Two ionic compounds swap partners.<br><span class="form">AB + CD → AD + CB</span></div>
+    <div class="rule-card"><h3>Combustion</h3>A substance burns in oxygen, usually producing CO₂ and H₂O (for hydrocarbons).<br><span class="form">CₓHᵧ + O₂ → CO₂ + H₂O</span></div>
+    <div class="rule-card"><h3>Acid-base (neutralization)</h3>An acid and a base react to form water + a salt.<br><span class="form">HA + BOH → H₂O + BA</span></div>
+  </div>
+
+  <h2>Useful sub-patterns</h2>
+  <div class="panel">
+    <ul style="margin:0; padding-left:20px; line-height:2;">
+      <li><strong>Non-metal oxide + water → acid</strong> (e.g. CO₂ + H₂O → H₂CO₃)</li>
+      <li><strong>Metal oxide + water → base</strong> (e.g. Na₂O + H₂O → 2NaOH)</li>
+      <li><strong>Double displacement → decomposition:</strong> when the "new" product from a double displacement is unstable, it immediately decomposes further.
+        <ul style="margin-top:6px;">
+          <li>acid + carbonate → <em>carbonic acid</em> + salt → decomposes to <strong>CO₂ + H₂O</strong> + salt</li>
+          <li>acid + sulphite → <em>sulphurous acid</em> + salt → decomposes to <strong>SO₂ + H₂O</strong> + salt</li>
+          <li>ammonium salt + hydroxide → <em>ammonium hydroxide</em> + salt → decomposes to <strong>NH₃ + H₂O</strong> + salt</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <h2>Thermal decomposition of metal compounds</h2>
+  <table class="ref-table">
+    <tr><th>Metal</th><th>Nitrate (NO₃)</th><th>Carbonate (CO₃)</th><th>Hydroxide (OH)</th></tr>
+    <tr><td>Group 1 (K, Na)</td><td>→ nitrite + O₂</td><td colspan="2" style="text-align:center;">does not decompose</td></tr>
+    <tr><td>Most other metals<br>(Ca, Mg, Al, Zn, Fe, Pb, Cu)</td><td>→ oxide + NO₂ + O₂</td><td>→ oxide + CO₂</td><td>→ oxide + H₂O</td></tr>
+    <tr><td>Ag, Au</td><td>→ metal + NO₂ + O₂</td><td>→ metal + CO₂ + O₂</td><td>do not exist</td></tr>
+  </table>
+
+  <h2>Try it: Identify the Reaction</h2>
+  <div class="demo">
+    <div class="drill-eq" id="drillEq"></div>
+    <div class="drill-select">
+      <select id="drillAnswer">
+        <option value="">— choose a type —</option>
+        <option value="synthesis">Synthesis</option>
+        <option value="decomposition">Decomposition</option>
+        <option value="single displacement">Single displacement</option>
+        <option value="double displacement">Double displacement</option>
+        <option value="combustion">Combustion</option>
+        <option value="acid-base">Acid-base</option>
+      </select>
+      <button class="op-btn" id="drillCheck" type="button">Check</button>
+    </div>
+    <div class="drill-feedback" id="drillFeedback"></div>
+    <div class="drill-nav"><button class="op-btn" id="drillNext" type="button">Next equation</button></div>
+  </div>
+
+  <h2>Practice</h2>
+  <div class="panel" id="practiceList"></div>
+</div>
+
+<div class="page-foot">SCH3U · Unit 5 — Chemical Reactions</div>
+
+<script>
+  const drillData = [
+    { eq: '2 Mg + O\u2082 \u2192 2 MgO', type: 'synthesis' },
+    { eq: '2 KClO\u2083 \u2192 2 KCl + 3 O\u2082', type: 'decomposition' },
+    { eq: 'Zn + 2 HCl \u2192 ZnCl\u2082 + H\u2082', type: 'single displacement' },
+    { eq: 'AgNO\u2083 + NaCl \u2192 AgCl + NaNO\u2083', type: 'double displacement' },
+    { eq: 'C\u2083H\u2088 + 5 O\u2082 \u2192 3 CO\u2082 + 4 H\u2082O', type: 'combustion' },
+    { eq: 'HCl + NaOH \u2192 NaCl + H\u2082O', type: 'acid-base' },
+    { eq: 'CaCO\u2083 \u2192 CaO + CO\u2082', type: 'decomposition' },
+    { eq: 'Cu + 2 AgNO\u2083 \u2192 Cu(NO\u2083)\u2082 + 2 Ag', type: 'single displacement' },
+  ];
+  let drillIdx = 0;
+
+  const drillEq = document.getElementById('drillEq');
+  const drillAnswer = document.getElementById('drillAnswer');
+  const drillFeedback = document.getElementById('drillFeedback');
+
+  function showDrill() {
+    drillEq.textContent = drillData[drillIdx].eq;
+    drillAnswer.value = '';
+    drillFeedback.textContent = '';
+    drillFeedback.className = 'drill-feedback';
+  }
+  showDrill();
+
+  document.getElementById('drillCheck').addEventListener('click', () => {
+    if (drillAnswer.value === drillData[drillIdx].type) {
+      drillFeedback.textContent = 'Correct!';
+      drillFeedback.className = 'drill-feedback ok';
+    } else {
+      drillFeedback.textContent = `Not quite — this is ${drillData[drillIdx].type}.`;
+      drillFeedback.className = 'drill-feedback bad';
+    }
+  });
+  document.getElementById('drillNext').addEventListener('click', () => {
+    drillIdx = (drillIdx + 1) % drillData.length;
+    showDrill();
+  });
+
+  const practice = [
+    { q: 'Predict the products: sulphur trioxide (a nonmetal oxide) + water →', a: 'H₂SO₄ (sulphuric acid) — nonmetal oxide + water → acid' },
+    { q: 'Predict the products: calcium oxide + water →', a: 'Ca(OH)₂ (calcium hydroxide, a base) — metal oxide + water → base' },
+    { q: 'HCl + Na₂CO₃ → (acid + carbonate). What are the final products after decomposition?', a: 'NaCl + CO₂ + H₂O (the intermediate carbonic acid breaks down into CO₂ and H₂O)' },
+    { q: 'Classify: 2 Al + 3 CuSO₄ → Al₂(SO₄)₃ + 3 Cu', a: 'Single displacement (Al displaces Cu)' },
+    { q: 'Thermal decomposition: what happens when you heat silver carbonate (Ag₂CO₃)?', a: 'It decomposes to Ag + CO₂ + O₂ (silver and gold carbonates break all the way down to the metal)' },
+  ];
+  const list = document.getElementById('practiceList');
+  practice.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'practice-item';
+    div.innerHTML = `<span>${i + 1}. ${p.q}</span><button class="op-btn reveal-btn" type="button" style="margin-left:10px;">Reveal</button><div class="answer">${p.a}</div>`;
+    const btn = div.querySelector('button');
+    const ans = div.querySelector('.answer');
+    btn.addEventListener('click', () => {
+      ans.classList.toggle('shown');
+      btn.textContent = ans.classList.contains('shown') ? 'Hide' : 'Reveal';
+    });
+    list.appendChild(div);
+  });
+</script>
+</body>
+</html>
