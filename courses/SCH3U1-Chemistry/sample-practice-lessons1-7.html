@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sample Practice — Lessons 1–7 — SCH3U</title>
+<link rel="stylesheet" href="../../shared/base.css">
+<style>
+  :root { --accent: #1c6e5e; --accent-dark: #124a3f; --accent-tint: #e3f2ee; }
+
+  .q-section { margin: 24px 0; }
+  .q-section-title { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid var(--accent); padding-bottom: 4px; margin-bottom: 10px; }
+  .q-section-title h3 { margin: 0; color: var(--accent-dark); font-size: 16px; }
+  .q-section-title .lesson-tag { font-size: 12px; color: var(--ink-soft); font-weight: 400; }
+  .q-marks { font-size: 13px; color: var(--ink-soft); font-weight: 700; }
+
+  .q-block { margin: 14px 0; padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .q-block:last-child { border-bottom: none; }
+  .q-prompt { font-weight: 600; margin-bottom: 8px; }
+  .q-prompt .q-pts { font-weight: 400; font-style: italic; color: var(--ink-soft); font-size: 13px; }
+
+  .q-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 6px 0; }
+  .q-row label { min-width: 180px; font-family: var(--mono); font-size: 14px; }
+  .q-row input[type="text"], .q-row select, .q-row textarea {
+    font-family: var(--mono); font-size: 15px; padding: 6px 10px;
+    border: 1px solid var(--line); border-radius: 6px; width: 190px;
+  }
+  .q-row textarea { font-family: var(--sans); width: 100%; max-width: 460px; min-height: 50px; }
+
+  .q-input.correct { border-color: #1c6e5e; background: #eaf6f1; }
+  .q-input.wrong { border-color: #a03030; background: #fbeaea; }
+  .q-feedback { font-size: 13px; margin-left: 4px; color: #a03030; }
+
+  .reveal-answer { display: none; margin-top: 6px; color: var(--accent-dark); font-size: 14px; }
+  .reveal-answer.shown { display: block; }
+
+  .score-bar {
+    position: sticky; bottom: 0; background: var(--surface); border-top: 2px solid var(--accent);
+    padding: 14px 18px; margin: 30px -24px 0; display: flex; justify-content: space-between;
+    align-items: center; flex-wrap: wrap; gap: 10px;
+  }
+  .score-total { font-weight: 700; font-size: 16px; color: var(--accent-dark); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="../../index.html">Study Hub</a>
+  <a href="index.html">SCH3U — Chemistry</a>
+  <span class="crumb-current">Sample Practice — Lessons 1–7</span>
+</div>
+
+<div class="wrap">
+  <h1>Sample Practice — Lessons 1 through 7</h1>
+  <p class="subtitle">Cumulative self-check: measurement, nomenclature, isotopes, periodic trends, bonding, VSEPR &amp; polarity, IMF &amp; crystal structures.</p>
+
+  <div class="callout">
+    This is a practice sample, not a real quiz or test — the actual questions will differ. Covers everything
+    up to and including Lesson 7 (IMF). Lesson 8 (chemical reactions) is not included here. Answer everything,
+    then press <strong>Check My Answers</strong> at the bottom.
+  </div>
+
+  <!-- LESSON 1 -->
+  <div class="q-section">
+    <div class="q-section-title"><h3>Measurement <span class="lesson-tag">Lesson 1</span></h3><span class="q-marks">4 marks</span></div>
+
+    <div class="q-block">
+      <div class="q-prompt">1. How many significant digits in 0.03040? <span class="q-pts">(1)</span></div>
+      <div class="q-row"><input type="text" class="q-input" data-answer="4" data-pts="1"></div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">2. 6.1 + 15.247 = ? (round to the correct number of decimal places) <span class="q-pts">(1)</span></div>
+      <div class="q-row"><input type="text" class="q-input" data-numeric="true" data-answer="21.3" data-tol="0.05" data-pts="1"></div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">3. Convert: 5.2 km = _____ m <span class="q-pts">(1)</span></div>
+      <div class="q-row"><input type="text" class="q-input" data-numeric="true" data-answer="5200" data-tol="1" data-pts="1"></div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">4. What element has the symbol "Si"? <span class="q-pts">(1)</span></div>
+      <div class="q-row"><input type="text" class="q-input" data-answer="silicon" data-pts="1"></div>
+    </div>
+  </div>
+
+  <!-- LESSON 2 -->
+  <div class="q-section">
+    <div class="q-section-title"><h3>Nomenclature <span class="lesson-tag">Lesson 2</span></h3><span class="q-marks">4 marks</span></div>
+
+    <div class="q-block">
+      <div class="q-prompt">5. Name CrCl₃ (chromium can be 2+, 3+, or 6+). <span class="q-pts">(1)</span></div>
+      <div class="q-row"><input type="text" class="q-input" data-answer="chromium(iii) chloride" data-pts="1"></div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">6. Name P₂O₅. <span class="q-pts">(1)</span></div>
+      <div class="q-row"><input type="text" class="q-input" data-answer="diphosphorus pentoxide" data-pts="1"></div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">7. Write the formula for ammonium phosphate. <span class="q-pts">(1)</span></div>
+      <div class="q-row"><input type="text" class="q-input" data-answer="(nh4)3po4" data-pts="1"></div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">8. Name HNO₂(aq). <span class="q-pts">(1)</span></div>
+      <div class="q-row"><input type="text" class="q-input" data-answer="nitrous acid" data-pts="1"></div>
+    </div>
+  </div>
+
+  <!-- LESSON 3 -->
+  <div class="q-section">
+    <div class="q-section-title"><h3>Isotopes &amp; Half-Life <span class="lesson-tag">Lesson 3</span></h3><span class="q-marks">4 marks</span></div>
+
+    <div class="q-block">
+      <div class="q-prompt">9. An atom has atomic number 20 and mass number 44. How many neutrons? <span class="q-pts">(1)</span></div>
+      <div class="q-row"><input type="text" class="q-input" data-answer="24" data-pts="1"></div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">10. Lithium has two isotopes: Li-6 (6.015 u, 7.6%) and Li-7 (7.016 u, 92.4%). Calculate the average atomic mass. <span class="q-pts">(1)</span></div>
+      <div class="q-row"><input type="text" class="q-input" data-numeric="true" data-answer="6.92" data-tol="0.03" data-pts="1"></div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">11. A radioisotope has a half-life of 10 days. How much of a 60 g sample remains after 30 days? <span class="q-pts">(1)</span></div>
+      <div class="q-row"><input type="text" class="q-input" data-numeric="true" data-answer="7.5" data-tol="0.1" data-pts="1"></div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">12. Which type of radiation requires thick lead or concrete to stop it? <span class="q-pts">(1)</span></div>
+      <div class="q-row">
+        <select class="q-input" data-answer="gamma" data-pts="1">
+          <option value="">— choose —</option>
+          <option value="alpha">Alpha</option>
+          <option value="beta">Beta</option>
+          <option value="gamma">Gamma</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- LESSON 4 -->
+  <div class="q-section">
+    <div class="q-section-title"><h3>Periodic Trends <span class="lesson-tag">Lesson 4</span></h3><span class="q-marks">3 marks</span></div>
+
+    <div class="q-block">
+      <div class="q-prompt">13. Which has the larger atomic radius: Mg or Ca? <span class="q-pts">(1)</span></div>
+      <div class="q-row"><input type="text" class="q-input" data-answer="ca" data-pts="1"></div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">14. Which has the higher ionization energy: O or Se? <span class="q-pts">(1)</span></div>
+      <div class="q-row"><input type="text" class="q-input" data-answer="o" data-pts="1"></div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">15. In your own words, explain why atomic radius decreases across a period. <span class="q-pts">(1 — self-check)</span></div>
+      <div class="q-row"><textarea placeholder="Your explanation..."></textarea></div>
+      <button class="op-btn reveal-btn" type="button" data-target="ans15">Show sample answer</button>
+      <div class="reveal-answer" id="ans15">Nuclear charge increases while shielding stays the same, so the nucleus pulls the valence shell in more tightly, shrinking the radius.</div>
+    </div>
+  </div>
+
+  <!-- LESSON 5 -->
+  <div class="q-section">
+    <div class="q-section-title"><h3>Bonding &amp; Lewis Structures <span class="lesson-tag">Lesson 5</span></h3><span class="q-marks">4 marks</span></div>
+
+    <div class="q-block">
+      <div class="q-prompt">16. What is the TVE for the carbonate ion, CO₃²⁻? <span class="q-pts">(1)</span></div>
+      <div class="q-row"><input type="text" class="q-input" data-answer="24" data-pts="1"></div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">17. An atom has 6 valence electrons, 4 lone pair electrons, and 2 bonding electrons. Formal charge? <span class="q-pts">(1)</span></div>
+      <div class="q-row"><input type="text" class="q-input" data-answer="0" data-pts="1"></div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">18. How many shared electron pairs are in a double bond? <span class="q-pts">(1)</span></div>
+      <div class="q-row"><input type="text" class="q-input" data-answer="2" data-pts="1"></div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">19. True or false: Be and B can be stable with fewer than 8 electrons around them. <span class="q-pts">(1)</span></div>
+      <div class="q-row">
+        <select class="q-input" data-answer="true" data-pts="1">
+          <option value="">— choose —</option>
+          <option value="true">True</option>
+          <option value="false">False</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- LESSON 6 -->
+  <div class="q-section">
+    <div class="q-section-title"><h3>VSEPR &amp; Polarity <span class="lesson-tag">Lesson 6</span></h3><span class="q-marks">5 marks</span></div>
+
+    <div class="q-block">
+      <div class="q-prompt">20. A central atom has 2 bonding pairs and 3 lone pairs (5 total domains). Name the shape. <span class="q-pts">(1)</span></div>
+      <div class="q-row"><input type="text" class="q-input" data-answer="linear" data-pts="1"></div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">21. A central atom has 3 bonding pairs and 2 lone pairs (5 total domains). Name the shape. <span class="q-pts">(1)</span></div>
+      <div class="q-row"><input type="text" class="q-input" data-answer="t-shaped" data-pts="1"></div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">22. Two atoms have EN values of 1.8 and 3.0. Classify the bond. <span class="q-pts">(1)</span></div>
+      <div class="q-row">
+        <select class="q-input" data-answer="polar covalent" data-pts="1">
+          <option value="">— choose —</option>
+          <option value="nonpolar covalent">Nonpolar covalent</option>
+          <option value="polar covalent">Polar covalent</option>
+          <option value="ionic">Ionic</option>
+        </select>
+      </div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">23. BF₃ is trigonal planar with three identical, symmetrically arranged bonds and no lone pairs on B. Is the molecule polar or nonpolar? <span class="q-pts">(1)</span></div>
+      <div class="q-row">
+        <select class="q-input" data-answer="nonpolar" data-pts="1">
+          <option value="">— choose —</option>
+          <option value="polar">Polar</option>
+          <option value="nonpolar">Nonpolar</option>
+        </select>
+      </div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">24. Why does a lone pair compress bond angles more than a bonding pair does? <span class="q-pts">(1 — self-check)</span></div>
+      <div class="q-row"><textarea placeholder="Your explanation..."></textarea></div>
+      <button class="op-btn reveal-btn" type="button" data-target="ans24">Show sample answer</button>
+      <div class="reveal-answer" id="ans24">A lone pair is held by only one nucleus (the central atom's), so it spreads out more and takes up more space than a bonding pair, which is pulled between two nuclei.</div>
+    </div>
+  </div>
+
+  <!-- LESSON 7 -->
+  <div class="q-section">
+    <div class="q-section-title"><h3>IMF &amp; Crystal Structures <span class="lesson-tag">Lesson 7</span></h3><span class="q-marks">4 marks</span></div>
+
+    <div class="q-block">
+      <div class="q-prompt">25. What is the strongest IMF present in NH₃ (which has H bonded directly to N)? <span class="q-pts">(1)</span></div>
+      <div class="q-row"><input type="text" class="q-input" data-answer="hydrogen bonding" data-pts="1"></div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">26. Classify the crystal type: hard, brittle, conducts only when molten or dissolved, made of a metal and a nonmetal. <span class="q-pts">(1)</span></div>
+      <div class="q-row"><input type="text" class="q-input" data-answer="ionic" data-pts="1"></div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">27. Between Cl₂ and Br₂ (both nonpolar), which has the higher boiling point, and why (in a few words)? <span class="q-pts">(1)</span></div>
+      <div class="q-row"><input type="text" class="q-input" data-answer="br2, more electrons/stronger london forces" data-pts="1" placeholder="e.g. Br2, more electrons"></div>
+    </div>
+    <div class="q-block">
+      <div class="q-prompt">28. Name the carbon allotrope made of hollow, roughly spherical cages of carbon (like C₆₀). <span class="q-pts">(1)</span></div>
+      <div class="q-row"><input type="text" class="q-input" data-answer="fullerene" data-pts="1"></div>
+    </div>
+  </div>
+
+  <div class="score-bar">
+    <div>
+      <button class="op-btn" id="checkAllBtn" type="button" style="background:var(--accent); color:#fff; border-color:var(--accent-dark);">Check My Answers</button>
+      <button class="op-btn" id="resetBtn" type="button">Reset</button>
+    </div>
+    <div class="score-total" id="scoreTotal">Auto-graded: — / 26 &nbsp;(+2 self-checked)</div>
+  </div>
+</div>
+
+<div class="page-foot">SCH3U · Sample Practice — Lessons 1–7</div>
+
+<script>
+  document.querySelectorAll('.reveal-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = document.getElementById(btn.dataset.target);
+      target.classList.toggle('shown');
+      btn.textContent = target.classList.contains('shown') ? 'Hide sample answer' : 'Show sample answer';
+    });
+  });
+
+  function normalize(s) {
+    return (s || '').toString().trim().toLowerCase().replace(/\s+/g, ' ')
+      .replace(/₂/g,'2').replace(/₃/g,'3').replace(/₄/g,'4').replace(/₅/g,'5');
+  }
+
+  function checkOneOf(val, answerString) {
+    // allow a couple of acceptable phrasings separated by " / " in data-answer if needed; default: single answer
+    const options = answerString.split(' / ').map(s => normalize(s));
+    return options.includes(normalize(val));
+  }
+
+  document.getElementById('checkAllBtn').addEventListener('click', () => {
+    let earned = 0, possible = 0;
+    document.querySelectorAll('.q-input').forEach(input => {
+      const pts = parseFloat(input.dataset.pts || '0');
+      possible += pts;
+      input.classList.remove('correct', 'wrong');
+      let fb = input.parentElement.querySelector('.q-feedback');
+      if (fb) fb.remove();
+
+      let isCorrect = false;
+      const rawVal = input.value;
+      const answer = input.dataset.answer;
+
+      if (input.dataset.numeric === 'true') {
+        const val = parseFloat(rawVal);
+        const correctVal = parseFloat(answer);
+        const tol = parseFloat(input.dataset.tol || '0.05');
+        if (!isNaN(val) && Math.abs(val - correctVal) <= tol) isCorrect = true;
+      } else {
+        isCorrect = checkOneOf(rawVal, answer);
+      }
+
+      if (isCorrect) {
+        input.classList.add('correct');
+        earned += pts;
+      } else {
+        input.classList.add('wrong');
+        const span = document.createElement('span');
+        span.className = 'q-feedback';
+        span.textContent = `correct: ${input.dataset.answer}`;
+        input.insertAdjacentElement('afterend', span);
+      }
+    });
+    document.getElementById('scoreTotal').textContent = `Auto-graded: ${earned.toFixed(0)} / ${possible.toFixed(0)}  (+2 self-checked)`;
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    document.querySelectorAll('.q-input').forEach(input => {
+      input.value = '';
+      input.classList.remove('correct', 'wrong');
+      const fb = input.parentElement.querySelector('.q-feedback');
+      if (fb) fb.remove();
+    });
+    document.querySelectorAll('textarea').forEach(t => t.value = '');
+    document.querySelectorAll('.reveal-answer').forEach(r => r.classList.remove('shown'));
+    document.getElementById('scoreTotal').textContent = 'Auto-graded: — / 26  (+2 self-checked)';
+  });
+</script>
+</body>
+</html>
